@@ -1,3 +1,5 @@
+import { WadIdentification } from './WadHeader'
+
 export const WAD_DIRECTORY_ENTRY_SIZE = 16
 
 export interface WadDirectoryEntry {
@@ -7,5 +9,6 @@ export interface WadDirectoryEntry {
 }
 
 export interface WadDirectory {
+    identification: WadIdentification
     entries: WadDirectoryEntry[]
 }

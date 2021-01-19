@@ -1,3 +1,4 @@
+import { buildWad } from '../../test/buildWad'
 import { WadDirectoryEntry, WAD_DIRECTORY_ENTRY_SIZE } from '../interfaces/WadDirectory'
 import { readDirectory } from './readDirectory'
 
@@ -26,31 +27,37 @@ describe('readDirectory', () => {
         expect(() => readDirectory(wad)).toThrow("Unsupported file format 'NWAD'")
     })
 
-    const writeEntry = (wad: Buffer, offset: number, entry: WadDirectoryEntry): void => {
-        wad.writeInt32LE(entry.filepos, offset + 0)
-        wad.writeInt32LE(entry.size, offset + 4)
-        wad.write(entry.name, offset + 8, 'ascii')
-    }
-
     it('reads directory entries from wad', () => {
-        const directoryOffset = 50
         const expected = [
-            { filepos: 123, size: 12, name: 'JOHN\u0000\u0000\u0000\u0000' },
-            { filepos: 34, size: 0, name: 'E1M1\u0000\u0000\u0000\u0000' }
+            { filepos: 34, size: 12, name: 'JOHN\u0000\u0000\u0000\u0000' },
+            { filepos: 123, size: 0, name: 'E1M1\u0000\u0000\u0000\u0000' }
         ]
 
-        const wad = Buffer.alloc(directoryOffset + 2 * WAD_DIRECTORY_ENTRY_SIZE)
-        wad.write('IWAD', 'ascii')
-        wad.writeInt32LE(expected.length, 4)
-        wad.writeInt32LE(directoryOffset, 8)
-
-        writeEntry(wad, directoryOffset + WAD_DIRECTORY_ENTRY_SIZE * 0, expected[0])
-        writeEntry(wad, directoryOffset + WAD_DIRECTORY_ENTRY_SIZE * 1, expected[1])
-
+        const wad = buildWad(expected)
         const actual = readDirectory(wad)
 
         expect(actual.entries.length).toEqual(expected.length)
         expect(actual.entries[0]).toEqual({ ...expected[0], name: 'JOHN' })
         expect(actual.entries[1]).toEqual({ ...expected[1], name: 'E1M1' })
+    })
+
+    it('sorts entries by filepos', () => {
+        const expected = [
+            { filepos: 123, size: 0, name: 'X' },
+            { filepos: 34, size: 0, name: 'X' },
+            { filepos: 2, size: 0, name: 'X' },
+            { filepos: 54, size: 0, name: 'X' },
+            { filepos: 98, size: 0, name: 'X' }
+        ]
+
+        const wad = buildWad(expected)
+        const actual = readDirectory(wad)
+
+        expect(actual.entries.length).toEqual(expected.length)
+        expect(actual.entries[0].filepos).toEqual(2)
+        expect(actual.entries[1].filepos).toEqual(34)
+        expect(actual.entries[2].filepos).toEqual(54)
+        expect(actual.entries[3].filepos).toEqual(98)
+        expect(actual.entries[4].filepos).toEqual(123)
     })
 })

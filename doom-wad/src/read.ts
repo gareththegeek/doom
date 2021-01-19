@@ -1,6 +1,6 @@
 import * as fs from 'fs'
-import { readDirectory } from './directory'
 import { Wad } from './interfaces/Wad'
+import { readWad } from './wad'
 
 export const read = async (filename: string): Promise<Wad | null> =>
     new Promise((resolve, reject) => {
@@ -9,10 +9,8 @@ export const read = async (filename: string): Promise<Wad | null> =>
                 reject(err)
             }
 
-            const directory = readDirectory(data)
+            const wad = readWad(data)
 
-            console.log(directory)
-
-            resolve(null)
+            resolve(wad)
         })
     })

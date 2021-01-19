@@ -1,7 +1,6 @@
 import { read } from './read'
 import * as path from 'path'
-import { writePlayPalLump } from './palettes'
-import { writeColorMapLump } from './colourmaps/writeColorMapLump'
+import { writeColorMapLump, writePlayPalLump } from './palettes'
 ;(async () => {
     const wad = await read(path.join(__dirname, '../data/doom.wad'))
     await writePlayPalLump(path.join(__dirname, '../out/palettes/'), wad!.playpal)
@@ -10,6 +9,7 @@ import { writeColorMapLump } from './colourmaps/writeColorMapLump'
         wad!.colormap,
         wad!.playpal.palettes[0]
     )
+    console.log(wad?.texture1.maptextures)
 })()
 
 export { read }

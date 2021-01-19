@@ -9,6 +9,12 @@ const isWad = (wad: Partial<Wad>): wad is Wad => {
     if (!wad.colormap) {
         throw new Error('No colormap lump found')
     }
+    if (!wad.pnames) {
+        throw new Error('No pnames lump found')
+    }
+    if (!wad.texture1) {
+        throw new Error('No texture1 lump found')
+    }
     return true
 }
 

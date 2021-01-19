@@ -5,7 +5,7 @@ import { readHeader } from './readHeader'
 const readDirectoryEntry = (data: Buffer, offset: number): WadDirectoryEntry => ({
     filepos: data.readInt32LE(offset),
     size: data.readInt32LE(offset + 4),
-    name: readString(data, offset + 8, offset + 16)
+    name: readString(data, offset + 8, offset + 16).toLowerCase()
 })
 
 export const readDirectory = (data: Buffer): WadDirectory => {

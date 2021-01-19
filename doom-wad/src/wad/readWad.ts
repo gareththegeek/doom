@@ -6,6 +6,9 @@ const isWad = (wad: Partial<Wad>): wad is Wad => {
     if (!wad.playpal) {
         throw new Error('No playpal lump found')
     }
+    if (!wad.colormap) {
+        throw new Error('No colormap lump found')
+    }
     return true
 }
 

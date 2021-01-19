@@ -6,7 +6,6 @@ const writePalette = async (filename: string, palette: WadPalette): Promise<void
     new Promise((resolve, reject) => {
         const image = new Jimp(16, 16)
         palette.colours.forEach((colour, index) => {
-            //const hex = 0xff000000 | (colour[0] << 16) | (colour[1] << 8) | colour[2]
             const hex = Jimp.rgbaToInt(colour[0], colour[1], colour[2], 0xff)
             image.setPixelColour(hex, Math.floor(index / 16), index % 16)
         })

@@ -1,4 +1,5 @@
 import { WadColorMapLump } from './WadColorMapLump'
+import { WadFlatLump } from './WadFlatLump'
 import { WadPictureLump } from './WadPictureLump'
 import { WadPlayPalLump } from './WadPlayPalLump'
 import { WadPNamesLump } from './WadPNamesLump'

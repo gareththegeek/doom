@@ -37,7 +37,7 @@ const readMapTexture = (data: Buffer, offset: number): WadMapTexture => {
         patches.push(readMapPatch(data, offset + MAP_TEXTURE_SIZE + MAP_PATCH_SIZE * i))
     }
     return {
-        name: readString(data, offset + MapTextureOffset.name, offset + MapTextureOffset.masked),
+        name: readString(data, offset + MapTextureOffset.name, offset + MapTextureOffset.masked).toLowerCase(),
         masked: data.readUInt32LE(offset + MapTextureOffset.masked) !== 0,
         width: data.readInt16LE(offset + MapTextureOffset.width),
         height: data.readInt16LE(offset + MapTextureOffset.height),
@@ -51,7 +51,7 @@ export const readTextureLump = (data: Buffer, entry: WadDirectoryEntry): WadText
     const maptextures: WadMapTexture[] = []
     for (let i = 0; i < numtextures; i++) {
         //TODO is it an absolute or relative offset in the table?
-        const offset = entry.filepos + data.readInt32LE(entry.filepos + i * 4)
+        const offset = entry.filepos + data.readInt32LE(entry.filepos + 4 + i * 4)
         maptextures.push(readMapTexture(data, offset))
     }
     return { maptextures }

@@ -2,8 +2,9 @@ import { read } from './read'
 import * as path from 'path'
 import { writeColorMapLump, writePlayPalLump } from './palettes'
 import { writePictureLumps } from './textures/writePictureLumps'
-;import { writeFlatLump } from './flats';
-(async () => {
+import { writeFlatLump } from './flats'
+import { writeTextureLumps } from './textures/writeTextureLumps'
+;(async () => {
     const wad = await read(path.join(__dirname, '../data/doom.wad'))
     await writePlayPalLump(path.join(__dirname, '../out/palettes/'), wad!.playpal)
     await writeColorMapLump(
@@ -29,6 +30,24 @@ import { writePictureLumps } from './textures/writePictureLumps'
         wad!.colormap.maps[0],
         wad!.playpal.palettes[0]
     )
+    await writeTextureLumps(
+        path.join(__dirname, '../out/textures/'),
+        wad!.pnames.names,
+        wad!.texture1,
+        wad!.patches,
+        wad!.colormap.maps[0],
+        wad!.playpal.palettes[0]
+    )
+    if (!!wad?.texture2) {
+        await writeTextureLumps(
+            path.join(__dirname, '../out/textures/'),
+            wad!.pnames.names,
+            wad!.texture2,
+            wad!.patches,
+            wad!.colormap.maps[0],
+            wad!.playpal.palettes[0]
+        )
+    }
 })()
 
 export { read }

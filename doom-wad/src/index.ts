@@ -48,6 +48,8 @@ import { writeTextureLumps } from './textures/writeTextureLumps'
             wad!.playpal.palettes[0]
         )
     }
+
+    console.log(wad!.maps['e1m1'].sectors.sectors)
 })()
 
 export { read }

@@ -1,10 +1,10 @@
 import * as path from 'path'
 import Jimp from 'jimp'
-import { WadFlatLookup } from '../interfaces/Wad'
 import { WadColorMap } from '../interfaces/WadColorMapLump'
 import { WadPalette } from '../interfaces/WadPlayPalLump'
 import { WadFlatLump } from '../interfaces/WadFlatLump'
 import { FLAT_HEIGHT, FLAT_WIDTH } from './readFlatLump'
+import { WadLookup } from '../interfaces/Wad'
 
 const writeFlat = async (
     filename: string,
@@ -32,7 +32,7 @@ const writeFlat = async (
 
 export const writeFlatLumps = async (
     filepath: string,
-    flats: WadFlatLookup,
+    flats: WadLookup<WadFlatLump>,
     colormap: WadColorMap,
     palette: WadPalette
 ): Promise<void> => {

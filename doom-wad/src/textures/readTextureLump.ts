@@ -37,7 +37,7 @@ const readMapTexture = (data: Buffer, offset: number): WadMapTexture => {
         patches.push(readMapPatch(data, offset + MAP_TEXTURE_SIZE + MAP_PATCH_SIZE * i))
     }
     return {
-        name: readString(data, offset + MapTextureOffset.name, offset + MapTextureOffset.masked).toLowerCase(),
+        name: readString(data, offset + MapTextureOffset.name, offset + MapTextureOffset.masked),
         masked: data.readUInt32LE(offset + MapTextureOffset.masked) !== 0,
         width: data.readInt16LE(offset + MapTextureOffset.width),
         height: data.readInt16LE(offset + MapTextureOffset.height),

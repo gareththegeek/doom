@@ -5,10 +5,12 @@ import { WadColorMapLump } from '../interfaces/WadColorMapLump'
 import { WadDirectory, WadDirectoryEntry } from '../interfaces/WadDirectory'
 import { WadFlatLump } from '../interfaces/WadFlatLump'
 import { WadLump } from '../interfaces/WadLump'
+import { WadMapLump } from '../interfaces/WadMapLump'
 import { WadPictureLump } from '../interfaces/WadPictureLump'
 import { WadPlayPalLump } from '../interfaces/WadPlayPalLump'
 import { WadPNamesLump } from '../interfaces/WadPNamesLump'
 import { WadTextureLump } from '../interfaces/WadTextureLump'
+import { readMapLump } from '../maps'
 import { readPlayPalLump, readColorMapLump } from '../palettes'
 import { readPictureLump, readPNamesLump, readTextureLump } from '../textures'
 
@@ -43,7 +45,8 @@ export const readWad = (data: Buffer): Wad => {
     const wad: Partial<Wad> = {
         patches: {},
         flats: {},
-        sprites: {}
+        sprites: {},
+        maps: {}
     }
 
     const directory = readDirectory(data)
@@ -53,9 +56,9 @@ export const readWad = (data: Buffer): Wad => {
         unusedLumps.splice(unusedLumps.indexOf(name), 1)
     }
 
-    const readLump = <T extends WadLump>(name: string, strategy: (data: Buffer, entry: WadDirectoryEntry) => T): T => {
+    const readLump = <T extends WadLump>(name: string, strategy: (data: Buffer, entry: WadDirectoryEntry, directory?: WadDirectory) => T): T => {
         markUsed(name)
-        return strategy(data, findEntry(directory, name))
+        return strategy(data, findEntry(directory, name), directory)
     }
 
     const findRange = (name: string): { start: number; end: number } => {
@@ -95,6 +98,9 @@ export const readWad = (data: Buffer): Wad => {
     wad.patches = readLumpBlock('p', readPictureLump)
     wad.flats = readLumpBlock('f', readFlatLump)
     wad.sprites = readLumpBlock('s', readPictureLump)
+
+    const maps = directory.entries.filter((entry) => entry.name.match(/^(e[1-4]m[1-9]|map(0[1-9]|[1-2][0-9]|3[0-2]))$/))
+    maps.forEach((entry) => (wad.maps![entry.name] = readLump<WadMapLump>(entry.name, readMapLump)))
 
     if (!isWad(wad)) {
         throw new Error('Invalid wad')

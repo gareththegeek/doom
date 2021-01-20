@@ -2,7 +2,7 @@ import { readString } from '../binary'
 import { WadIdentification, WadHeader } from '../interfaces/WadHeader'
 
 const isWad = (identification: string): identification is WadIdentification =>
-    identification === 'IWAD' || identification === 'PWAD'
+    identification === 'iwad' || identification === 'pwad'
 
 export const readHeader = (data: Buffer): WadHeader => {
     const identification = readString(data, 0, 4)

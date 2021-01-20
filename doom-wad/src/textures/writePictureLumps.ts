@@ -1,6 +1,6 @@
 import * as path from 'path'
 import Jimp from 'jimp'
-import { WadPictureLookup } from '../interfaces/Wad'
+import { WadLookup } from '../interfaces/Wad'
 import { WadColorMap } from '../interfaces/WadColorMapLump'
 import { WadPictureLump } from '../interfaces/WadPictureLump'
 import { WadPalette } from '../interfaces/WadPlayPalLump'
@@ -35,7 +35,7 @@ const writePicture = async (
 
 export const writePictureLumps = async (
     filepath: string,
-    patches: WadPictureLookup,
+    patches: WadLookup<WadPictureLump>,
     colormap: WadColorMap,
     palette: WadPalette
 ): Promise<void> => {

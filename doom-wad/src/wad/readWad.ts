@@ -47,10 +47,14 @@ export const readWad = (data: Buffer): Wad => {
     }
 
     const directory = readDirectory(data)
-    const unusedLumps = directory.entries.map((entry) => entry.name).sort()
+    const unusedLumps = directory.entries.map((entry) => entry.name)
+
+    const markUsed = (name: string): void => {
+        unusedLumps.splice(unusedLumps.indexOf(name), 1)
+    }
 
     const readLump = <T extends WadLump>(name: string, strategy: (data: Buffer, entry: WadDirectoryEntry) => T): T => {
-        unusedLumps.splice(unusedLumps.indexOf(name), 1)
+        markUsed(name)
         return strategy(data, findEntry(directory, name))
     }
 
@@ -62,9 +66,23 @@ export const readWad = (data: Buffer): Wad => {
         if (start === -1 || end === -1) {
             throw new Error(`failed to find ${startName} and ${endName}`)
         }
-        unusedLumps.splice(unusedLumps.indexOf(startName), 1)
-        unusedLumps.splice(unusedLumps.indexOf(endName), 1)
         return { start, end }
+    }
+
+    const readLumpBlock = <T>(
+        name: string,
+        strategy: (data: Buffer, entry: WadDirectoryEntry) => T
+    ): { [name: string]: T } => {
+        const range = findRange(name)
+        const result: { [name: string]: T } = {}
+        for (let i = range.start; i <= range.end; i++) {
+            const entry = directory.entries[i]
+            if (entry.size !== 0) {
+                result[entry.name] = readLump<T>(entry.name, strategy)
+            }
+            markUsed(entry.name)
+        }
+        return result
     }
 
     wad.playpal = readLump<WadPlayPalLump>('playpal', readPlayPalLump)
@@ -74,27 +92,12 @@ export const readWad = (data: Buffer): Wad => {
     if (hasEntry(directory, 'texture2')) {
         wad.texture2 = readLump<WadTextureLump>('texture2', readTextureLump)
     }
+    wad.patches = readLumpBlock('p', readPictureLump)
+    wad.flats = readLumpBlock('f', readFlatLump)
+    wad.sprites = readLumpBlock('s', readPictureLump)
 
     if (!isWad(wad)) {
         throw new Error('Invalid wad')
-    }
-
-    wad.pnames.names.forEach((name) => {
-        if (!hasEntry(directory, name)) {
-            throw new Error(`Unable to locate patch lump ${name}`)
-        }
-        wad.patches[name] = readLump<WadPictureLump>(name, readPictureLump)
-    })
-
-    const flatsRange = findRange('f')
-    for (let i = flatsRange.start + 1; i < flatsRange.end; i++) {
-        const entry = directory.entries[i]
-        wad.flats[entry.name] = readLump<WadFlatLump>(entry.name, readFlatLump)
-    }
-    const spritesRange = findRange('s')
-    for (let i = spritesRange.start + 1; i < spritesRange.end; i++) {
-        const entry = directory.entries[i]
-        wad.sprites[entry.name] = readLump<WadPictureLump>(entry.name, readPictureLump)
     }
 
     if (unusedLumps.length !== 0) {

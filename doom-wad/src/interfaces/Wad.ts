@@ -4,7 +4,8 @@ import { WadPlayPalLump } from './WadPlayPalLump'
 import { WadPNamesLump } from './WadPNamesLump'
 import { WadTextureLump } from './WadTextureLump'
 
-export type WadPatchLookup = { [name: string]: WadPictureLump }
+export type WadPictureLookup = { [name: string]: WadPictureLump }
+export type WadFlatLookup = { [name: string]: WadFlatLump }
 
 export interface Wad {
     playpal: WadPlayPalLump
@@ -12,5 +13,7 @@ export interface Wad {
     pnames: WadPNamesLump
     texture1: WadTextureLump
     texture2?: WadTextureLump
-    patches: WadPatchLookup
+    patches: WadPictureLookup
+    flats: WadFlatLookup
+    sprites: WadPictureLookup
 }

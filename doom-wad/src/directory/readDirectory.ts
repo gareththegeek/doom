@@ -16,5 +16,5 @@ export const readDirectory = (data: Buffer): WadDirectory => {
         const offset = infotableofs + i * WAD_DIRECTORY_ENTRY_SIZE
         entries.push(readDirectoryEntry(data, offset))
     }
-    return { identification, entries: entries.sort((a, b) => a.filepos - b.filepos) }
+    return { identification, entries }
 }

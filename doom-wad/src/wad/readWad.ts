@@ -1,6 +1,7 @@
 import { readDirectory } from '../directory'
 import { Wad } from '../interfaces/Wad'
 import { readLump } from '../lumps'
+import { readPictureLump } from '../textures'
 
 const isWad = (wad: Partial<Wad>): wad is Wad => {
     if (!wad.playpal) {
@@ -19,7 +20,9 @@ const isWad = (wad: Partial<Wad>): wad is Wad => {
 }
 
 export const readWad = (data: Buffer): Wad => {
-    const result = {}
+    const result = {
+        patches: {}
+    }
 
     const directory = readDirectory(data)
 
@@ -30,6 +33,14 @@ export const readWad = (data: Buffer): Wad => {
     if (!isWad(result)) {
         throw new Error('Invalid wad')
     }
+
+    result.pnames.names.forEach((name) => {
+        const entry = directory.entries.find((entry) => entry.name === name)
+        if (!entry) {
+            throw new Error(`Unable to locate patch lump ${name}`)
+        }
+        result.patches[entry.name] = readPictureLump(data, entry)
+    })
 
     return result
 }

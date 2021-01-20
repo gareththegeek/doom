@@ -9,7 +9,7 @@ export const readPNamesLump = (data: Buffer, entry: WadDirectoryEntry): WadPName
     const names: string[] = []
     for (let i = 0; i < nummappatches; i++) {
         const offset = entry.filepos + 4 + i * PNAME_SIZE
-        names.push(readString(data, offset, offset + 8))
+        names.push(readString(data, offset, offset + 8).toLowerCase())
     }
     return { names }
 }

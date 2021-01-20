@@ -5,6 +5,7 @@ const COLOR_MAP_SIZE = 256
 
 const readColorMap = (data: Buffer, offset: number): WadColorMap => {
     const indices: number[] = []
+    //TODO ArrayUInt8.from
     for (let i = 0; i < COLOR_MAP_SIZE; i += 1) {
         indices.push(data.readUInt8(offset + i))
     }

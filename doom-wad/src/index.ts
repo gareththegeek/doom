@@ -9,7 +9,7 @@ import { writeColorMapLump, writePlayPalLump } from './palettes'
         wad!.colormap,
         wad!.playpal.palettes[0]
     )
-    console.log(wad?.texture1.maptextures)
+    
 })()
 
 export { read }

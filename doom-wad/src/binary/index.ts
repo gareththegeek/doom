@@ -1,3 +1,4 @@
 import { readString } from './readString'
+import { readBytes } from './readBytes'
 
-export { readString }
+export { readString, readBytes }

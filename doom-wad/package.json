@@ -1,12 +1,12 @@
 {
     "name": "doom-wad",
     "version": "1.0.0",
-    "main": "index.js",
-    "types": "index.d.ts",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
     "license": "MIT",
     "scripts": {
         "clean": "rimraf ./dist",
-        "start": "ts-node src/index.ts",
+        "start": "ts-node src/start.ts",
         "prebuild": "yarn clean",
         "build": "tsc -p tsconfig.build.json",
         "test": "jest"

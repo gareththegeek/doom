@@ -7,13 +7,14 @@
             "esnext"
         ],
         "allowJs": false,
+        "sourceMap": true,
         "esModuleInterop": true,
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "noFallthroughCasesInSwitch": true,
-        "module": "commonjs",
+        "module": "amd",
         "moduleResolution": "node",
-        "outDir": "public/scripts",
+        "outFile": "dist/scripts/index.js",
         "declaration": true
     },
     "include": [

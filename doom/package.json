@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "clean": "rimraf ./public/scripts",
+    "clean": "rimraf ./dist/scripts",
     "prebuild": "yarn clean",
-    "build": "tsc -p tsconfig.build.json",
+    "build": "webpack",
     "prestart": "yarn build",
-    "start": "http-server ./public",
+    "start": "http-server ./dist",
     "test": "jest"
   },
   "author": "",
@@ -18,6 +18,12 @@
     "jest": "^26.6.3",
     "rimraf": "^3.0.2",
     "ts-jest": "^26.4.4",
-    "typescript": "^4.1.3"
+    "ts-loader": "^8.0.14",
+    "typescript": "^4.1.3",
+    "webpack": "^5.16.0",
+    "webpack-cli": "^4.4.0"
+  },
+  "dependencies": {
+    "gl-matrix": "^3.3.0"
   }
 }

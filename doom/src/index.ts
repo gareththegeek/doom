@@ -1,12 +1,10 @@
 import { vec2, vec3 } from 'gl-matrix'
 import { BufferSet } from './buffers/BufferSet'
 import { createBufferSet } from './buffers'
-import { createCamera, renderScene } from './scene'
+import { createCamera, initialiseScene, renderScene } from './scene'
 import { createShaderProgram } from './shaders'
 import { createTexture } from './textures'
 import { Geometry } from './scene/Geometry'
-
-let cubeRotation = 0.0
 
 const vsSource = `
 attribute vec4 aVertexPosition;
@@ -22,29 +20,6 @@ void main(void) {
   vTextureCoord = aTextureCoord;
 }
 `
-
-// const vsSource = `
-// attribute vec4 aVertexPosition;
-// attribute vec4 aVertexColor;
-
-// uniform mat4 uModelViewMatrix;
-// uniform mat4 uProjectionMatrix;
-
-// varying lowp vec4 vColor;
-
-// void main(void) {
-//   gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-//   vColor = aVertexColor;
-// }
-// `
-
-// const fsSource = `
-// varying lowp vec4 vColor;
-
-// void main(void) {
-//   gl_FragColor = vColor;
-// }
-// `
 
 const fsSource = `
 varying highp vec2 vTextureCoord;
@@ -180,15 +155,8 @@ const main = async () => {
             throw new Error('Unable to acquire webgl context')
         }
 
+        initialiseScene(gl)
         const program = createShaderProgram(gl, vsSource, fsSource)
-
-        gl.clearColor(0.0, 0.0, 0.0, 1.0) // Clear to black, fully opaque
-        gl.clearDepth(1.0) // Clear everything
-        gl.enable(gl.DEPTH_TEST) // Enable depth testing
-        gl.depthFunc(gl.LEQUAL) // Near things obscure far things
-
-        gl.useProgram(program.program)
-        gl.uniform1i(program.uniformLocations.uSampler, 0)
 
         const camera = createCamera(gl, { fieldOfView: 45, zNear: 0.1, zFar: 100 })
         camera.position = [0.0, 0.0, 6.0]
@@ -198,13 +166,13 @@ const main = async () => {
             position: [2.0, 0.0, 0.0],
             rotation: 0,
             buffers,
-            texture: createTexture(gl, 'cubetexture.png')
+            texture: createTexture(gl, 'cubetexture1.png')
         }
         const cube1: Geometry = {
             position: [-2.0, 0.0, 0.0],
             rotation: 0,
             buffers,
-            texture: createTexture(gl, 'cubetexture.png')
+            texture: createTexture(gl, 'cubetexture2.png')
         }
 
         const scene = {
@@ -213,6 +181,7 @@ const main = async () => {
         }
 
         let then = 0
+        let cubeRotation = 0.0
         const render = (now: number) => {
             now *= 0.001
             const deltaTime = now - then

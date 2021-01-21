@@ -25,7 +25,7 @@ export const createShaderProgram = (gl: WebGLRenderingContext, vsSource: string,
         throw new Error(`Unable to initialize the shader program: ${gl.getProgramInfoLog(program)}`)
     }
 
-    return {
+    const result = {
         program,
         attribLocations: {
             vertexPosition: gl.getAttribLocation(program, 'aVertexPosition'),
@@ -37,4 +37,9 @@ export const createShaderProgram = (gl: WebGLRenderingContext, vsSource: string,
             uSampler: getUniformLocation(gl, program, 'uSampler')
         }
     }
+
+    gl.useProgram(program)
+    gl.uniform1i(result.uniformLocations.uSampler, 0)
+
+    return result
 }

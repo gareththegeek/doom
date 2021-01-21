@@ -10,6 +10,7 @@ import { writeAtlas } from './writeAtlas'
         }
         const atlas = createAtlas(wad, 2048)
         await writeAtlas(wad, atlas, path.join(__dirname, '../out/atlas.png'))
+        console.log(atlas.lookup)
     } catch (e) {
         console.error(e.message)
     }

@@ -7,7 +7,9 @@ export interface TextureAtlasEntry {
     bottom: number
 }
 
+export type TextureAtlasLookup = { [name: string]: TextureAtlasEntry }
+
 export interface TextureAtlas {
     image: IndexedPixel[][]
-    lookup: { [name: string]: TextureAtlasEntry }
+    lookup: TextureAtlasLookup
 }

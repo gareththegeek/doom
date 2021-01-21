@@ -12,10 +12,8 @@
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "noFallthroughCasesInSwitch": true,
-        "module": "amd",
-        "moduleResolution": "node",
-        "outFile": "dist/scripts/index.js",
-        "declaration": true
+        "module": "commonjs",
+        "moduleResolution": "node"
     },
     "include": [
         "src",

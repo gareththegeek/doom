@@ -1,19 +1,20 @@
 import { Wad } from 'doom-wad/dist/interfaces/Wad'
 import { WadFlatLump } from 'doom-wad/dist/interfaces/WadFlatLump'
+import { IndexedPixel } from 'doom-wad/dist/interfaces/WadPictureLump'
+import { allocateImage } from './allocateImage'
 import { buildLookupEntry } from './buildLookupEntry'
 import { TextureAtlas, TextureAtlasLookup } from './TextureAtlas'
 
 const FLAT_SIZE = 64
 
-const blitFlat = (image: number[][], flat: WadFlatLump, originx: number, originy: number): void => {
+const blitFlat = (image: IndexedPixel[][], flat: WadFlatLump, originx: number, originy: number): void => {
     for (let x = 0; x < FLAT_SIZE; x++) {
         image[x + originx].splice(originy, FLAT_SIZE, ...flat.pixels[x])
     }
 }
 
 export const createFlatAtlas = (wad: Wad, size: number): TextureAtlas => {
-    const image = new Array(size).fill([])
-    image.forEach((_, i) => (image[i] = new Array(size).fill(undefined)))
+    const image = allocateImage(size)
 
     let x = 0
     let y = 0

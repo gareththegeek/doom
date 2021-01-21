@@ -1,20 +1,12 @@
 import { Wad } from 'doom-wad/dist/interfaces/Wad'
-import { WadMapTexture } from 'doom-wad/dist/interfaces/WadTextureLump'
+import { allocateImage } from './allocateImage'
 import { blitTexture } from './blitTexture'
 import { buildLookupEntry } from './buildLookupEntry'
+import { sortTextures } from './sortTextures'
 import { TextureAtlas, TextureAtlasLookup } from './TextureAtlas'
 
-const sortTextures = (a: WadMapTexture, b: WadMapTexture): number => {
-    const h = b.height - a.height
-    if (h !== 0) {
-        return h
-    }
-    return b.width - a.width
-}
-
 export const createTextureAtlas = (wad: Wad, size: number): TextureAtlas => {
-    const image = new Array(size).fill([])
-    image.forEach((_, i) => (image[i] = new Array(size).fill(undefined)))
+    const image = allocateImage(size)
     let allTextures = wad.texture1.maptextures
     if (!!wad.texture2) {
         allTextures = allTextures.concat(wad.texture2.maptextures)

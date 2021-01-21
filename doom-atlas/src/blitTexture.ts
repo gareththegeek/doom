@@ -2,22 +2,22 @@ import { Wad } from 'doom-wad/dist/interfaces/Wad'
 import { WadPictureLump, IndexedPixel } from 'doom-wad/dist/interfaces/WadPictureLump'
 import { WadMapTexture } from 'doom-wad/dist/interfaces/WadTextureLump'
 
-const insideTexture = (constraints: TextureConstraints, x: number, y: number): boolean =>
-    x >= constraints.left && y >= constraints.top && x < constraints.right && y < constraints.bottom
+const insideTexture = (x: number, y: number, constraints?: TextureConstraints): boolean =>
+    !constraints || (x >= constraints.left && y >= constraints.top && x < constraints.right && y < constraints.bottom)
 
-const blitPatch = (
+export const blitPatch = (
     patch: WadPictureLump,
     image: IndexedPixel[][],
     originx: number,
     originy: number,
-    constraints: TextureConstraints
+    constraints?: TextureConstraints
 ): void => {
     const { width, height } = patch
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
             const fx = originx + x
             const fy = originy + y
-            if (!insideTexture(constraints, fx, fy)) {
+            if (!insideTexture(fx, fy, constraints)) {
                 continue
             }
             const colourIndex = patch.pixels[x][y]

@@ -1,21 +1,17 @@
 import * as path from 'path'
 import { read } from 'doom-wad'
-import { createTextureAtlas } from './createTextureAtlas'
 import { writeAtlas } from './writeAtlas'
-import { createFlatAtlas } from '.'
-import { createSpriteAtlas } from './createSpriteAtlas'
-;(async () => {
+;import { createAtlases } from './createAtlases'
+(async () => {
     try {
         const wad = await read(path.join(__dirname, '../data/doom.wad'))
         if (!wad) {
             throw new Error('Unable to load doom.wad')
         }
-        const atlas1 = createTextureAtlas(wad, 2048)
-        const atlas2 = createFlatAtlas(wad, 1024)
-        const atlas3 = createSpriteAtlas(wad, 2048)
-        await writeAtlas(wad, atlas1, path.join(__dirname, '../out/atlas1.png'))
-        await writeAtlas(wad, atlas2, path.join(__dirname, '../out/atlas2.png'))
-        await writeAtlas(wad, atlas3, path.join(__dirname, '../out/atlas3.png'))
+        const atlases = createAtlases(wad)
+        await writeAtlas(wad, atlases.textureAtlas, path.join(__dirname, '../out/textures.png'))
+        await writeAtlas(wad, atlases.flatAtlas, path.join(__dirname, '../out/flats.png'))
+        await writeAtlas(wad, atlases.spriteAtlas, path.join(__dirname, '../out/sprites.png'))
     } catch (e) {
         console.error(e.message)
     }

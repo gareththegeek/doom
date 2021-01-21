@@ -1,3 +1,4 @@
+import { WadBlockMapLump } from './WadBlockmapLump'
 import { WadLineDefsLump } from './WadLineDefsLump'
 import { WadLump } from './WadLump'
 import { WadSectorsLump } from './WadSectorsLump'
@@ -11,4 +12,5 @@ export interface WadMapLump extends WadLump {
     sidedefs: WadSideDefsLump
     vertices: WadVertexLump
     sectors: WadSectorsLump
+    blockmap: WadBlockMapLump
 }

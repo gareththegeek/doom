@@ -1,5 +1,6 @@
 import { WadDirectory, WadDirectoryEntry } from '../interfaces/WadDirectory'
 import { WadMapLump } from '../interfaces/WadMapLump'
+import { readBlockMapLump } from './readBlockMapLump'
 import { readLineDefsLump } from './readLineDefsLump'
 import { readSectorsLump } from './readSectorsLump'
 import { readSideDefsLump } from './readSideDefsLump'
@@ -14,7 +15,10 @@ const MapLumpOffset = {
     segs: 5,
     ssectors: 6,
     nodes: 7,
-    sectors: 8
+    sectors: 8,
+    reject: 9,
+    blockmap: 10,
+    behaviour: 11
 }
 
 export const readMapLump = (data: Buffer, entry: WadDirectoryEntry, directory?: WadDirectory): WadMapLump => {
@@ -32,6 +36,7 @@ export const readMapLump = (data: Buffer, entry: WadDirectoryEntry, directory?: 
         linedefs: readLineDefsLump(data, directory.entries[lumpIndex + MapLumpOffset.linedefs]),
         sidedefs: readSideDefsLump(data, directory.entries[lumpIndex + MapLumpOffset.sidedefs]),
         vertices: readVertexLump(data, directory.entries[lumpIndex + MapLumpOffset.vertex]),
-        sectors: readSectorsLump(data, directory.entries[lumpIndex + MapLumpOffset.sectors])
+        sectors: readSectorsLump(data, directory.entries[lumpIndex + MapLumpOffset.sectors]),
+        blockmap: readBlockMapLump(data, directory.entries[lumpIndex + MapLumpOffset.blockmap])
     }
 }

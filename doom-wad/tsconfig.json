@@ -13,13 +13,11 @@
         "noFallthroughCasesInSwitch": true,
         "module": "commonjs",
         "moduleResolution": "node",
-        "outDir": "dist"
+        "outDir": "dist",
+        "declaration": true
     },
     "include": [
         "src",
         "test"
-    ],
-    "exclude": [
-        //"**/*.spec.ts"
     ]
 }

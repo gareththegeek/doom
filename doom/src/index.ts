@@ -1,10 +1,14 @@
 import { vec2, vec3 } from 'gl-matrix'
-import { BufferSet } from './buffers/BufferSet'
-import { createBufferSet } from './buffers'
-import { createCamera, initialiseScene, renderScene } from './scene'
-import { createShaderProgram } from './shaders'
-import { createTexture } from './textures'
-import { Geometry } from './scene/Geometry'
+import { BufferSet } from 'doom-video/dist/buffers/BufferSet'
+import { Geometry } from 'doom-video/dist/scene/Geometry'
+import {
+    createTexture,
+    createShaderProgram,
+    createBufferSet,
+    createCamera,
+    initialiseScene,
+    renderScene
+} from 'doom-video'
 
 const vsSource = `
 attribute vec4 aVertexPosition;

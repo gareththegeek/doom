@@ -24,6 +24,7 @@
     "webpack-cli": "^4.4.0"
   },
   "dependencies": {
-    "gl-matrix": "^3.3.0"
+    "gl-matrix": "^3.3.0",
+    "doom-video": "file:../doom-video"
   }
 }

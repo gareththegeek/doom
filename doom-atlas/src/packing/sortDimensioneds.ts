@@ -1,4 +1,4 @@
-import { Dimensioned } from "./Dimensioned"
+import { Dimensioned } from "../interfaces/Dimensioned"
 
 export const sortDimensioneds = (a: Dimensioned, b: Dimensioned): number => {
     const h = b.height - a.height

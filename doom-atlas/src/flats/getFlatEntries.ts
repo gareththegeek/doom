@@ -1,7 +1,7 @@
 import { Wad } from 'doom-wad/dist/interfaces/Wad'
 import { WadFlatLump } from 'doom-wad/dist/interfaces/WadFlatLump'
 import { IndexedPixel } from 'doom-wad/dist/interfaces/WadPictureLump'
-import { AtlasEntry } from '../AtlasEntry'
+import { AtlasEntry } from '../interfaces/AtlasEntry'
 
 const FLAT_SIZE = 64
 

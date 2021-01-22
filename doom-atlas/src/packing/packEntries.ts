@@ -1,7 +1,7 @@
-import { AtlasEntry } from './AtlasEntry'
+import { AtlasEntry } from '../interfaces/AtlasEntry'
 import { buildLookupEntry } from './buildLookupEntry'
 import { sortDimensioneds } from './sortDimensioneds'
-import { TextureAtlasLookup } from './TextureAtlas'
+import { TextureAtlasLookup } from '../interfaces/TextureAtlas'
 
 const MARGIN = 2
 

@@ -1,5 +1,5 @@
 import { Wad } from 'doom-wad/dist/interfaces/Wad'
-import { TextureAtlas } from './TextureAtlas'
+import { TextureAtlas } from '../interfaces/TextureAtlas'
 import Jimp from 'jimp'
 
 export const writeAtlas = async ({ playpal, colormap }: Wad, atlas: TextureAtlas, filename: string): Promise<void> =>

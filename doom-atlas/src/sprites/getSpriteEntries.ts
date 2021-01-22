@@ -1,6 +1,6 @@
 import { Wad } from 'doom-wad/dist/interfaces/Wad'
 import { IndexedPixel, WadPictureLump } from 'doom-wad/dist/interfaces/WadPictureLump'
-import { AtlasEntry } from '../AtlasEntry'
+import { AtlasEntry } from '../interfaces/AtlasEntry'
 import { blitPatch } from '../textures'
 
 export const getSpriteEntries = (image: IndexedPixel[][], wad: Wad): AtlasEntry<WadPictureLump>[] =>

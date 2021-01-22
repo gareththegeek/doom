@@ -1,8 +1,7 @@
 import * as path from 'path'
 import { read } from 'doom-wad'
-import { writeAtlas } from './writeAtlas'
-;import { createAtlas } from './createAtlas'
-(async () => {
+import { writeAtlas, createAtlas } from './atlas'
+;(async () => {
     try {
         const wad = await read(path.join(__dirname, '../data/doom2.wad'))
         if (!wad) {

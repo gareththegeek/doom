@@ -1,14 +1,13 @@
 import { AtlasEntry } from './AtlasEntry'
 import { buildLookupEntry } from './buildLookupEntry'
-import { sortDimensioneds } from './sortTextures'
+import { sortDimensioneds } from './sortDimensioneds'
 import { TextureAtlasLookup } from './TextureAtlas'
 
-const MARGIN = 1
+const MARGIN = 2
 
 export const packEntries = <T>(
     size: number,
-    entries: AtlasEntry<T>[],
-    blit: (entry: AtlasEntry<T>, x: number, y: number) => void
+    entries: AtlasEntry<T>[]
 ): TextureAtlasLookup => {
     const sortedEntries = entries.sort(sortDimensioneds)
 
@@ -24,7 +23,7 @@ export const packEntries = <T>(
             rowHeight = height
         }
         lookup[name] = buildLookupEntry(size, x, y, width, height)
-        blit(entry, x, y)
+        entry.blit(entry, x, y)
         x += width + MARGIN
     }
 

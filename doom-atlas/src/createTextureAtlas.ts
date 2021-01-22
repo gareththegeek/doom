@@ -1,36 +1,31 @@
 import { Wad } from 'doom-wad/dist/interfaces/Wad'
+import { WadMapTexture } from 'doom-wad/dist/interfaces/WadTextureLump'
 import { allocateImage } from './allocateImage'
+import { AtlasEntry } from './AtlasEntry'
 import { blitTexture } from './blitTexture'
-import { buildLookupEntry } from './buildLookupEntry'
-import { sortTextures } from './sortTextures'
-import { TextureAtlas, TextureAtlasLookup } from './TextureAtlas'
+import { packEntries } from './packEntries'
+import { TextureAtlas } from './TextureAtlas'
 
 export const createTextureAtlas = (wad: Wad, size: number): TextureAtlas => {
     const image = allocateImage(size)
+    const blit = (texture: AtlasEntry<WadMapTexture>, x: number, y: number): void => {
+        blitTexture(wad, image, texture.data, x, y)
+    }
+    
     let allTextures = wad.texture1.maptextures
     if (!!wad.texture2) {
         allTextures = allTextures.concat(wad.texture2.maptextures)
     }
-    const sortedTextures = allTextures.sort(sortTextures)
 
-    let x = 0
-    let y = 0
-    let rowHeight = sortedTextures[0].height
-    const lookup: TextureAtlasLookup = {}
-    for (const texture of sortedTextures) {
-        const { width, height } = texture
-        if (x + width > size) {
-            x = 0
-            y += rowHeight
-            rowHeight = height
-        }
-        lookup[texture.name] = buildLookupEntry(size, x, y, texture.width, texture.height)
-        blitTexture(wad, image, texture, x, y)
-        x += width
-    }
+    const entries = allTextures.map((texture) => ({
+        width: texture.width,
+        height: texture.height,
+        name: texture.name,
+        data: texture
+    }))
 
     return {
         image,
-        lookup
+        lookup: packEntries(size, entries, blit)
     }
 }

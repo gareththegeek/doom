@@ -6,8 +6,8 @@ const insideTexture = (x: number, y: number, constraints?: TextureConstraints): 
     !constraints || (x >= constraints.left && y >= constraints.top && x < constraints.right && y < constraints.bottom)
 
 export const blitPatch = (
-    patch: WadPictureLump,
     image: IndexedPixel[][],
+    patch: WadPictureLump,
     originx: number,
     originy: number,
     constraints?: TextureConstraints
@@ -55,6 +55,6 @@ export const blitTexture = (
         const { originx, originy } = patchInfo
         const patchName = pnames.names[patchInfo.patch]
         const patch = patches[patchName]
-        blitPatch(patch, image, x + originx, y + originy, constraints)
+        blitPatch(image, patch, x + originx, y + originy, constraints)
     })
 }

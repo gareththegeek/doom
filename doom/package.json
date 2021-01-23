@@ -25,10 +25,10 @@
   },
   "dependencies": {
     "buffer": "^6.0.3",
-    "doom-atlas": "file:../doom-atlas",
-    "doom-map": "file:../doom-map",
-    "doom-video": "file:../doom-video",
-    "doom-wad": "file:../doom-wad",
+    "doom-atlas": "1.0.0",
+    "doom-map": "1.0.0",
+    "doom-video": "1.0.0",
+    "doom-wad": "1.0.0",
     "gl-matrix": "^3.3.0"
   }
 }

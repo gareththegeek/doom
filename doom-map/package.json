@@ -14,15 +14,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "doom-atlas": "file:../doom-atlas",
-    "doom-video": "file:../doom-video",
-    "doom-wad": "file:../doom-wad",
+    "doom-atlas": "1.0.0",
+    "doom-video": "1.0.0",
+    "doom-wad": "1.0.0",
     "gl-matrix": "^3.3.0",
     "pnltri": "^2.1.1"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
-    "@types/jimp": "^0.2.28",
     "@types/node": "^14.14.21",
     "jest": "^26.6.3",
     "rimraf": "^3.0.2",

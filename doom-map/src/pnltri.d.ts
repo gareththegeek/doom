@@ -4,7 +4,11 @@ declare module 'pnltri' {
         y: number
     }
 
+    export type Line = Point[]
+
+    export type IndexedFace = [a: number, b: number, c: number]
+
     export class Triangulator {
-        public triangulate_polygon(data: Point[][]): any
+        public triangulate_polygon(data: [contour: Line, ...holes: Line[]]): IndexedFace[]
     }
 }

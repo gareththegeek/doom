@@ -14,6 +14,7 @@ const buildFace = (
     top: number,
     texture: TextureAtlasEntry
 ): FaceData => ({
+    isFlat: false,
     position: [
         [start.x, bottom, start.y],
         [start.x, top, start.y],
@@ -31,6 +32,7 @@ const buildFace = (
 })
 
 const buildFlat = (vertices: WadVertex[], y: number, texture: TextureAtlasEntry): FaceData => ({
+    isFlat: true,
     position: vertices.map((vertex) => [vertex.x, y, vertex.y]),
     //TODO literally no idea about mapping this right now!
     texture: vertices.map(() => [0.0, 0.0]),

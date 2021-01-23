@@ -4,6 +4,7 @@ export interface FaceData {
     position: vec3[]
     textureBounds: number[]
     texture: vec2[]
+    isFlat: boolean
 }
 
 export interface SectorData {

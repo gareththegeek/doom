@@ -1,5 +1,5 @@
 const Buffer = require('buffer/').Buffer
-import { vec2, vec3 } from 'gl-matrix'
+import { mat3, mat4, vec2, vec3 } from 'gl-matrix'
 import { BufferSet } from 'doom-video/dist/buffers/BufferSet'
 import { Geometry } from 'doom-video/dist/scene/Geometry'
 import {
@@ -14,6 +14,7 @@ import { readWad } from 'doom-wad'
 import { Wad } from 'doom-wad/dist/interfaces/Wad'
 import { createAtlas } from 'doom-atlas'
 import { createMapGeometry } from 'doom-map'
+import { Camera } from 'doom-video/dist/scene/Camera'
 
 const vsSource = `
 attribute vec4 aVertexPosition;
@@ -78,127 +79,20 @@ window.addEventListener(
     false
 )
 
-const createBuffers = (gl: WebGLRenderingContext): BufferSet => {
-    // Now create an array of positions for the cube.
-    const positions = [
-        // Front face
-        vec3.fromValues(-1.0, -1.0, 1.0),
-        vec3.fromValues(1.0, -1.0, 1.0),
-        vec3.fromValues(1.0, 1.0, 1.0),
-        vec3.fromValues(-1.0, 1.0, 1.0),
-
-        // Back face
-        vec3.fromValues(-1.0, -1.0, -1.0),
-        vec3.fromValues(-1.0, 1.0, -1.0),
-        vec3.fromValues(1.0, 1.0, -1.0),
-        vec3.fromValues(1.0, -1.0, -1.0),
-
-        // Top face
-        vec3.fromValues(-1.0, 1.0, -1.0),
-        vec3.fromValues(-1.0, 1.0, 1.0),
-        vec3.fromValues(1.0, 1.0, 1.0),
-        vec3.fromValues(1.0, 1.0, -1.0),
-
-        // Bottom face
-        vec3.fromValues(-1.0, -1.0, -1.0),
-        vec3.fromValues(1.0, -1.0, -1.0),
-        vec3.fromValues(1.0, -1.0, 1.0),
-        vec3.fromValues(-1.0, -1.0, 1.0),
-
-        // Right face
-        vec3.fromValues(1.0, -1.0, -1.0),
-        vec3.fromValues(1.0, 1.0, -1.0),
-        vec3.fromValues(1.0, 1.0, 1.0),
-        vec3.fromValues(1.0, -1.0, 1.0),
-
-        // Left face
-        vec3.fromValues(-1.0, -1.0, -1.0),
-        vec3.fromValues(-1.0, -1.0, 1.0),
-        vec3.fromValues(-1.0, 1.0, 1.0),
-        vec3.fromValues(-1.0, 1.0, -1.0)
-    ]
-
-    const indices = [
-        0,
-        1,
-        2,
-        0,
-        2,
-        3, // front
-        4,
-        5,
-        6,
-        4,
-        6,
-        7, // back
-        8,
-        9,
-        10,
-        8,
-        10,
-        11, // top
-        12,
-        13,
-        14,
-        12,
-        14,
-        15, // bottom
-        16,
-        17,
-        18,
-        16,
-        18,
-        19, // right
-        20,
-        21,
-        22,
-        20,
-        22,
-        23 // left
-    ]
-
-    const textures = [
-        // Front
-        vec2.fromValues(0.0, 0.0),
-        vec2.fromValues(1.0, 0.0),
-        vec2.fromValues(1.0, 1.0),
-        vec2.fromValues(0.0, 1.0),
-        // Back
-        vec2.fromValues(0.0, 0.0),
-        vec2.fromValues(1.0, 0.0),
-        vec2.fromValues(1.0, 1.0),
-        vec2.fromValues(0.0, 1.0),
-        // Top
-        vec2.fromValues(0.0, 0.0),
-        vec2.fromValues(1.0, 0.0),
-        vec2.fromValues(1.0, 1.0),
-        vec2.fromValues(0.0, 1.0),
-        // Bottom
-        vec2.fromValues(0.0, 0.0),
-        vec2.fromValues(1.0, 0.0),
-        vec2.fromValues(1.0, 1.0),
-        vec2.fromValues(0.0, 1.0),
-        // Right
-        vec2.fromValues(0.0, 0.0),
-        vec2.fromValues(1.0, 0.0),
-        vec2.fromValues(1.0, 1.0),
-        vec2.fromValues(0.0, 1.0),
-        // Left
-        vec2.fromValues(0.0, 0.0),
-        vec2.fromValues(1.0, 0.0),
-        vec2.fromValues(1.0, 1.0),
-        vec2.fromValues(0.0, 1.0)
-    ]
-
-    return createBufferSet(gl, { positions, indices, textures })
-}
-
 const getWad = async (url: string): Promise<Wad> => {
     const response = await fetch(url)
     const blob = await response.blob()
     const array = await new Response(blob).arrayBuffer()
     const buffer = Buffer.from(array)
     return readWad(buffer)
+}
+
+const forward = (camera: Camera, speed: number): void => {
+    const result: vec2 = [0, 0]
+    vec2.rotate(result, [0, speed], [0, 0], -camera.rotation)
+
+    camera.position[0] -= result[0]
+    camera.position[2] -= result[1]
 }
 
 const main = async () => {
@@ -226,19 +120,12 @@ const main = async () => {
         }))
         console.info('Prepared scene')
 
-        const buffers = createBuffers(gl)
-        objects.push({
-            position: [2.0, 0.0, 0.0],
-            rotation: 0,
-            buffers,
-            texture
-        })
-
         initialiseScene(gl)
         const program = createShaderProgram(gl, vsSource, fsSource)
 
         const camera = createCamera(gl, { fieldOfView: 45, zNear: 1, zFar: 100000 })
-        camera.position = [0.0, 0.0, -100.0]
+        camera.position = [0.0, 0.0, 0.0]
+        camera.rotation = Math.PI
 
         const scene = {
             camera,
@@ -253,12 +140,12 @@ const main = async () => {
             cubeRotation += deltaTime
             then = now
 
-            if (Key.isDown(Key.UP)) camera.position[2] -= deltaTime*500
+            if (Key.isDown(Key.UP)) forward(camera, deltaTime * 500)
             if (Key.isDown(Key.LEFT)) camera.rotation += deltaTime
-            if (Key.isDown(Key.DOWN)) camera.position[2] += deltaTime*500
+            if (Key.isDown(Key.DOWN)) forward(camera, -deltaTime * 500)
             if (Key.isDown(Key.RIGHT)) camera.rotation -= deltaTime
-            if (Key.isDown(Key.Q)) camera.position[1] += deltaTime*500
-            if (Key.isDown(Key.A)) camera.position[1] -= deltaTime*500
+            if (Key.isDown(Key.Q)) camera.position[1] += deltaTime * 500
+            if (Key.isDown(Key.A)) camera.position[1] -= deltaTime * 500
 
             //camera.rotation = cubeRotation
             // cube0.rotation = cubeRotation

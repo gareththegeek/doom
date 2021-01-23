@@ -4,8 +4,7 @@ import { WadMapLump } from 'doom-wad/dist/interfaces/WadMapLump'
 import { WadSector } from 'doom-wad/dist/interfaces/WadSectorsLump'
 import { WadSideDef } from 'doom-wad/dist/interfaces/WadSideDefsLump'
 import { WadVertex } from 'doom-wad/dist/interfaces/WadVertexLump'
-import { Map } from './interfaces/Map'
-import { FaceData, SectorData } from './interfaces/SectorData'
+import { FaceData, LineLoop, SectorData } from './interfaces/SectorData'
 
 const buildFace = (
     start: WadVertex,
@@ -15,25 +14,28 @@ const buildFace = (
     texture: TextureAtlasEntry
 ): FaceData => ({
     isFlat: false,
-    position: [
-        [start.x, bottom, start.y],
-        [start.x, top, start.y],
-        [end.x, top, end.y],
-        [end.x, bottom, end.y]
-    ],
-    texture: [
-        //TODO figure out texture coordinates based upon size of polygon somehow?
-        [0.0, 0.0],
-        [0.0, 1.0],
-        [1.0, 1.0],
-        [1.0, 0.0]
-    ],
-    textureBounds: [texture.left, texture.bottom, texture.right, texture.top]
+    loops: [
+        {
+            position: [
+                [start.x, bottom, -start.y],
+                [start.x, top, -start.y],
+                [end.x, top, -end.y],
+                [end.x, bottom, -end.y]
+            ],
+            texture: [
+                //TODO figure out texture coordinates based upon size of polygon somehow?
+                [0.0, 0.0],
+                [0.0, 1.0],
+                [1.0, 1.0],
+                [1.0, 0.0]
+            ],
+            textureBounds: [texture.left, texture.bottom, texture.right, texture.top]
+        }
+    ]
 })
 
-const buildFlat = (vertices: WadVertex[], y: number, texture: TextureAtlasEntry): FaceData => ({
-    isFlat: true,
-    position: vertices.map((vertex) => [vertex.x, y, vertex.y]),
+const buildFlat = (vertices: WadVertex[], y: number, texture: TextureAtlasEntry): LineLoop => ({
+    position: vertices.map((vertex) => [vertex.x, y, -vertex.y]),
     //TODO literally no idea about mapping this right now!
     texture: vertices.map(() => [0.0, 0.0]),
     textureBounds: [texture.left, texture.bottom, texture.right, texture.top]
@@ -109,30 +111,67 @@ const addWalls = (sectorlist: SectorData[], map: WadMapLump, atlas: TextureAtlas
     })
 }
 
+const popAdjacency = (adjacency: number[][], current: number): number => {
+    const nextI = adjacency.findIndex((a) => a[0] === current)
+    if (nextI === -1) {
+        throw new Error('Missing vertex in sector adjacency data')
+    }
+    const next = adjacency.splice(nextI, 1)[0]
+    return next[1]
+}
+
+const processLoop = (adjacency: number[][]): number[] => {
+    const start = adjacency[0][0]
+    const indices = [start]
+    let current = popAdjacency(adjacency, start)
+    while (current !== start) {
+        indices.push(current)
+
+        current = popAdjacency(adjacency, current)
+
+        // if (i++ > adjacency.length) {
+        //     //throw new Error('Sector adjancency loop not closed')
+        //     console.log(`Unclosed sector detected, is that right? ${index}`)
+        //     return
+        // }
+    }
+    return indices
+}
+
 const addFlats = (sectorlist: SectorData[], map: WadMapLump, atlas: TextureAtlas): void => {
     map.sectors.forEach((sector, index) => {
         const { adjacency, faces } = sectorlist[index]
-        const start = adjacency[0][0]
-        const indices = [start]
-        let current = adjacency[0][1]
-        let i = 0
-        while (current !== start) {
-            indices.push(current)
-            const next = adjacency.find((a) => a[0] === current)
-            if (!next) {
-                throw new Error('Missing vertex in sector adjacency data')
-            }
-            current = next[1]
+        const loopIndices = []
 
-            if (i++ > adjacency.length) {
-                //throw new Error('Sector adjancency loop not closed')
-                console.log(`Unclosed sector detected, is that right? ${index}`)
-                return
-            }
+        //const debug_prejacency = [...adjacency]
+        while (adjacency.length > 0) {
+            loopIndices.push(processLoop(adjacency))
         }
-        const vertices = indices.map((index) => map.vertices[index])
-        faces.push(buildFlat(vertices, sector.floorHeight, atlas.lookup[sector.floorTexture]))
-        faces.push(buildFlat(vertices.reverse(), sector.ceilingHeight, atlas.lookup[sector.ceilingTexture]))
+
+        const floorLoops = loopIndices.map((loopIndices) => {
+            const vertices = loopIndices.map((index) => map.vertices[index])
+            return buildFlat(vertices, sector.floorHeight, atlas.lookup[sector.floorTexture])
+        })
+
+        const ceilingLoops = loopIndices.map((loopIndices) => {
+            const vertices = loopIndices.map((index) => map.vertices[index])
+            return buildFlat(vertices.reverse(), sector.ceilingHeight, atlas.lookup[sector.ceilingTexture])
+        })
+
+        faces.push({
+            isFlat: true,
+            loops: floorLoops
+        })
+        faces.push({
+            isFlat: true,
+            loops: ceilingLoops
+        })
+        
+        // if (loopIndices.length > 1) {
+        //     // We can keep processing rings but how do we know which is the perimiter?
+        //     console.warn('loop**S**!')
+        //     debugger
+        // }
     })
 }
 
@@ -146,7 +185,6 @@ const buildSectorList = (map: WadMapLump, atlas: TextureAtlas): SectorData[] => 
 }
 
 export const createSectorData = (wad: Wad, atlas: TextureAtlas, name: string): SectorData[] => {
-    //TODO holes in a sector - this will manifest as two separate adjacency loops on the same sector I guess
     const wadmap = wad.maps[name]
     if (!wadmap) {
         throw new Error(`Unable to locate map ${name}`)

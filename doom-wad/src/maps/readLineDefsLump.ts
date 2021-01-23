@@ -1,5 +1,5 @@
 import { WadDirectoryEntry } from '../interfaces/WadDirectory'
-import { WadLineDef, WadLineDefFlags, WadLineDefsLump } from '../interfaces/WadLineDefsLump'
+import { WadLineDef, WadLineDefFlags } from '../interfaces/WadLineDefsLump'
 
 const LINE_DEFS_SIZE = 14
 
@@ -35,11 +35,11 @@ const readLineDef = (data: Buffer, offset: number): WadLineDef => ({
     back: data.readInt16LE(offset + LineDefOffset.back)
 })
 
-export const readLineDefsLump = (data: Buffer, entry: WadDirectoryEntry): WadLineDefsLump => {
+export const readLineDefsLump = (data: Buffer, entry: WadDirectoryEntry): WadLineDef[] => {
     const length = entry.size / LINE_DEFS_SIZE
     const linedefs = []
     for (let i = 0; i < length; i++) {
         linedefs.push(readLineDef(data, entry.filepos + i * LINE_DEFS_SIZE))
     }
-    return { linedefs }
+    return linedefs
 }

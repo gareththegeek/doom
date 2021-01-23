@@ -1,6 +1,6 @@
 import { readString } from "../binary"
 import { WadDirectoryEntry } from "../interfaces/WadDirectory"
-import { WadSector, WadSectorsLump } from "../interfaces/WadSectorsLump"
+import { WadSector } from "../interfaces/WadSectorsLump"
 
 const SECTOR_SIZE = 26
 
@@ -24,11 +24,11 @@ const readSector = (data: Buffer, offset: number): WadSector => ({
     tag: data.readInt16LE(offset + SectorOffset.tag)
 })
 
-export const readSectorsLump = (data: Buffer, entry: WadDirectoryEntry): WadSectorsLump => {
+export const readSectorsLump = (data: Buffer, entry: WadDirectoryEntry): WadSector[] => {
     const length = entry.size / SECTOR_SIZE
     const sectors = []
     for (let i = 0; i < length; i++) {
         sectors.push(readSector(data, entry.filepos + i * SECTOR_SIZE))
     }
-    return { sectors }
+    return sectors
 }

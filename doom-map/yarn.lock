@@ -1518,6 +1518,7 @@ domexception@^2.0.1:
 "doom-atlas@file:../doom-atlas":
   version "1.0.0"
   dependencies:
+    doom-wad "file:../../../Users/gareth/AppData/Local/Yarn/Cache/v6/npm-doom-atlas-1.0.0-c5a705c4-36b6-4ea7-a4d4-68d5dd19eba9-1611401687439/node_modules/doom-wad"
     jimp "^0.16.1"
 
 "doom-video@file:../doom-video":
@@ -3250,6 +3251,11 @@ pngjs@^3.0.0, pngjs@^3.3.3:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/pngjs/-/pngjs-3.4.0.tgz#99ca7d725965fb655814eaf65f38f12bbdbf555f"
   integrity sha512-NCrCHhWmnQklfH4MtJMRjZ2a8c80qXeMlQMv2uVp9ISJMTt562SbGd6n2oq0PaPgKm7Z6pL9E2UlLIhC+SHL3w==
+
+pnltri@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/pnltri/-/pnltri-2.1.1.tgz#3b3912ef049c0036825a4a574f90340b75396af3"
+  integrity sha1-OzkS7wScADaCWkpXT5A0C3U5avM=
 
 posix-character-classes@^0.1.0:
   version "0.1.1"

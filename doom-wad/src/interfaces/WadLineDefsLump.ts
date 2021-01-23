@@ -21,7 +21,3 @@ export interface WadLineDef {
     front: number
     back: number
 }
-
-export interface WadLineDefsLump extends WadLump {
-    linedefs: WadLineDef[]
-}

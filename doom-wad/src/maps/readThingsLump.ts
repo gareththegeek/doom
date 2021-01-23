@@ -1,5 +1,5 @@
 import { WadDirectoryEntry } from '../interfaces/WadDirectory'
-import { WadThing, WadThingFlags, WadThingsLump } from '../interfaces/WadThingsLump'
+import { WadThing, WadThingFlags } from '../interfaces/WadThingsLump'
 
 const THINGS_SIZE = 10
 
@@ -27,11 +27,11 @@ const readThing = (data: Buffer, offset: number): WadThing => ({
     flags: toThingFlags(data.readInt16LE(offset + ThingOffset.flags))
 })
 
-export const readThingsLump = (data: Buffer, entry: WadDirectoryEntry): WadThingsLump => {
+export const readThingsLump = (data: Buffer, entry: WadDirectoryEntry): WadThing[] => {
     const length = entry.size / THINGS_SIZE
     const things = []
     for (let i = 0; i < length; i++) {
         things.push(readThing(data, entry.filepos + i * THINGS_SIZE))
     }
-    return { things }
+    return things
 }

@@ -8,7 +8,3 @@ export interface WadSideDef {
     middleTexture: string
     sector: number
 }
-
-export interface WadSideDefsLump extends WadLump {
-    sidedefs: WadSideDef[]
-}

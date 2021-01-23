@@ -15,7 +15,3 @@ export interface WadThing {
     thingType: number
     flags: WadThingFlags
 }
-
-export interface WadThingsLump extends WadLump {
-    things: WadThing[]
-}

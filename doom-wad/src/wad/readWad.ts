@@ -101,7 +101,7 @@ export const readWad = (data: Buffer): Wad => {
 
     const maps = directory.entries.filter((entry) => entry.name.match(/^(e[1-4]m[1-9]|map(0[1-9]|[1-2][0-9]|3[0-2]))$/))
     maps.forEach((entry) => (wad.maps![entry.name] = readLump<WadMapLump>(entry.name, readMapLump)))
-
+    
     if (!isWad(wad)) {
         throw new Error('Invalid wad')
     }

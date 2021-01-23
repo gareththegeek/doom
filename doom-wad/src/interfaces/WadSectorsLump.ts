@@ -9,7 +9,3 @@ export interface WadSector {
     specialType: number,
     tag: number
 }
-
-export interface WadSectorsLump extends WadLump {
-    sectors: WadSector[]
-}

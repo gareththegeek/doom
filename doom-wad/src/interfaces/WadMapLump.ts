@@ -1,16 +1,16 @@
 import { WadBlockMapLump } from './WadBlockmapLump'
-import { WadLineDefsLump } from './WadLineDefsLump'
+import { WadLineDef } from './WadLineDefsLump'
 import { WadLump } from './WadLump'
-import { WadSectorsLump } from './WadSectorsLump'
-import { WadSideDefsLump } from './WadSideDefsLump'
-import { WadThingsLump } from './WadThingsLump'
-import { WadVertexLump } from './WadVertexLump'
+import { WadSector } from './WadSectorsLump'
+import { WadSideDef } from './WadSideDefsLump'
+import { WadThing } from './WadThingsLump'
+import { WadVertex } from './WadVertexLump'
 
 export interface WadMapLump extends WadLump {
-    things: WadThingsLump
-    linedefs: WadLineDefsLump
-    sidedefs: WadSideDefsLump
-    vertices: WadVertexLump
-    sectors: WadSectorsLump
+    things: WadThing[]
+    linedefs: WadLineDef[]
+    sidedefs: WadSideDef[]
+    vertices: WadVertex[]
+    sectors: WadSector[]
     blockmap: WadBlockMapLump
 }

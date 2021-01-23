@@ -1,3 +1,4 @@
+const Buffer = require('buffer/').Buffer
 import { vec2, vec3 } from 'gl-matrix'
 import { BufferSet } from 'doom-video/dist/buffers/BufferSet'
 import { Geometry } from 'doom-video/dist/scene/Geometry'
@@ -9,6 +10,8 @@ import {
     initialiseScene,
     renderScene
 } from 'doom-video'
+import { readWad } from 'doom-wad'
+import { Wad } from 'doom-wad/dist/interfaces/Wad'
 
 const vsSource = `
 attribute vec4 aVertexPosition;
@@ -150,8 +153,18 @@ const createBuffers = (gl: WebGLRenderingContext): BufferSet => {
     return createBufferSet(gl, { positions, indices, textures })
 }
 
+const getWad = async (url: string): Promise<Wad> => {
+    const response = await fetch(url)
+    const blob = await response.blob()
+    const array = await new Response(blob).arrayBuffer()
+    const buffer = Buffer.from(array)
+    return readWad(buffer)
+}
+
 const main = async () => {
     try {
+        const wad = await getWad('doom.wad')
+        console.log(wad)
         const canvas = document.querySelector('#canvas') as HTMLCanvasElement
         const gl = canvas.getContext('webgl')
 

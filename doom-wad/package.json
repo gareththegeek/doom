@@ -6,7 +6,6 @@
     "license": "MIT",
     "scripts": {
         "clean": "rimraf ./dist",
-        "start": "ts-node src/start.ts",
         "prebuild": "yarn clean",
         "build": "tsc -p tsconfig.build.json",
         "test": "jest"
@@ -20,8 +19,5 @@
         "ts-jest": "^26.4.4",
         "ts-node": "^9.1.1",
         "typescript": "^4.1.3"
-    },
-    "dependencies": {
-        "jimp": "^0.16.1"
     }
 }

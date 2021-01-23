@@ -1,10 +1,10 @@
 import * as path from 'path'
 import Jimp from 'jimp'
-import { WadLookup } from '../interfaces/Wad'
-import { WadColorMap } from '../interfaces/WadColorMapLump'
-import { WadPalette } from '../interfaces/WadPlayPalLump'
-import { WadMapTexture, WadTextureLump } from '../interfaces/WadTextureLump'
-import { WadPictureLump } from '../interfaces/WadPictureLump'
+import { WadLookup } from 'doom-wad/dist/interfaces/Wad'
+import { WadColorMap } from 'doom-wad/dist/interfaces/WadColorMapLump'
+import { WadPalette } from 'doom-wad/dist/interfaces/WadPlayPalLump'
+import { WadMapTexture, WadTextureLump } from 'doom-wad/dist/interfaces/WadTextureLump'
+import { WadPictureLump } from 'doom-wad/dist/interfaces/WadPictureLump'
 
 const writePatch = (
     patch: WadPictureLump,

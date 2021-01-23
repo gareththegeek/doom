@@ -1,6 +1,6 @@
-import { WadPalette } from '../interfaces/WadPlayPalLump'
 import Jimp from 'jimp'
-import { WadColorMapLump } from '../interfaces/WadColorMapLump'
+import { WadColorMapLump } from 'doom-wad/dist/interfaces/WadColorMapLump'
+import { WadPalette } from 'doom-wad/dist/interfaces/WadPlayPalLump'
 
 const WIDTH = 16
 const COLOR_MAP_SIZE = 256

@@ -1,3 +1,3 @@
-import { createAtlas, writeAtlas } from './atlas'
+import { createAtlas } from './atlas'
 
-export { createAtlas, writeAtlas }
+export { createAtlas }

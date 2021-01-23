@@ -1,10 +1,11 @@
 import * as path from 'path'
 import Jimp from 'jimp'
-import { WadColorMap } from '../interfaces/WadColorMapLump'
-import { WadPalette } from '../interfaces/WadPlayPalLump'
-import { WadFlatLump } from '../interfaces/WadFlatLump'
-import { FLAT_HEIGHT, FLAT_WIDTH } from './readFlatLump'
-import { WadLookup } from '../interfaces/Wad'
+import { WadColorMap } from 'doom-wad/dist/interfaces/WadColorMapLump'
+import { WadPalette } from 'doom-wad/dist/interfaces/WadPlayPalLump'
+import { WadFlatLump } from 'doom-wad/dist/interfaces/WadFlatLump'
+import { WadLookup } from 'doom-wad/dist/interfaces/Wad'
+const FLAT_WIDTH = 64
+const FLAT_HEIGHT = 64
 
 const writeFlat = async (
     filename: string,

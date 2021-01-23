@@ -5,23 +5,9 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Wad",
+            "name": "Debug Test Harness",
             "request": "launch",
-            "cwd": "${workspaceFolder}/doom-wad",
-            "runtimeArgs": [
-                "run-script",
-                "start"
-            ],
-            "runtimeExecutable": "npm",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "type": "pwa-node"
-        },
-        {
-            "name": "Debug Atlas",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/doom-atlas",
+            "cwd": "${workspaceFolder}/doom-test-harness",
             "runtimeArgs": [
                 "run-script",
                 "start"

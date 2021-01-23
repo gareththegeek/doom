@@ -1,9 +1,9 @@
 import * as path from 'path'
 import Jimp from 'jimp'
-import { WadLookup } from '../interfaces/Wad'
-import { WadColorMap } from '../interfaces/WadColorMapLump'
-import { WadPictureLump } from '../interfaces/WadPictureLump'
-import { WadPalette } from '../interfaces/WadPlayPalLump'
+import { WadLookup } from 'doom-wad/dist/interfaces/Wad'
+import { WadColorMap } from 'doom-wad/dist/interfaces/WadColorMapLump'
+import { WadPictureLump } from 'doom-wad/dist/interfaces/WadPictureLump'
+import { WadPalette } from 'doom-wad/dist/interfaces/WadPlayPalLump'
 
 const writePicture = async (
     filename: string,

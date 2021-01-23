@@ -1518,8 +1518,7 @@ domexception@^2.0.1:
 "doom-atlas@file:../doom-atlas":
   version "1.0.0"
   dependencies:
-    doom-wad "file:../../../Users/gareth/AppData/Local/Yarn/Cache/v6/npm-doom-atlas-1.0.0-c5a705c4-36b6-4ea7-a4d4-68d5dd19eba9-1611401687439/node_modules/doom-wad"
-    jimp "^0.16.1"
+    doom-wad "file:../../../Users/gareth/AppData/Local/Yarn/Cache/v6/npm-doom-atlas-1.0.0-3a4d1de4-7aff-4767-ad15-6485d8e312a0-1611410165236/node_modules/doom-wad"
 
 "doom-video@file:../doom-video":
   version "1.0.0"
@@ -1528,8 +1527,6 @@ domexception@^2.0.1:
 
 "doom-wad@file:../doom-wad":
   version "1.0.0"
-  dependencies:
-    jimp "^0.16.1"
 
 ecc-jsbn@~0.1.1:
   version "0.1.2"
@@ -2628,7 +2625,7 @@ jest@^26.6.3:
     import-local "^3.0.2"
     jest-cli "^26.6.3"
 
-jimp@*, jimp@^0.16.1:
+jimp@*:
   version "0.16.1"
   resolved "https://registry.yarnpkg.com/jimp/-/jimp-0.16.1.tgz#192f851a30e5ca11112a3d0aa53137659a78ca7a"
   integrity sha512-+EKVxbR36Td7Hfd23wKGIeEyHbxShZDX6L8uJkgVW3ESA9GiTEPK08tG1XI2r/0w5Ch0HyJF5kPqF9K7EmGjaw==

@@ -1,5 +1,5 @@
 import * as path from 'path'
-import { WadPalette, WadPlayPalLump } from '../interfaces/WadPlayPalLump'
+import { WadPalette, WadPlayPalLump } from 'doom-wad/dist/interfaces/WadPlayPalLump'
 import Jimp from 'jimp'
 
 const writePalette = async (filename: string, palette: WadPalette): Promise<void> =>

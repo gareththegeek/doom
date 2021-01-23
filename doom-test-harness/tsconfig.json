@@ -19,5 +19,5 @@
     "include": [
         "src",
         "test"
-, "../doom-test-harness/src/wad/palettes/writePlayPalLump.ts", "../doom-test-harness/src/wad/textures/writeTextureLumps.ts"    ]
+    ]
 }

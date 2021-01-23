@@ -1515,6 +1515,11 @@ domexception@^2.0.1:
   dependencies:
     webidl-conversions "^5.0.0"
 
+"doom-atlas@file:../doom-atlas":
+  version "1.0.0"
+  dependencies:
+    doom-wad "file:../../../Users/gareth/AppData/Local/Yarn/Cache/v6/npm-doom-atlas-1.0.0-7d72a469-2dfa-4278-8ae0-2812359b99a1-1611409390252/node_modules/doom-wad"
+
 "doom-wad@file:../doom-wad":
   version "1.0.0"
 

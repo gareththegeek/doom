@@ -12,6 +12,8 @@ import {
 } from 'doom-video'
 import { readWad } from 'doom-wad'
 import { Wad } from 'doom-wad/dist/interfaces/Wad'
+import { createAtlas } from 'doom-atlas'
+import { createMapGeometry } from 'doom-map'
 
 const vsSource = `
 attribute vec4 aVertexPosition;
@@ -37,6 +39,44 @@ void main(void) {
   gl_FragColor = texture2D(uSampler, vTextureCoord);
 }
 `
+
+var Key = {
+    _pressed: {} as { [keyCode: number]: boolean },
+
+    LEFT: 37,
+    UP: 38,
+    RIGHT: 39,
+    DOWN: 40,
+    Q: 81,
+    A: 65,
+
+    isDown: function (keyCode: number) {
+        return this._pressed[keyCode]
+    },
+
+    onKeydown: function (event: KeyboardEvent) {
+        this._pressed[event.keyCode] = true
+    },
+
+    onKeyup: function (event: KeyboardEvent) {
+        delete this._pressed[event.keyCode]
+    }
+}
+
+window.addEventListener(
+    'keyup',
+    function (event) {
+        Key.onKeyup(event)
+    },
+    false
+)
+window.addEventListener(
+    'keydown',
+    function (event) {
+        Key.onKeydown(event)
+    },
+    false
+)
 
 const createBuffers = (gl: WebGLRenderingContext): BufferSet => {
     // Now create an array of positions for the cube.
@@ -163,8 +203,6 @@ const getWad = async (url: string): Promise<Wad> => {
 
 const main = async () => {
     try {
-        const wad = await getWad('doom.wad')
-        console.log(wad)
         const canvas = document.querySelector('#canvas') as HTMLCanvasElement
         const gl = canvas.getContext('webgl')
 
@@ -172,29 +210,39 @@ const main = async () => {
             throw new Error('Unable to acquire webgl context')
         }
 
-        initialiseScene(gl)
-        const program = createShaderProgram(gl, vsSource, fsSource)
-
-        const camera = createCamera(gl, { fieldOfView: 45, zNear: 0.1, zFar: 100 })
-        camera.position = [0.0, 0.0, 6.0]
+        console.info('Loading')
+        const wad = await getWad('doom.wad')
+        console.info('Loaded doom.wad')
+        const atlas = createAtlas(wad, 4096)
+        console.info('Built texture atlas')
+        const texture = createTexture(gl, 'cubetexture1.png')
+        const map = createMapGeometry(gl, wad, atlas, 'e1m1')
+        console.info('Built map geometry')
+        const objects: Geometry[] = map.map((buffers) => ({
+            position: [0.0, 0.0, 0.0],
+            rotation: 0,
+            buffers,
+            texture
+        }))
+        console.info('Prepared scene')
 
         const buffers = createBuffers(gl)
-        const cube0: Geometry = {
+        objects.push({
             position: [2.0, 0.0, 0.0],
             rotation: 0,
             buffers,
-            texture: createTexture(gl, 'cubetexture1.png')
-        }
-        const cube1: Geometry = {
-            position: [-2.0, 0.0, 0.0],
-            rotation: 0,
-            buffers,
-            texture: createTexture(gl, 'cubetexture2.png')
-        }
+            texture
+        })
+
+        initialiseScene(gl)
+        const program = createShaderProgram(gl, vsSource, fsSource)
+
+        const camera = createCamera(gl, { fieldOfView: 45, zNear: 1, zFar: 100000 })
+        camera.position = [0.0, 0.0, -100.0]
 
         const scene = {
             camera,
-            objects: [cube0, cube1]
+            objects
         }
 
         let then = 0
@@ -205,8 +253,16 @@ const main = async () => {
             cubeRotation += deltaTime
             then = now
 
-            cube0.rotation = cubeRotation
-            cube1.rotation = -cubeRotation
+            if (Key.isDown(Key.UP)) camera.position[2] -= deltaTime*500
+            if (Key.isDown(Key.LEFT)) camera.rotation += deltaTime
+            if (Key.isDown(Key.DOWN)) camera.position[2] += deltaTime*500
+            if (Key.isDown(Key.RIGHT)) camera.rotation -= deltaTime
+            if (Key.isDown(Key.Q)) camera.position[1] += deltaTime*500
+            if (Key.isDown(Key.A)) camera.position[1] -= deltaTime*500
+
+            //camera.rotation = cubeRotation
+            // cube0.rotation = cubeRotation
+            // cube1.rotation = -cubeRotation
 
             renderScene(gl, program, scene)
 

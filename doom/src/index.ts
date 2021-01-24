@@ -1,15 +1,7 @@
 const Buffer = require('buffer/').Buffer
-import { mat3, mat4, vec2, vec3 } from 'gl-matrix'
-import { BufferSet } from 'doom-video/dist/buffers/BufferSet'
+import { vec2 } from 'gl-matrix'
 import { Geometry } from 'doom-video/dist/scene/Geometry'
-import {
-    createTexture,
-    createShaderProgram,
-    createBufferSet,
-    createCamera,
-    initialiseScene,
-    renderScene
-} from 'doom-video'
+import { createTexture, createShaderProgram, createCamera, initialiseScene, renderScene } from 'doom-video'
 import { readWad } from 'doom-wad'
 import { Wad } from 'doom-wad/dist/interfaces/Wad'
 import { createAtlas } from 'doom-atlas'

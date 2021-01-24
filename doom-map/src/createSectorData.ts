@@ -4,6 +4,7 @@ import { WadMapLump } from 'doom-wad/dist/interfaces/WadMapLump'
 import { WadSector } from 'doom-wad/dist/interfaces/WadSectorsLump'
 import { WadSideDef } from 'doom-wad/dist/interfaces/WadSideDefsLump'
 import { WadVertex } from 'doom-wad/dist/interfaces/WadVertexLump'
+import { vec2 } from 'gl-matrix'
 import { FaceData, LineLoop, SectorData } from './interfaces/SectorData'
 
 const buildFace = (
@@ -12,32 +13,38 @@ const buildFace = (
     bottom: number,
     top: number,
     texture: TextureAtlasEntry
-): FaceData => ({
-    isFlat: false,
-    loops: [
-        {
-            position: [
-                [start.x, bottom, -start.y],
-                [start.x, top, -start.y],
-                [end.x, top, -end.y],
-                [end.x, bottom, -end.y]
-            ],
-            texture: [
-                //TODO figure out texture coordinates based upon size of polygon somehow?
-                [0.0, 0.0],
-                [0.0, 1.0],
-                [1.0, 1.0],
-                [1.0, 0.0]
-            ],
-            textureBounds: [texture.left, texture.bottom, texture.right, texture.top]
-        }
-    ]
-})
+): FaceData => {
+    const width = vec2.length([end.x - start.x, end.y - start.y])
+    const height = top - bottom
+    const texturex = width / texture.pixelWidth
+    const texturey = height / texture.pixelHeight
+    return {
+        isFlat: false,
+        loops: [
+            {
+                position: [
+                    [start.x, bottom, -start.y],
+                    [start.x, top, -start.y],
+                    [end.x, top, -end.y],
+                    [end.x, bottom, -end.y]
+                ],
+                texture: [
+                    [0.0, 0.0],
+                    [0.0, texturey],
+                    [texturex, texturey],
+                    [texturex, 0.0]
+                ],
+                textureBounds: [texture.left, texture.bottom, texture.right, texture.top]
+            }
+        ]
+    }
+}
+
+const FLAT_SIZE = 64
 
 const buildFlat = (vertices: WadVertex[], y: number, texture: TextureAtlasEntry): LineLoop => ({
     position: vertices.map((vertex) => [vertex.x, y, -vertex.y]),
-    //TODO literally no idea about mapping this right now!
-    texture: vertices.map(() => [0.0, 0.0]),
+    texture: vertices.map((vertex) => [vertex.x / FLAT_SIZE, vertex.y / FLAT_SIZE]),
     textureBounds: [texture.left, texture.bottom, texture.right, texture.top]
 })
 
@@ -166,7 +173,7 @@ const addFlats = (sectorlist: SectorData[], map: WadMapLump, atlas: TextureAtlas
             isFlat: true,
             loops: ceilingLoops
         })
-        
+
         // if (loopIndices.length > 1) {
         //     // We can keep processing rings but how do we know which is the perimiter?
         //     console.warn('loop**S**!')

@@ -3,4 +3,5 @@ export interface BufferSet {
     position: WebGLBuffer
     index: WebGLBuffer
     texture: WebGLBuffer
+    atlas: WebGLBuffer
 }

@@ -19,5 +19,6 @@ const bindArray = (
 export const bindBufferSet = (gl: WebGL2RenderingContext, program: ShaderProgram, buffers: BufferSet): void => {
     bindArray(gl, buffers.position, program.attribLocations.vertexPosition, 3)
     bindArray(gl, buffers.texture, program.attribLocations.textureCoord, 2)
+    bindArray(gl, buffers.atlas, program.attribLocations.atlasCoord, 4)
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.index)
 }

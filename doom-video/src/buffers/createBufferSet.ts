@@ -13,9 +13,10 @@ const buildBuffer = (gl: WebGL2RenderingContext, target: number, data: ArrayBuff
     return buffer
 }
 
-export const createBufferSet = (gl: WebGL2RenderingContext, { positions, indices, textures }: BufferSetParams): BufferSet => ({
+export const createBufferSet = (gl: WebGL2RenderingContext, { positions, indices, textures, atlas }: BufferSetParams): BufferSet => ({
     vertexCount: indices.length,
     position: buildBuffer(gl, gl.ARRAY_BUFFER, new Float32Array(positions.map((vec) => Array.from(vec)).flat())),
     index: buildBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices)),
-    texture: buildBuffer(gl, gl.ARRAY_BUFFER, new Float32Array(textures.map((vec) => Array.from(vec)).flat()))
+    texture: buildBuffer(gl, gl.ARRAY_BUFFER, new Float32Array(textures.map((vec) => Array.from(vec)).flat())),
+    atlas: buildBuffer(gl, gl.ARRAY_BUFFER, new Float32Array(atlas.map((vec) => Array.from(vec)).flat()))
 })

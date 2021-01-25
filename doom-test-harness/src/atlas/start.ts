@@ -4,7 +4,7 @@ import { createAtlas } from 'doom-atlas/dist/atlas'
 import { writeAtlas } from './writeAtlas'
 ;(async () => {
     try {
-        const wad = await readFile(path.join(__dirname, '../../data/doom2.wad'))
+        const wad = await readFile(path.join(__dirname, '../../data/doom.wad'))
         if (!wad) {
             throw new Error('Unable to load doom.wad')
         }

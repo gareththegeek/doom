@@ -1,4 +1,4 @@
-import { createTexture } from './createTexture'
+import { createPalette, createIndexedTexture } from './createTexture'
 import { bindTexture } from './bindTexture'
 
-export { createTexture, bindTexture }
+export { createPalette, bindTexture, createIndexedTexture }

@@ -1,4 +1,4 @@
-import { TextureAtlas, TextureAtlasEntry } from 'doom-atlas/dist/interfaces/TextureAtlas'
+import { TextureAtlas, TextureAtlasEntry, TextureAtlasLookup } from 'doom-atlas/dist/interfaces/TextureAtlas'
 import { Wad } from 'doom-wad/dist/interfaces/Wad'
 import { WadMapLump } from 'doom-wad/dist/interfaces/WadMapLump'
 import { WadSector } from 'doom-wad/dist/interfaces/WadSectorsLump'
@@ -21,6 +21,7 @@ const buildFace = (
     //TODO not sure about these offsets - can't really test until proper textures are applied
     const texturex = (width + xoffset) / texture.pixelWidth
     const texturey = (height + yoffset) / texture.pixelHeight
+    const bounds: [number, number, number, number] = [texture.left, texture.top, texture.right, texture.bottom]
     return {
         isFlat: false,
         loops: [
@@ -37,7 +38,7 @@ const buildFace = (
                     [texturex, texturey],
                     [texturex, 0.0]
                 ],
-                textureBounds: [texture.left, texture.bottom, texture.right, texture.top]
+                atlas: [[...bounds], [...bounds], [...bounds], [...bounds]]
             }
         ]
     }
@@ -45,11 +46,13 @@ const buildFace = (
 
 const FLAT_SIZE = 64
 
-const buildFlat = (vertices: WadVertex[], y: number, texture: TextureAtlasEntry): LineLoop => ({
-    position: vertices.map((vertex) => [vertex.x, y, -vertex.y]),
-    texture: vertices.map((vertex) => [vertex.x / FLAT_SIZE, vertex.y / FLAT_SIZE]),
-    textureBounds: [texture.left, texture.bottom, texture.right, texture.top]
-})
+const buildFlat = (vertices: WadVertex[], y: number, texture: TextureAtlasEntry): LineLoop => {
+    return {
+        position: vertices.map((vertex) => [vertex.x, y, -vertex.y]),
+        texture: vertices.map((vertex) => [vertex.x / FLAT_SIZE, vertex.y / FLAT_SIZE]),
+        atlas: vertices.map(() => [texture.left, texture.top, texture.right, texture.bottom])
+    }
+}
 
 const hasMiddle = (sidedef: WadSideDef): boolean => sidedef.middleTexture !== '-'
 

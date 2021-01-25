@@ -29,13 +29,14 @@ export const createShaderProgram = (gl: WebGL2RenderingContext, vsSource: string
         program,
         attribLocations: {
             vertexPosition: gl.getAttribLocation(program, 'aVertexPosition'),
-            textureCoord: gl.getAttribLocation(program, 'aTextureCoord')
+            textureCoord: gl.getAttribLocation(program, 'aTextureCoord'),
+            atlasCoord: gl.getAttribLocation(program, 'aAtlasCoord'),
         },
         uniformLocations: {
             projectionMatrix: getUniformLocation(gl, program, 'uProjectionMatrix'),
             modelViewMatrix: getUniformLocation(gl, program, 'uModelViewMatrix'),
             uSampler0: getUniformLocation(gl, program, 'uSampler0'),
-            uSampler1: getUniformLocation(gl, program, 'uSampler1')
+            uSampler1: getUniformLocation(gl, program, 'uSampler1'),
         }
     }
 

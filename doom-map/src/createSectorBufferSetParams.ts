@@ -55,15 +55,16 @@ const triangulate = (face: FaceData, base: number): number[] =>
     face.isFlat ? triangulateFlat(face, base) : triangulateWall(base)
 
 const buildSectorParams = (sector: SectorData): BufferSetParams => {
-    const params: BufferSetParams = { positions: [], indices: [], textures: [] }
+    const params: BufferSetParams = { positions: [], indices: [], textures: [], atlas: [] }
 
     let base = 0
     sector.faces.forEach((face) => {
         const newPositions = face.loops.flatMap((loop) => loop.position)
         const newTextures = face.loops.flatMap((loop) => loop.texture)
+        const newAtlas = face.loops.flatMap((loop) => loop.atlas)
         params.positions = params.positions.concat(newPositions)
         params.textures = params.textures.concat(newTextures)
-        //TODO texture bounds
+        params.atlas = params.atlas.concat(newAtlas)
         params.indices = params.indices.concat(triangulate(face, base))
         base += newPositions.length
     })

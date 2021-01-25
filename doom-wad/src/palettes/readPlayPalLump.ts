@@ -7,7 +7,7 @@ const PALETTE_ENTRY_SIZE = 3
 const readPalette = (data: Buffer, offset: number): WadPalette => {
     const colours: WadColour[] = []
     for (let i = 0; i < PALETTE_SIZE; i += PALETTE_ENTRY_SIZE) {
-        //TODO ArrayUInt8.from
+        
         const r = data.readUInt8(offset + i + 0)
         const g = data.readUInt8(offset + i + 1)
         const b = data.readUInt8(offset + i + 2)

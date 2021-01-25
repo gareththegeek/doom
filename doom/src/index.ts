@@ -123,15 +123,9 @@ const main = async () => {
         const objects: Geometry[] = map.map((buffers) => ({
             position: [0.0, 0.0, 0.0],
             rotation: 0,
-            buffers,
-            //TODO no need to bind this texture every sector
-            texture
+            buffers
         }))
         console.info('Prepared scene')
-
-        //TODO get indexed textures working by using a single flat for everything
-        // Flats are same format as the texture atlas but
-        // don't need the complex texture coordinate calculations
 
         initialiseScene(gl)
         const program = createShaderProgram(gl, vsSource, fsSource)
@@ -154,7 +148,8 @@ const main = async () => {
 
         const scene = {
             camera,
-            objects
+            objects,
+            texture
         }
 
         let then = 0

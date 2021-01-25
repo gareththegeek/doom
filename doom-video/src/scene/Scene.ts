@@ -4,4 +4,5 @@ import { Geometry } from './Geometry'
 export interface Scene {
     camera: Camera
     objects: Geometry[]
+    texture: WebGLTexture
 }

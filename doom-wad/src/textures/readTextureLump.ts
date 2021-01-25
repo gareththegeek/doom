@@ -50,7 +50,6 @@ export const readTextureLump = (data: Buffer, entry: WadDirectoryEntry): WadText
     const numtextures = data.readInt32LE(entry.filepos)
     const maptextures: WadMapTexture[] = []
     for (let i = 0; i < numtextures; i++) {
-        //TODO is it an absolute or relative offset in the table?
         const offset = entry.filepos + data.readInt32LE(entry.filepos + 4 + i * 4)
         maptextures.push(readMapTexture(data, offset))
     }

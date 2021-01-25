@@ -1,4 +1,4 @@
-import { TextureAtlas, TextureAtlasEntry, TextureAtlasLookup } from 'doom-atlas/dist/interfaces/TextureAtlas'
+import { TextureAtlas, TextureAtlasEntry } from 'doom-atlas/dist/interfaces/TextureAtlas'
 import { Wad } from 'doom-wad/dist/interfaces/Wad'
 import { WadLineDefFlags } from 'doom-wad/dist/interfaces/WadLineDefsLump'
 import { WadMapLump } from 'doom-wad/dist/interfaces/WadMapLump'
@@ -21,7 +21,7 @@ const buildFace = (
 ): FaceData => {
     const width = vec2.length([end.x - start.x, end.y - start.y])
     const height = top - bottom
-    //TODO not sure about these offsets - can't really test until proper textures are applied
+    
     const { pixelWidth, pixelHeight } = texture
 
     let pinning = 0
@@ -54,7 +54,6 @@ const buildFace = (
                     [end.x, top, -end.y],
                     [end.x, bottom, -end.y]
                 ],
-                //TODO upper and lower textures need a different texture coord calculation :S
                 texture: [
                     [x0, y1],
                     [x0, y0],

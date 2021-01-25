@@ -3,5 +3,4 @@ import { SceneObject } from './SceneObject'
 
 export interface Geometry extends SceneObject {
     buffers: BufferSet
-    texture: WebGLTexture
 }

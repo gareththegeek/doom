@@ -42,7 +42,7 @@ uniform sampler2D uSampler1;
 
 void main(void) {
    highp vec2 sampleCoords = mix(vec2(vAtlasCoord.rg), vec2(vAtlasCoord.ba), fract(vTextureCoord));
-   highp vec2 index = texture2D(uSampler0, sampleCoords).ra;
+   highp vec2 index = texture2D(uSampler0, sampleCoords.yx).ra;
    highp vec3 colour = texture2D(uSampler1, vec2(index.r, 0)).rgb;
    gl_FragColor = vec4(colour, index.g);
 }

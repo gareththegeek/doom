@@ -19,8 +19,11 @@ const buildFace = (
     const width = vec2.length([end.x - start.x, end.y - start.y])
     const height = top - bottom
     //TODO not sure about these offsets - can't really test until proper textures are applied
-    const texturex = (width + xoffset) / texture.pixelWidth
-    const texturey = (height + yoffset) / texture.pixelHeight
+    const { pixelWidth, pixelHeight } = texture
+    const x1 = pixelWidth + xoffset
+    const y1 = pixelHeight + yoffset
+    const x0 = x1 - width / pixelWidth
+    const y0 = y1 - height / pixelHeight
     const bounds: [number, number, number, number] = [texture.left, texture.top, texture.right, texture.bottom]
     return {
         isFlat: false,
@@ -32,11 +35,12 @@ const buildFace = (
                     [end.x, top, -end.y],
                     [end.x, bottom, -end.y]
                 ],
+                //TODO upper and lower textures need a different texture coord calculation :S
                 texture: [
-                    [0.0, 0.0],
-                    [0.0, texturey],
-                    [texturex, texturey],
-                    [texturex, 0.0]
+                    [x0, y1],
+                    [x0, y0],
+                    [x1, y0],
+                    [x1, y1]
                 ],
                 atlas: [[...bounds], [...bounds], [...bounds], [...bounds]]
             }

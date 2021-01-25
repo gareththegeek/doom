@@ -1,5 +1,6 @@
 import { TextureAtlas, TextureAtlasEntry, TextureAtlasLookup } from 'doom-atlas/dist/interfaces/TextureAtlas'
 import { Wad } from 'doom-wad/dist/interfaces/Wad'
+import { WadLineDefFlags } from 'doom-wad/dist/interfaces/WadLineDefsLump'
 import { WadMapLump } from 'doom-wad/dist/interfaces/WadMapLump'
 import { WadSector } from 'doom-wad/dist/interfaces/WadSectorsLump'
 import { WadSideDef } from 'doom-wad/dist/interfaces/WadSideDefsLump'
@@ -12,7 +13,9 @@ const buildFace = (
     end: WadVertex,
     bottom: number,
     top: number,
+    sectorTop: number,
     texture: TextureAtlasEntry,
+    textureOrigin: TextureOriginType,
     xoffset: number,
     yoffset: number
 ): FaceData => {
@@ -20,10 +23,26 @@ const buildFace = (
     const height = top - bottom
     //TODO not sure about these offsets - can't really test until proper textures are applied
     const { pixelWidth, pixelHeight } = texture
-    const x1 = pixelWidth + xoffset
-    const y1 = pixelHeight + yoffset
-    const x0 = x1 - width / pixelWidth
-    const y0 = y1 - height / pixelHeight
+
+    let pinning = 0
+    switch (textureOrigin) {
+        case TextureOriginType.Bottom: {
+            pinning = pixelHeight - height
+            break
+        }
+        case TextureOriginType.SectorTop: {
+            pinning = sectorTop - top
+            break
+        }
+    }
+
+    const xoffs = xoffset / pixelWidth
+    const yoffs = (yoffset + pinning) / pixelHeight
+    const x0 = xoffs
+    const y0 = yoffs
+    const x1 = xoffs + width / pixelWidth
+    const y1 = yoffs + height / pixelHeight
+
     const bounds: [number, number, number, number] = [texture.left, texture.top, texture.right, texture.bottom]
     return {
         isFlat: false,
@@ -66,12 +85,19 @@ const hasUpper = (sidedef: WadSideDef, front: WadSector, back?: WadSector): bool
 const hasLower = (sidedef: WadSideDef, front: WadSector, back?: WadSector): boolean =>
     !!back && front.floorHeight < back.floorHeight && sidedef.lowerTexture !== '-'
 
+enum TextureOriginType {
+    Top = 0,
+    Bottom,
+    SectorTop
+}
+
 const processSidedef = (
     atlas: TextureAtlas,
     faces: FaceData[],
     sidedef: WadSideDef,
     start: WadVertex,
     end: WadVertex,
+    flags: WadLineDefFlags,
     frontSector: WadSector,
     backSector: WadSector | undefined
 ): void => {
@@ -82,7 +108,9 @@ const processSidedef = (
                 end,
                 frontSector.floorHeight,
                 frontSector.ceilingHeight,
+                0,
                 atlas.lookup[sidedef.middleTexture],
+                flags.lowerUnpegged ? TextureOriginType.Bottom : TextureOriginType.Top,
                 sidedef.xoffset,
                 sidedef.yoffset
             )
@@ -95,7 +123,9 @@ const processSidedef = (
                 end,
                 backSector!.ceilingHeight,
                 frontSector.ceilingHeight,
+                0,
                 atlas.lookup[sidedef.upperTexture],
+                flags.upperUnpegged ? TextureOriginType.Top : TextureOriginType.Bottom,
                 sidedef.xoffset,
                 sidedef.yoffset
             )
@@ -108,7 +138,9 @@ const processSidedef = (
                 end,
                 frontSector.floorHeight,
                 backSector!.floorHeight,
+                frontSector.ceilingHeight,
                 atlas.lookup[sidedef.lowerTexture],
+                flags.lowerUnpegged ? TextureOriginType.SectorTop : TextureOriginType.Top,
                 sidedef.xoffset,
                 sidedef.yoffset
             )
@@ -130,12 +162,12 @@ const addWalls = (sectorlist: SectorData[], map: WadMapLump, atlas: TextureAtlas
         if (!!front && !!frontSector) {
             const { adjacency, faces } = sectorlist[front.sector]
             adjacency.push([linedef.start, linedef.end])
-            processSidedef(atlas, faces, front, start, end, frontSector, backSector)
+            processSidedef(atlas, faces, front, start, end, linedef.flags, frontSector, backSector)
         }
         if (!!back && !!backSector) {
             const { adjacency, faces } = sectorlist[back.sector]
             adjacency.push([linedef.end, linedef.start])
-            processSidedef(atlas, faces, back, end, start, backSector, frontSector)
+            processSidedef(atlas, faces, back, end, start, linedef.flags, backSector, frontSector)
         }
     })
 }

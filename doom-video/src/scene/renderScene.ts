@@ -7,16 +7,16 @@ import { Camera } from './Camera'
 import { Geometry } from './Geometry'
 import { Scene } from './Scene'
 
-const clearScene = (gl: WebGLRenderingContext) => {
+const clearScene = (gl: WebGL2RenderingContext) => {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 }
 
-const applyCamera = (gl: WebGLRenderingContext, program: ShaderProgram, camera: Camera): void => {
+const applyCamera = (gl: WebGL2RenderingContext, program: ShaderProgram, camera: Camera): void => {
     gl.uniformMatrix4fv(program.uniformLocations.projectionMatrix, false, camera.projection)
 }
 
 const renderGeometry = (
-    gl: WebGLRenderingContext,
+    gl: WebGL2RenderingContext,
     program: ShaderProgram,
     camera: Camera,
     geometry: Geometry
@@ -30,7 +30,7 @@ const renderGeometry = (
     renderBufferSet(gl, geometry.buffers)
 }
 
-export const renderScene = (gl: WebGLRenderingContext, program: ShaderProgram, { camera, objects }: Scene): void => {
+export const renderScene = (gl: WebGL2RenderingContext, program: ShaderProgram, { camera, objects }: Scene): void => {
     clearScene(gl)
     applyCamera(gl, program, camera)
     objects.forEach((object) => renderGeometry(gl, program, camera, object))

@@ -7,6 +7,7 @@ import { Wad } from 'doom-wad/dist/interfaces/Wad'
 import { createAtlas } from 'doom-atlas'
 import { createMapGeometry } from 'doom-map'
 import { Camera } from 'doom-video/dist/scene/Camera'
+import { createIndexedTexture } from 'doom-video/dist/textures/createTexture'
 
 const vsSource = `
 attribute vec4 aVertexPosition;
@@ -26,10 +27,13 @@ void main(void) {
 const fsSource = `
 varying highp vec2 vTextureCoord;
 
-uniform sampler2D uSampler;
+uniform sampler2D uSampler0;
+uniform sampler2D uSampler1;
 
 void main(void) {
-  gl_FragColor = texture2D(uSampler, vTextureCoord);
+   highp vec2 index = texture2D(uSampler0, vTextureCoord).ra;
+   highp vec3 colour = texture2D(uSampler1, vec2(index.r, 0)).rgb;
+   gl_FragColor = vec4(colour, index.g);
 }
 `
 
@@ -90,7 +94,7 @@ const forward = (camera: Camera, speed: number): void => {
 const main = async () => {
     try {
         const canvas = document.querySelector('#canvas') as HTMLCanvasElement
-        const gl = canvas.getContext('webgl')
+        const gl = canvas.getContext('webgl2')
 
         if (!gl) {
             throw new Error('Unable to acquire webgl context')
@@ -101,8 +105,9 @@ const main = async () => {
         console.info('Loaded doom.wad')
         const atlas = createAtlas(wad, 4096)
         console.info('Built texture atlas')
-        const texture = createTexture(gl, 'cubetexture1.png')
         const map = createMapGeometry(gl, wad, atlas, 'e1m1')
+        //const texture = createIndexedTexture(gl, wad.flats['floor5_1'].pixels)
+        const texture = createIndexedTexture(gl, wad.flats['flat5_6'].pixels)
         console.info('Built map geometry')
         const objects: Geometry[] = map.map((buffers) => ({
             position: [0.0, 0.0, 0.0],
@@ -112,9 +117,17 @@ const main = async () => {
         }))
         console.info('Prepared scene')
 
+        //TODO get indexed textures working by using a single flat for everything
+        // Flats are same format as the texture atlas but
+        // don't need the complex texture coordinate calculations
+
         initialiseScene(gl)
         const program = createShaderProgram(gl, vsSource, fsSource)
 
+        const palette = createTexture(gl, wad.playpal.palettes[0].colours)
+        gl.activeTexture(gl.TEXTURE1)
+        gl.bindTexture(gl.TEXTURE_2D, palette)
+        
         const camera = createCamera(gl, { fieldOfView: 45, zNear: 1, zFar: 100000 })
         camera.position = [0.0, 0.0, 0.0]
         camera.rotation = Math.PI
@@ -133,9 +146,9 @@ const main = async () => {
             then = now
 
             if (Key.isDown(Key.UP)) forward(camera, deltaTime * 500)
-            if (Key.isDown(Key.LEFT)) camera.rotation += deltaTime
+            if (Key.isDown(Key.LEFT)) camera.rotation += deltaTime * 3
             if (Key.isDown(Key.DOWN)) forward(camera, -deltaTime * 500)
-            if (Key.isDown(Key.RIGHT)) camera.rotation -= deltaTime
+            if (Key.isDown(Key.RIGHT)) camera.rotation -= deltaTime * 3
             if (Key.isDown(Key.Q)) camera.position[1] += deltaTime * 500
             if (Key.isDown(Key.A)) camera.position[1] -= deltaTime * 500
 

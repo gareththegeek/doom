@@ -1,7 +1,7 @@
 import { loadShader } from './loadShader'
 import { ShaderProgram } from './ShaderProgram'
 
-const getUniformLocation = (gl: WebGLRenderingContext, program: WebGLProgram, name: string): WebGLUniformLocation => {
+const getUniformLocation = (gl: WebGL2RenderingContext, program: WebGLProgram, name: string): WebGLUniformLocation => {
     const result = gl.getUniformLocation(program, name)
     if (!result) {
         throw new Error(`Unable to get uniform location '${name}' for program`)
@@ -9,7 +9,7 @@ const getUniformLocation = (gl: WebGLRenderingContext, program: WebGLProgram, na
     return result
 }
 
-export const createShaderProgram = (gl: WebGLRenderingContext, vsSource: string, fsSource: string): ShaderProgram => {
+export const createShaderProgram = (gl: WebGL2RenderingContext, vsSource: string, fsSource: string): ShaderProgram => {
     const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource)
     const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource)
 
@@ -34,12 +34,14 @@ export const createShaderProgram = (gl: WebGLRenderingContext, vsSource: string,
         uniformLocations: {
             projectionMatrix: getUniformLocation(gl, program, 'uProjectionMatrix'),
             modelViewMatrix: getUniformLocation(gl, program, 'uModelViewMatrix'),
-            uSampler: getUniformLocation(gl, program, 'uSampler')
+            uSampler0: getUniformLocation(gl, program, 'uSampler0'),
+            uSampler1: getUniformLocation(gl, program, 'uSampler1')
         }
     }
 
     gl.useProgram(program)
-    gl.uniform1i(result.uniformLocations.uSampler, 0)
+    gl.uniform1i(result.uniformLocations.uSampler0, 0)
+    gl.uniform1i(result.uniformLocations.uSampler1, 1)
 
     return result
 }

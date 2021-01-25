@@ -23,6 +23,7 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
+    "doom-wad": "1.0.0",
     "gl-matrix": "^3.3.0"
   }
 }

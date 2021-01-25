@@ -2,7 +2,7 @@ import { ShaderProgram } from '../shaders/ShaderProgram'
 import { BufferSet } from './BufferSet'
 
 const bindArray = (
-    gl: WebGLRenderingContext,
+    gl: WebGL2RenderingContext,
     buffer: WebGLBuffer,
     index: number,
     size: number
@@ -16,7 +16,7 @@ const bindArray = (
     gl.enableVertexAttribArray(index)
 }
 
-export const bindBufferSet = (gl: WebGLRenderingContext, program: ShaderProgram, buffers: BufferSet): void => {
+export const bindBufferSet = (gl: WebGL2RenderingContext, program: ShaderProgram, buffers: BufferSet): void => {
     bindArray(gl, buffers.position, program.attribLocations.vertexPosition, 3)
     bindArray(gl, buffers.texture, program.attribLocations.textureCoord, 2)
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.index)

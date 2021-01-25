@@ -12,12 +12,15 @@ const buildFace = (
     end: WadVertex,
     bottom: number,
     top: number,
-    texture: TextureAtlasEntry
+    texture: TextureAtlasEntry,
+    xoffset: number,
+    yoffset: number
 ): FaceData => {
     const width = vec2.length([end.x - start.x, end.y - start.y])
     const height = top - bottom
-    const texturex = width / texture.pixelWidth
-    const texturey = height / texture.pixelHeight
+    //TODO not sure about these offsets - can't really test until proper textures are applied
+    const texturex = (width + xoffset) / texture.pixelWidth
+    const texturey = (height + yoffset) / texture.pixelHeight
     return {
         isFlat: false,
         loops: [
@@ -72,7 +75,9 @@ const processSidedef = (
                 end,
                 frontSector.floorHeight,
                 frontSector.ceilingHeight,
-                atlas.lookup[sidedef.middleTexture]
+                atlas.lookup[sidedef.middleTexture],
+                sidedef.xoffset,
+                sidedef.yoffset
             )
         )
     }
@@ -83,13 +88,23 @@ const processSidedef = (
                 end,
                 backSector!.ceilingHeight,
                 frontSector.ceilingHeight,
-                atlas.lookup[sidedef.upperTexture]
+                atlas.lookup[sidedef.upperTexture],
+                sidedef.xoffset,
+                sidedef.yoffset
             )
         )
     }
     if (hasLower(sidedef, frontSector, backSector)) {
         faces.push(
-            buildFace(start, end, frontSector.floorHeight, backSector!.floorHeight, atlas.lookup[sidedef.lowerTexture])
+            buildFace(
+                start,
+                end,
+                frontSector.floorHeight,
+                backSector!.floorHeight,
+                atlas.lookup[sidedef.lowerTexture],
+                sidedef.xoffset,
+                sidedef.yoffset
+            )
         )
     }
 }

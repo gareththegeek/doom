@@ -5,7 +5,7 @@ import { createSectorBufferSetParams } from './createSectorBufferSetParams'
 import { createSectorBufferSets } from './createSectorBufferSets'
 import { createSectorData } from './createSectorData'
 
-export const createMapGeometry = (gl: WebGLRenderingContext, wad: Wad, atlas: TextureAtlas, name: string): BufferSet[] => {
+export const createMapGeometry = (gl: WebGL2RenderingContext, wad: Wad, atlas: TextureAtlas, name: string): BufferSet[] => {
     const sectorlist = createSectorData(wad, atlas, name)
     const params = createSectorBufferSetParams(sectorlist)
     return createSectorBufferSets(gl, params)

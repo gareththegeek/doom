@@ -1,4 +1,4 @@
-export const loadShader = (gl: WebGLRenderingContext, type: number, source: string): WebGLShader => {
+export const loadShader = (gl: WebGL2RenderingContext, type: number, source: string): WebGLShader => {
     const shader = gl.createShader(type)
 
     if (!shader) {
@@ -9,8 +9,9 @@ export const loadShader = (gl: WebGLRenderingContext, type: number, source: stri
     gl.compileShader(shader)
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        const message = `An error occurred compiling the shaders: ${gl.getShaderInfoLog(shader)}`
         gl.deleteShader(shader)
-        throw new Error(`An error occurred compiling the shaders: ${gl.getShaderInfoLog(shader)}`)
+        throw new Error(message)
     }
 
     return shader

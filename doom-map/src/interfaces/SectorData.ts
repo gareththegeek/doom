@@ -9,6 +9,7 @@ export interface LineLoop {
 export interface FaceData {
     loops: LineLoop[]
     isFlat: boolean
+    isCeiling: boolean
 }
 
 export interface SectorData {

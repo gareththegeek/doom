@@ -21,7 +21,7 @@ const buildFace = (
 ): FaceData => {
     const width = vec2.length([end.x - start.x, end.y - start.y])
     const height = top - bottom
-    
+
     const { pixelWidth, pixelHeight } = texture
 
     let pinning = 0
@@ -46,6 +46,7 @@ const buildFace = (
     const bounds: [number, number, number, number] = [texture.left, texture.top, texture.right, texture.bottom]
     return {
         isFlat: false,
+        isCeiling: false,
         loops: [
             {
                 position: [
@@ -203,7 +204,6 @@ const addFlats = (sectorlist: SectorData[], map: WadMapLump, atlas: TextureAtlas
         const { adjacency, faces } = sectorlist[index]
         const loopIndices = []
 
-        //const debug_prejacency = [...adjacency]
         while (adjacency.length > 0) {
             loopIndices.push(processLoop(adjacency))
         }
@@ -215,23 +215,19 @@ const addFlats = (sectorlist: SectorData[], map: WadMapLump, atlas: TextureAtlas
 
         const ceilingLoops = loopIndices.map((loopIndices) => {
             const vertices = loopIndices.map((index) => map.vertices[index])
-            return buildFlat(vertices.reverse(), sector.ceilingHeight, atlas.lookup[sector.ceilingTexture])
+            return buildFlat(vertices, sector.ceilingHeight, atlas.lookup[sector.ceilingTexture])
         })
 
         faces.push({
             isFlat: true,
+            isCeiling: false,
             loops: floorLoops
         })
         faces.push({
             isFlat: true,
+            isCeiling: true,
             loops: ceilingLoops
         })
-
-        // if (loopIndices.length > 1) {
-        //     // We can keep processing rings but how do we know which is the perimiter?
-        //     console.warn('loop**S**!')
-        //     debugger
-        // }
     })
 }
 

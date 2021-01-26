@@ -35,7 +35,6 @@ const findPerimiter = (loops: LineLoop[]): number => {
 }
 
 const triangulateFlat = (face: FaceData, base: number): number[] => {
-    //TODO floors end up with CCW winding
     const triangulator = new Triangulator()
 
     const perimeterIndex = face.loops.length === 1 ? 0 : findPerimiter(face.loops)
@@ -61,10 +60,13 @@ const buildSectorParams = (sector: SectorData): BufferSetParams => {
         const newPositions = face.loops.flatMap((loop) => loop.position)
         const newTextures = face.loops.flatMap((loop) => loop.texture)
         const newAtlas = face.loops.flatMap((loop) => loop.atlas)
+        const newIndices = triangulate(face, base)
+
         params.positions = params.positions.concat(newPositions)
         params.textures = params.textures.concat(newTextures)
         params.atlas = params.atlas.concat(newAtlas)
-        params.indices = params.indices.concat(triangulate(face, base))
+        params.indices = params.indices.concat(face.isCeiling ? newIndices.reverse() : newIndices)
+
         base += newPositions.length
     })
 

@@ -143,8 +143,10 @@ const main = async () => {
         const colourmaps = createColourMap(gl, wad.colormap.maps)
 
         const camera = createCamera(gl, { fieldOfView: 45, zNear: 1, zFar: 100000 })
-        camera.position = [0.0, 0.0, 0.0]
-        camera.rotation = Math.PI
+        // camera.position = [0.0, 0.0, 0.0]
+        // camera.rotation = Math.PI
+        camera.position = [2103.112593621454, 41.670000000014085, 2354.890666609926]
+        camera.rotation = 7.491532653589783
 
         const scene = {
             camera,
@@ -154,6 +156,7 @@ const main = async () => {
             colourmaps
         }
 
+        let last = 0
         let then = 0
         let cubeRotation = 0.0
         const render = (now: number) => {
@@ -174,6 +177,11 @@ const main = async () => {
             // cube1.rotation = -cubeRotation
 
             renderScene(gl, program, scene)
+
+            if (now - last > 1) {
+                console.log(`${camera.position} ${camera.rotation}`)
+                last = now
+            }
 
             requestAnimationFrame(render)
         }

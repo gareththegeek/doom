@@ -44,7 +44,7 @@ const triangulateFlat = (face: FaceData, base: number): number[] => {
     const contour = perimeter.position.map(flatVecToPoint)
 
     let holes: Line[] = []
-    if (face.loops.length > 1) {
+    if (face.loops.length > 0) {
         holes = face.loops.map((loop) => loop.position.map(flatVecToPoint))
     }
     const result = triangulator.triangulate_polygon([contour, ...holes])
@@ -56,7 +56,6 @@ const triangulate = (face: FaceData, base: number): number[] =>
 
 const buildSectorParams = (sector: SectorData): BufferSetParams => {
     const params: BufferSetParams = { positions: [], indices: [], textures: [], atlas: [] }
-
     let base = 0
     sector.faces.forEach((face) => {
         const newPositions = face.loops.flatMap((loop) => loop.position)

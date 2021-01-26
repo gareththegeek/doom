@@ -189,12 +189,6 @@ const processLoop = (adjacency: number[][]): number[] => {
         indices.push(current)
 
         current = popAdjacency(adjacency, current)
-
-        // if (i++ > adjacency.length) {
-        //     //throw new Error('Sector adjancency loop not closed')
-        //     console.log(`Unclosed sector detected, is that right? ${index}`)
-        //     return
-        // }
     }
     return indices
 }

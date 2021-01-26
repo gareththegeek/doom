@@ -34,8 +34,7 @@ export const createColourMap = (gl: WebGL2RenderingContext, maps: WadColorMap[])
     return createTextureInternal(gl, maps[0].indices.length, maps.length, image, gl.ALPHA, gl.ALPHA)
 }
 
-export const createIndexedTexture = (gl: WebGL2RenderingContext, pixels: IndexedPixel[][]): WebGLTexture => {
-    const data = pixels.flat().flat()
-    const image = new Uint8Array(data)
-    return createTextureInternal(gl, pixels.length, pixels[0].length, image, gl.RG8, gl.RG)
+export const createIndexedTexture = (gl: WebGL2RenderingContext, pixels: number[], size: number): WebGLTexture => {
+    const image = new Uint8Array(pixels)
+    return createTextureInternal(gl, size, size, image, gl.RG8, gl.RG)
 }

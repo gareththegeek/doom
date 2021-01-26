@@ -126,7 +126,7 @@ const main = async () => {
         const atlas = createAtlas(wad, 4096)
         console.info('Built texture atlas')
         const map = createMapGeometry(gl, wad, atlas, 'e1m1')
-        const texture = createIndexedTexture(gl, atlas.image)
+        const texture = createIndexedTexture(gl, atlas.image, 4096)
         console.info('Built map geometry')
         const objects: Geometry[] = map.map((buffers, index) => ({
             position: [0.0, 0.0, 0.0],

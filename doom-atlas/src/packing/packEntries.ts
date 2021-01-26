@@ -1,43 +1,53 @@
 import { AtlasEntry } from '../interfaces/AtlasEntry'
 import { buildLookupEntry } from './buildLookupEntry'
 import { sortDimensioneds } from './sortDimensioneds'
-import { TextureAtlasEntry, TextureAtlasLookup } from '../interfaces/TextureAtlas'
-import { IndexedPixel } from 'doom-wad/dist/interfaces/WadPictureLump'
-import { lookup } from 'dns'
+import { TextureAtlasLookup } from '../interfaces/TextureAtlas'
 
 const MARGIN = 2
 
-const blitRow = (image: IndexedPixel[][], sourcex: number, sourcey: number, width: number, targety: number): void => {
+const blitRow = (
+    image: number[],
+    size: number,
+    sourcex: number,
+    sourcey: number,
+    width: number,
+    targety: number
+): void => {
     for (let x = 0; x < width; x++) {
-        image[sourcex + x][targety] = image[sourcex + x][sourcey]
+        const sourceIdx = ((sourcex + x) * size + sourcey) * 2
+        const targetIdx = ((sourcex + x) * size + targety) * 2
+        image[targetIdx] = image[sourceIdx]
     }
 }
 
 const blitColumn = (
-    image: IndexedPixel[][],
+    image: number[],
+    size: number,
     sourcex: number,
     sourcey: number,
     height: number,
     targetx: number
 ): void => {
     try {
-        image[targetx].splice(sourcey, height, ...image[sourcex].slice(sourcey, sourcey + height))
+        const targetIdx = (targetx * size + sourcey) * 2
+        const sourceIdx = (sourcex * size + sourcey) * 2
+        image.splice(targetIdx, height, ...image.slice(sourceIdx, sourceIdx + height))
     } catch (e) {
         console.log(e.message)
         console.log(`${sourcex} ${sourcey} ${height} ${targetx}`)
     }
 }
 
-const blitFrame = (image: IndexedPixel[][], left: number, top: number, width: number, height: number): void => {
+const blitFrame = (image: number[], size: number, left: number, top: number, width: number, height: number): void => {
     const bottom = top + height - 1
     const right = left + width - 1
-    blitColumn(image, left, top, height, left - 1)
-    blitColumn(image, right, top, height, right + 1)
-    blitRow(image, left, top, width, top - 1)
-    blitRow(image, left, bottom, width, bottom + 1)
+    blitColumn(image, size, left, top, height, left - 1)
+    blitColumn(image, size, right, top, height, right + 1)
+    blitRow(image, size, left, top, width, top - 1)
+    blitRow(image, size, left, bottom, width, bottom + 1)
 }
 
-export const packEntries = <T>(image: IndexedPixel[][], size: number, entries: AtlasEntry<T>[]): TextureAtlasLookup => {
+export const packEntries = <T>(image: number[], size: number, entries: AtlasEntry<T>[]): TextureAtlasLookup => {
     const sortedEntries = entries.sort(sortDimensioneds)
 
     let x = MARGIN
@@ -53,7 +63,7 @@ export const packEntries = <T>(image: IndexedPixel[][], size: number, entries: A
         }
         lookup[name] = buildLookupEntry(size, x, y, width, height)
         entry.blit(entry, x, y)
-        blitFrame(image, x, y, width, height)
+        blitFrame(image, size, x, y, width, height)
         x += width + MARGIN
     }
 

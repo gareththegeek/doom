@@ -1,5 +1,3 @@
-import { IndexedPixel } from 'doom-wad/dist/interfaces/WadPictureLump'
-
 export interface TextureAtlasEntry {
     left: number
     right: number
@@ -12,6 +10,6 @@ export interface TextureAtlasEntry {
 export type TextureAtlasLookup = { [name: string]: TextureAtlasEntry }
 
 export interface TextureAtlas {
-    image: IndexedPixel[][]
+    image: number[]
     lookup: TextureAtlasLookup
 }

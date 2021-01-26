@@ -9,6 +9,6 @@ export const createAtlas = (wad: Wad, size: number) => {
     const entries = [...getTextureEntries(image, wad), ...getSpriteEntries(image, wad), ...getFlatEntries(image, wad)]
     return {
         image,
-        lookup: packEntries<any>(size, entries)
+        lookup: packEntries<any>(image, size, entries)
     }
 }

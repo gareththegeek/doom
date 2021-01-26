@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prestart": "cd ../doom-atlas && yarn build && cd ../doom-test-harness",
     "start": "ts-node src/start.ts",
     "test": "jest"
   },

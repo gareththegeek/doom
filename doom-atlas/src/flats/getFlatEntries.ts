@@ -7,7 +7,7 @@ const FLAT_SIZE = 64
 
 const blitFlat = (image: IndexedPixel[][], flat: WadFlatLump, originx: number, originy: number): void => {
     for (let x = 0; x < FLAT_SIZE; x++) {
-        image[x + originx].splice(originy, FLAT_SIZE, ...flat.pixels[x])
+        image[x + originx].splice(originy, FLAT_SIZE, ...flat.pixels[x].map((pixel) => [pixel, 255] as IndexedPixel))
     }
 }
 

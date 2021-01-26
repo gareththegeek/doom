@@ -18,7 +18,6 @@ const createTextureInternal = (
 
     const level = 0
     const srcType = gl.UNSIGNED_BYTE
-
     gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, 0, srcFormat, srcType, pixels)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
@@ -36,11 +35,7 @@ export const createColourMap = (gl: WebGL2RenderingContext, maps: WadColorMap[])
 }
 
 export const createIndexedTexture = (gl: WebGL2RenderingContext, pixels: IndexedPixel[][]): WebGLTexture => {
-    const image = new Uint8Array(
-        pixels
-            .flat()
-            .map((pixel) => (pixel === undefined ? [0, 0] : [pixel, 255]))
-            .flat()
-    )
+    const data = pixels.flat().flat()
+    const image = new Uint8Array(data)
     return createTextureInternal(gl, pixels.length, pixels[0].length, image, gl.RG8, gl.RG)
 }

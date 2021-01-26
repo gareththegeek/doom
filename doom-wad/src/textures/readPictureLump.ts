@@ -22,11 +22,11 @@ const readPost = (data: Buffer, offset: number): IndexedPixel[] => {
     const length = data.readUInt8(offset + PictureColumnOffset.length)
     const start = offset + PictureColumnOffset.data
 
-    return readBytes(data, start, length)
+    return readBytes(data, start, length).map((byte) => [byte, 255])
 }
 
 const readPictureColumn = (data: Buffer, height: number, startoffset: number): IndexedPixel[] => {
-    const pixels = new Array(height).fill(undefined)
+    const pixels = new Array(height).fill([0, 0])
     let offset = startoffset
     while (true) {
         const topdelta = data.readUInt8(offset + PictureColumnOffset.topdelta)

@@ -20,11 +20,7 @@ export const blitPatch = (
             if (!insideTexture(fx, fy, constraints)) {
                 continue
             }
-            const colourIndex = patch.pixels[x][y]
-            if (colourIndex === undefined) {
-                continue
-            }
-            image[fx][fy] = colourIndex
+            image[fx][fy] = patch.pixels[x][y]
         }
     }
 }

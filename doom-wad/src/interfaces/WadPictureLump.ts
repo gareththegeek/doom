@@ -1,7 +1,6 @@
 import { WadLump } from './WadLump'
 
-// Undefined pixels are transparent
-export type IndexedPixel = (number | undefined)
+export type IndexedPixel = [index: number, alpha: number]
 
 export interface WadPictureLump extends WadLump {
     width: number

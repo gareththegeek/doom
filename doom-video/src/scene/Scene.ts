@@ -5,4 +5,6 @@ export interface Scene {
     camera: Camera
     objects: Geometry[]
     texture: WebGLTexture
+    palette: WebGLTexture
+    colourmaps: WebGLTexture
 }

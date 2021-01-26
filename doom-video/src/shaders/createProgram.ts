@@ -30,19 +30,22 @@ export const createShaderProgram = (gl: WebGL2RenderingContext, vsSource: string
         attribLocations: {
             vertexPosition: gl.getAttribLocation(program, 'aVertexPosition'),
             textureCoord: gl.getAttribLocation(program, 'aTextureCoord'),
-            atlasCoord: gl.getAttribLocation(program, 'aAtlasCoord'),
+            atlasCoord: gl.getAttribLocation(program, 'aAtlasCoord')
         },
         uniformLocations: {
             projectionMatrix: getUniformLocation(gl, program, 'uProjectionMatrix'),
             modelViewMatrix: getUniformLocation(gl, program, 'uModelViewMatrix'),
-            uSampler0: getUniformLocation(gl, program, 'uSampler0'),
-            uSampler1: getUniformLocation(gl, program, 'uSampler1'),
+            lightLevel: getUniformLocation(gl, program, 'uLightLevel'),
+            uSamplerAtlas: getUniformLocation(gl, program, 'uSamplerAtlas'),
+            uSamplerPalette: getUniformLocation(gl, program, 'uSamplerPalette'),
+            uSamplerColourMap: getUniformLocation(gl, program, 'uSamplerColourMap')
         }
     }
 
     gl.useProgram(program)
-    gl.uniform1i(result.uniformLocations.uSampler0, 0)
-    gl.uniform1i(result.uniformLocations.uSampler1, 1)
+    gl.uniform1i(result.uniformLocations.uSamplerAtlas, 0)
+    gl.uniform1i(result.uniformLocations.uSamplerPalette, 1)
+    gl.uniform1i(result.uniformLocations.uSamplerColourMap, 2)
 
     return result
 }

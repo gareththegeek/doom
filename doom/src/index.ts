@@ -4,6 +4,7 @@ import { Geometry } from 'doom-video/dist/scene/Geometry'
 import {
     createIndexedTexture,
     createPalette,
+    createColourMap,
     createShaderProgram,
     createCamera,
     initialiseScene,
@@ -15,6 +16,8 @@ import { createAtlas } from 'doom-atlas'
 import { createMapGeometry } from 'doom-map'
 import { Camera } from 'doom-video/dist/scene/Camera'
 
+//varying highp float depth;
+//depth = -gl_position.z
 const vsSource = `
 attribute vec4 aVertexPosition;
 attribute vec2 aTextureCoord;
@@ -33,18 +36,22 @@ void main(void) {
 }
 `
 
+//varying highp float depth;
 const fsSource = `
 varying highp vec2 vTextureCoord;
 varying highp vec4 vAtlasCoord;
 
-uniform sampler2D uSampler0;
-uniform sampler2D uSampler1;
+uniform highp float uLightLevel;
+uniform sampler2D uSamplerAtlas;
+uniform sampler2D uSamplerPalette;
+uniform sampler2D uSamplerColourMap;
 
 void main(void) {
    highp vec2 sampleCoords = mix(vec2(vAtlasCoord.rg), vec2(vAtlasCoord.ba), fract(vTextureCoord));
-   highp vec2 index = texture2D(uSampler0, sampleCoords.yx).ra;
-   highp vec3 colour = texture2D(uSampler1, vec2(index.r, 0.5)).rgb;
-   gl_FragColor = vec4(colour, index.g);
+   highp vec2 cmindex = texture2D(uSamplerAtlas, sampleCoords.yx).ra;
+   highp float index = texture2D(uSamplerColourMap, vec2(cmindex.r, uLightLevel)).r;
+   highp vec3 colour = texture2D(uSamplerPalette, vec2(index, 0.5)).rgb;
+   gl_FragColor = vec4(colour, cmindex.g);
 }
 `
 
@@ -117,30 +124,22 @@ const main = async () => {
         const atlas = createAtlas(wad, 4096)
         console.info('Built texture atlas')
         const map = createMapGeometry(gl, wad, atlas, 'e1m1')
-        //const texture = createIndexedTexture(gl, wad.flats['floor5_1'].pixels)
         const texture = createIndexedTexture(gl, atlas.image)
         console.info('Built map geometry')
-        const objects: Geometry[] = map.map((buffers) => ({
+        const objects: Geometry[] = map.map((buffers, index) => ({
             position: [0.0, 0.0, 0.0],
             rotation: 0,
-            buffers
+            buffers,
+            light: wad.maps['e1m1'].sectors[index].lightLevel
         }))
+        console.log(objects)
         console.info('Prepared scene')
 
         initialiseScene(gl)
         const program = createShaderProgram(gl, vsSource, fsSource)
 
         const palette = createPalette(gl, wad.playpal.palettes[0].colours)
-        gl.activeTexture(gl.TEXTURE1)
-        gl.bindTexture(gl.TEXTURE_2D, palette)
-
-        // const atlasTexture = createAtlasTexture(
-        //     gl,
-        //     Object.values(atlas.lookup).map((entry) => [entry.left, entry.top, entry.right, entry.bottom])
-        // )
-        // gl.activeTexture(gl.TEXTURE3)
-        // gl.bindTexture(gl.TEXTURE_2D, atlasTexture)
-        // console.log(Object.values(atlas.lookup).map((entry) => [entry.left, entry.top, entry.right, entry.bottom]))
+        const colourmaps = createColourMap(gl, wad.colormap.maps)
 
         const camera = createCamera(gl, { fieldOfView: 45, zNear: 1, zFar: 100000 })
         camera.position = [0.0, 0.0, 0.0]
@@ -149,7 +148,9 @@ const main = async () => {
         const scene = {
             camera,
             objects,
-            texture
+            texture,
+            palette,
+            colourmaps
         }
 
         let then = 0

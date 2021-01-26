@@ -7,7 +7,8 @@ const createTextureInternal = (
     width: number,
     height: number,
     pixels: ArrayBufferView,
-    format: number
+    internalFormat: number,
+    srcFormat: number
 ): WebGLTexture => {
     const texture = gl.createTexture()
     if (!texture) {
@@ -16,8 +17,6 @@ const createTextureInternal = (
     gl.bindTexture(gl.TEXTURE_2D, texture)
 
     const level = 0
-    const internalFormat = format
-    const srcFormat = format
     const srcType = gl.UNSIGNED_BYTE
 
     gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, 0, srcFormat, srcType, pixels)
@@ -29,21 +28,21 @@ const createTextureInternal = (
 }
 
 export const createPalette = (gl: WebGL2RenderingContext, pixels: WadColour[]): WebGLTexture => {
-    const image = new Uint8Array(pixels.map((pixel) => [...pixel, 255]).flat())
-    return createTextureInternal(gl, pixels.length, 1, image, gl.RGBA)
+    const image = new Uint8Array(pixels.flat())
+    return createTextureInternal(gl, pixels.length, 1, image, gl.RGB8, gl.RGB)
 }
 
 export const createColourMap = (gl: WebGL2RenderingContext, maps: WadColorMap[]): WebGLTexture => {
-    const image = new Uint8Array(maps.flatMap((map) => map.indices.map((index) => [index, index, index, index])).flat())
-    return createTextureInternal(gl, maps[0].indices.length, maps.length, image, gl.RGBA)
+    const image = new Uint8Array(maps.flatMap((map) => map.indices))
+    return createTextureInternal(gl, maps[0].indices.length, maps.length, image, gl.ALPHA, gl.ALPHA)
 }
 
 export const createIndexedTexture = (gl: WebGL2RenderingContext, pixels: IndexedPixel[][]): WebGLTexture => {
     const image = new Uint8Array(
         pixels
             .flat()
-            .map((pixel) => (pixel === undefined ? [0, 0, 0, 0] : [pixel, pixel, pixel, 255]))
+            .map((pixel) => (pixel === undefined ? [0, 0] : [pixel, 255]))
             .flat()
     )
-    return createTextureInternal(gl, pixels.length, pixels[0].length, image, gl.RGBA)
+    return createTextureInternal(gl, pixels.length, pixels[0].length, image, gl.RG8, gl.RG)
 }

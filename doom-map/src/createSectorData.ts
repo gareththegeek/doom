@@ -7,6 +7,7 @@ import { WadSideDef } from 'doom-wad/dist/interfaces/WadSideDefsLump'
 import { WadVertex } from 'doom-wad/dist/interfaces/WadVertexLump'
 import { vec2 } from 'gl-matrix'
 import { FaceData, LineLoop, SectorData } from './interfaces/SectorData'
+import { processLoops } from './processLoops'
 
 const buildFace = (
     start: WadVertex,
@@ -172,35 +173,11 @@ const addWalls = (sectorlist: SectorData[], map: WadMapLump, atlas: TextureAtlas
     })
 }
 
-const popAdjacency = (adjacency: number[][], current: number): number => {
-    const nextI = adjacency.findIndex((a) => a[0] === current)
-    if (nextI === -1) {
-        throw new Error('Missing vertex in sector adjacency data')
-    }
-    const next = adjacency.splice(nextI, 1)[0]
-    return next[1]
-}
-
-const processLoop = (adjacency: number[][]): number[] => {
-    const start = adjacency[0][0]
-    const indices = [start]
-    let current = popAdjacency(adjacency, start)
-    while (current !== start) {
-        indices.push(current)
-
-        current = popAdjacency(adjacency, current)
-    }
-    return indices
-}
-
 const addFlats = (sectorlist: SectorData[], map: WadMapLump, atlas: TextureAtlas): void => {
     map.sectors.forEach((sector, index) => {
         const { adjacency, faces } = sectorlist[index]
-        const loopIndices = []
 
-        while (adjacency.length > 0) {
-            loopIndices.push(processLoop(adjacency))
-        }
+        const loopIndices = processLoops(adjacency)
 
         const floorLoops = loopIndices.map((loopIndices) => {
             const vertices = loopIndices.map((index) => map.vertices[index])

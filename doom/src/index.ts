@@ -7,7 +7,8 @@ import {
     createShaderProgram,
     createCamera,
     initialiseScene,
-    renderScene
+    renderScene,
+    createSprite
 } from 'doom-video'
 import { fetchWad } from 'doom-wad'
 import { createAtlas } from 'doom-atlas'
@@ -130,9 +131,14 @@ const main = async () => {
             position: [0.0, 0.0, 0.0],
             rotation: 0,
             buffers,
+            flat: false,
             light: wad.maps['e1m1'].sectors[index].lightLevel
         }))
         console.info('Prepared scene')
+
+        const imp = createSprite(gl, atlas, 'trooa1')
+        imp.position = [1760, 0, 2206]
+        objects.push(imp)
 
         initialiseScene(gl)
         const program = createShaderProgram(gl, vsSource, fsSource)

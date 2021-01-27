@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "doom-wad": "1.0.0",
+    "doom-atlas": "1.0.0",
     "gl-matrix": "^3.3.0"
   }
 }

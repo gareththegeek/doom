@@ -21,9 +21,17 @@ const renderGeometry = (
     geometry: Geometry
 ): void => {
     const modelView = mat4.multiply(mat4.create(), getModelView(camera), getModelView(geometry))
+    if (geometry.flat) {
+        modelView[0] = 1.0
+        modelView[4] = 0.0
+        modelView[8] = 0.0
+        modelView[2] = 0.0
+        modelView[6] = 0.0
+        modelView[10] = 1.0
+    }
     gl.uniformMatrix4fv(program.uniformLocations.modelViewMatrix, false, modelView)
     gl.uniform1f(program.uniformLocations.lightLevel, ((1 - geometry.light / 255) * 32) / 34)
-    
+
     bindBufferSet(gl, program, geometry.buffers)
     renderBufferSet(gl, geometry.buffers)
 }

@@ -1,5 +1,5 @@
 import { createBufferSet } from './buffers'
-import { createCamera, renderScene, initialiseScene } from './scene'
+import { createCamera, renderScene, initialiseScene, createSprite } from './scene'
 import { createShaderProgram } from './shaders'
 import { createPalette, createIndexedTexture, createColourMap } from './textures'
 
@@ -11,5 +11,6 @@ export {
     createShaderProgram,
     createPalette,
     createIndexedTexture,
-    createColourMap
+    createColourMap,
+    createSprite
 }

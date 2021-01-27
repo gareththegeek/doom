@@ -24,7 +24,6 @@
     "webpack-cli": "^4.4.0"
   },
   "dependencies": {
-    "buffer": "^6.0.3",
     "doom-atlas": "1.0.0",
     "doom-map": "1.0.0",
     "doom-video": "1.0.0",

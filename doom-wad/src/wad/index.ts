@@ -1,3 +1,4 @@
 import { readWad } from './readWad'
+import { fetchWad } from './fetchWad'
 
-export { readWad }
+export { readWad, fetchWad }

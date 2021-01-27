@@ -1,3 +1,3 @@
-import { readWad } from './wad'
+import { readWad, fetchWad } from './wad'
 
-export { readWad }
+export { readWad, fetchWad }

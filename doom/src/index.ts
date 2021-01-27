@@ -1,4 +1,3 @@
-const Buffer = require('buffer/').Buffer
 import { vec2 } from 'gl-matrix'
 import { Geometry } from 'doom-video/dist/scene/Geometry'
 import {
@@ -10,14 +9,11 @@ import {
     initialiseScene,
     renderScene
 } from 'doom-video'
-import { readWad } from 'doom-wad'
-import { Wad } from 'doom-wad/dist/interfaces/Wad'
+import { fetchWad } from 'doom-wad'
 import { createAtlas } from 'doom-atlas'
 import { createMapGeometry } from 'doom-map'
 import { Camera } from 'doom-video/dist/scene/Camera'
 
-//varying highp float depth;
-//depth = -gl_position.z
 const vsSource = `
 attribute vec4 aVertexPosition;
 attribute vec2 aTextureCoord;
@@ -28,30 +24,38 @@ uniform mat4 uProjectionMatrix;
 
 varying highp vec2 vTextureCoord;
 varying highp vec4 vAtlasCoord;
+varying highp float depth;
 
 void main(void) {
   gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
   vTextureCoord = aTextureCoord;
   vAtlasCoord = aAtlasCoord;
+  depth = gl_Position.z;
 }
 `
 
-//varying highp float depth;
 const fsSource = `
 varying highp vec2 vTextureCoord;
 varying highp vec4 vAtlasCoord;
+varying highp float depth;
 
 uniform highp float uLightLevel;
 uniform sampler2D uSamplerAtlas;
 uniform sampler2D uSamplerPalette;
 uniform sampler2D uSamplerColourMap;
 
+const highp float MIN_LIGHT = 32.0 / 34.0;
+const highp float ONE_LIGHT_LEVEL = 1.0 / 34.0;
+const highp float MAX_DIMINISH = 12.0 * ONE_LIGHT_LEVEL;
+
 void main(void) {
    highp vec2 sampleCoords = mix(vec2(vAtlasCoord.rg), vec2(vAtlasCoord.ba), fract(vTextureCoord));
    highp vec2 cmindex = texture2D(uSamplerAtlas, sampleCoords.yx).rg;
    if(cmindex.g < 0.5)
       discard;
-   highp float index = texture2D(uSamplerColourMap, vec2(cmindex.r, uLightLevel)).a;
+   highp float diminish = clamp((depth / 20.0 - 16.0) * ONE_LIGHT_LEVEL, -MAX_DIMINISH, MAX_DIMINISH);
+   highp float final_light = clamp(uLightLevel + diminish, 0.0, MIN_LIGHT);
+   highp float index = texture2D(uSamplerColourMap, vec2(cmindex.r, final_light)).a;
    highp vec3 colour = texture2D(uSamplerPalette, vec2(index, 0.5)).rgb;
    gl_FragColor = vec4(colour, 1.0);
 }
@@ -95,14 +99,6 @@ window.addEventListener(
     false
 )
 
-const getWad = async (url: string): Promise<Wad> => {
-    const response = await fetch(url)
-    const blob = await response.blob()
-    const array = await new Response(blob).arrayBuffer()
-    const buffer = Buffer.from(array)
-    return readWad(buffer)
-}
-
 const forward = (camera: Camera, speed: number): void => {
     const result: vec2 = [0, 0]
     vec2.rotate(result, [0, speed], [0, 0], -camera.rotation)
@@ -120,13 +116,15 @@ const main = async () => {
             throw new Error('Unable to acquire webgl context')
         }
 
-        console.info('Loading')
-        const wad = await getWad('doom.wad')
+        console.info('Loading...')
+        const wad = await fetchWad('doom.wad')
         console.info('Loaded doom.wad')
         const atlas = createAtlas(wad, 4096)
-        console.info('Built texture atlas')
-        const map = createMapGeometry(gl, wad, atlas, 'e1m1')
         const texture = createIndexedTexture(gl, atlas.image, 4096)
+        const palette = createPalette(gl, wad.playpal.palettes[0].colours)
+        const colourmaps = createColourMap(gl, wad.colormap.maps)
+        console.info('Built textures')
+        const map = createMapGeometry(gl, wad, atlas, 'e1m1')
         console.info('Built map geometry')
         const objects: Geometry[] = map.map((buffers, index) => ({
             position: [0.0, 0.0, 0.0],
@@ -138,9 +136,6 @@ const main = async () => {
 
         initialiseScene(gl)
         const program = createShaderProgram(gl, vsSource, fsSource)
-
-        const palette = createPalette(gl, wad.playpal.palettes[0].colours)
-        const colourmaps = createColourMap(gl, wad.colormap.maps)
 
         const camera = createCamera(gl, { fieldOfView: 45, zNear: 1, zFar: 100000 })
         camera.position = [2103.112593621454, 41.670000000014085, 2354.890666609926]

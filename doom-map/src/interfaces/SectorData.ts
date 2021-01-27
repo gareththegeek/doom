@@ -7,7 +7,8 @@ export interface LineLoop {
 }
 
 export interface FaceData {
-    loops: LineLoop[]
+    contour: LineLoop
+    holes: LineLoop[]
     isFlat: boolean
     isCeiling: boolean
 }

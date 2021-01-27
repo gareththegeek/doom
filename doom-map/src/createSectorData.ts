@@ -6,6 +6,7 @@ import { WadSector } from 'doom-wad/dist/interfaces/WadSectorsLump'
 import { WadSideDef } from 'doom-wad/dist/interfaces/WadSideDefsLump'
 import { WadVertex } from 'doom-wad/dist/interfaces/WadVertexLump'
 import { vec2 } from 'gl-matrix'
+import { findPerimeterIndices, insidePerimeter } from './findPerimeters'
 import { FaceData, LineLoop, SectorData } from './interfaces/SectorData'
 import { processLoops } from './processLoops'
 
@@ -48,23 +49,22 @@ const buildFace = (
     return {
         isFlat: false,
         isCeiling: false,
-        loops: [
-            {
-                position: [
-                    [start.x, bottom, -start.y],
-                    [start.x, top, -start.y],
-                    [end.x, top, -end.y],
-                    [end.x, bottom, -end.y]
-                ],
-                texture: [
-                    [x0, y1],
-                    [x0, y0],
-                    [x1, y0],
-                    [x1, y1]
-                ],
-                atlas: [[...bounds], [...bounds], [...bounds], [...bounds]]
-            }
-        ]
+        holes: [],
+        contour: {
+            position: [
+                [start.x, bottom, -start.y],
+                [start.x, top, -start.y],
+                [end.x, top, -end.y],
+                [end.x, bottom, -end.y]
+            ],
+            texture: [
+                [x0, y1],
+                [x0, y0],
+                [x1, y0],
+                [x1, y1]
+            ],
+            atlas: [[...bounds], [...bounds], [...bounds], [...bounds]]
+        }
     }
 }
 
@@ -175,29 +175,37 @@ const addWalls = (sectorlist: SectorData[], map: WadMapLump, atlas: TextureAtlas
 
 const addFlats = (sectorlist: SectorData[], map: WadMapLump, atlas: TextureAtlas): void => {
     map.sectors.forEach((sector, index) => {
+        if (index === 1) {
+            debugger
+        }
         const { adjacency, faces } = sectorlist[index]
 
         const loopIndices = processLoops(adjacency)
+        const vertexLoops = loopIndices.map((indices) => indices.map((index) => map.vertices[index]))
+        const perimeterIndices = findPerimeterIndices(vertexLoops)
 
-        const floorLoops = loopIndices.map((loopIndices) => {
-            const vertices = loopIndices.map((index) => map.vertices[index])
-            return buildFlat(vertices, sector.floorHeight, atlas.lookup[sector.floorTexture])
-        })
+        const loops = perimeterIndices.map((perimeterIndex) => ({
+            contour: vertexLoops[perimeterIndex],
+            holes: vertexLoops.filter(
+                (vl, i) => i !== perimeterIndex && insidePerimeter(vertexLoops[perimeterIndex], vl)
+            )
+        }))
 
-        const ceilingLoops = loopIndices.map((loopIndices) => {
-            const vertices = loopIndices.map((index) => map.vertices[index])
-            return buildFlat(vertices, sector.ceilingHeight, atlas.lookup[sector.ceilingTexture])
-        })
-
-        faces.push({
-            isFlat: true,
-            isCeiling: false,
-            loops: floorLoops
-        })
-        faces.push({
-            isFlat: true,
-            isCeiling: true,
-            loops: ceilingLoops
+        loops.map((loop) => {
+            const floorTexture = atlas.lookup[sector.floorTexture]
+            const ceilingTexture = atlas.lookup[sector.ceilingTexture]
+            faces.push({
+                isFlat: true,
+                isCeiling: false,
+                contour: buildFlat(loop.contour, sector.floorHeight, floorTexture),
+                holes: loop.holes.map((hole) => buildFlat(hole, sector.floorHeight, floorTexture))
+            })
+            faces.push({
+                isFlat: true,
+                isCeiling: true,
+                contour: buildFlat(loop.contour, sector.ceilingHeight, ceilingTexture),
+                holes: loop.holes.map((hole) => buildFlat(hole, sector.ceilingHeight, ceilingTexture))
+            })
         })
     })
 }

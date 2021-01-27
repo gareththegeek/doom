@@ -1,8 +1,7 @@
 import { BufferSetParams } from 'doom-video/dist/buffers/BufferSetParams'
-import { FaceData, LineLoop, SectorData } from './interfaces/SectorData'
+import { FaceData, SectorData } from './interfaces/SectorData'
 import { Line, Point, Triangulator } from 'pnltri'
-import { vec2, vec3 } from 'gl-matrix'
-import { pointInPolygon } from './pointInPolygon'
+import { vec3 } from 'gl-matrix'
 
 const triangulateWall = (base: number): number[] => [base + 0, base + 1, base + 2, base + 0, base + 2, base + 3]
 
@@ -11,41 +10,12 @@ const flatVecToPoint = (position3: vec3): Point => ({
     y: position3[2]
 })
 
-const flatVec3ToVec2 = (vec3: vec3): vec2 => [vec3[0], vec3[2]]
-
-const findPerimiter = (loops: LineLoop[]): number => {
-    const loops2d = loops.map((loop) => loop.position.map(flatVec3ToVec2))
-    for (let i = 0; i < loops.length; i++) {
-        let isPerimeter = true
-        for (let j = 0; j < loops.length; j++) {
-            if (i === j) {
-                continue
-            }
-
-            if (loops2d[i].filter((p) => pointInPolygon(p, loops2d[j])).length > 0) {
-                isPerimeter = false
-                break
-            }
-        }
-        if (isPerimeter) {
-            return i
-        }
-    }
-    throw new Error('No perimeter, what!?')
-}
-
 const triangulateFlat = (face: FaceData, base: number): number[] => {
     const triangulator = new Triangulator()
 
-    const perimeterIndex = face.loops.length === 1 ? 0 : findPerimiter(face.loops)
-    const perimeter = face.loops.splice(perimeterIndex, 1)[0]
+    const contour = face.contour.position.map(flatVecToPoint)
+    const holes = face.holes.map((hole) => hole.position.map(flatVecToPoint))
 
-    const contour = perimeter.position.map(flatVecToPoint)
-
-    let holes: Line[] = []
-    if (face.loops.length > 0) {
-        holes = face.loops.map((loop) => loop.position.map(flatVecToPoint))
-    }
     const result = triangulator.triangulate_polygon([contour, ...holes])
     return result.flatMap((face) => face.map((point) => point + base))
 }
@@ -53,13 +23,17 @@ const triangulateFlat = (face: FaceData, base: number): number[] => {
 const triangulate = (face: FaceData, base: number): number[] =>
     face.isFlat ? triangulateFlat(face, base) : triangulateWall(base)
 
-const buildSectorParams = (sector: SectorData): BufferSetParams => {
+const buildSectorParams = (sector: SectorData, index: number): BufferSetParams => {
     const params: BufferSetParams = { positions: [], indices: [], textures: [], atlas: [] }
     let base = 0
+    // if (index === 28) {
+    //     debugger
+    // }
     sector.faces.forEach((face) => {
-        const newPositions = face.loops.flatMap((loop) => loop.position)
-        const newTextures = face.loops.flatMap((loop) => loop.texture)
-        const newAtlas = face.loops.flatMap((loop) => loop.atlas)
+        const all = [face.contour, ...face.holes]
+        const newPositions = all.flatMap((loop) => loop.position)
+        const newTextures = all.flatMap((loop) => loop.texture)
+        const newAtlas = all.flatMap((loop) => loop.atlas)
         const newIndices = triangulate(face, base)
 
         params.positions = params.positions.concat(newPositions)
@@ -74,4 +48,4 @@ const buildSectorParams = (sector: SectorData): BufferSetParams => {
 }
 
 export const createSectorBufferSetParams = (sectorlist: SectorData[]): BufferSetParams[] =>
-    sectorlist.map((sector) => buildSectorParams(sector))
+    sectorlist.map((sector, i) => buildSectorParams(sector, i))

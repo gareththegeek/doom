@@ -37,7 +37,7 @@ const renderGeometry = (
     gl.uniform1f(program.uniformLocations.lightLevel, ((1 - geometry.light / 255) * 32) / 34)
 
     bindBufferSet(gl, program, geometry.buffers)
-    renderBufferSet(gl, geometry.buffers)
+    renderBufferSet(gl, geometry)
 }
 
 const bindTextures = (gl: WebGL2RenderingContext, { texture, palette, colourmaps }: Scene): void => {

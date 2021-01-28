@@ -5,9 +5,9 @@ import { WadThing } from 'doom-wad/dist/interfaces/WadThingsLump'
 import { SectorThing } from 'doom-map/dist/interfaces/SectorInfo'
 import { Sector } from '../interfaces/Sector'
 import { Thing } from '../interfaces/Thing'
-import { ThingTypeNames } from './ThingTypeNames'
+import { ThingInfo, ThingInfoLookup } from './ThingInfoLookup'
 
-const getName = (type: number): string => ThingTypeNames[type]
+const getInfo = (type: number): ThingInfo => ThingInfoLookup[type]
 
 const createThing = (
     gl: WebGL2RenderingContext,
@@ -16,8 +16,8 @@ const createThing = (
     wadThing: WadThing,
     index: number
 ): Thing => {
-    const spriteName = getName(wadThing.thingType)
-    if (spriteName === '-') {
+    const info = getInfo(wadThing.thingType)
+    if (info.sprite === '-') {
         return {
             index,
             type: wadThing.thingType,
@@ -26,7 +26,7 @@ const createThing = (
         }
     }
 
-    const geometry = createSprite(gl, atlas, spriteName)
+    const geometry = createSprite(gl, atlas, info.sprite, info.sequence)
     geometry.position = [wadThing.x, sector.floorHeight, -wadThing.y]
     //TODO is wad angle === rotation?
     geometry.rotation = ((wadThing.angle - 90) * Math.PI) / 180.0

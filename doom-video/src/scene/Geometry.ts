@@ -6,4 +6,6 @@ export interface Geometry extends SceneObject {
     light: number
     flat: boolean
     visible: boolean
+    frame?: number
+    frameCount?: number
 }

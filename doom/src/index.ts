@@ -70,6 +70,7 @@ void main(void) {
 let noclip = false
 let loadMap: (mapName: string) => any
 let player: Thing | undefined
+let things: Thing[]
 let scene: Scene
 
 var Key = {
@@ -171,7 +172,7 @@ const main = async () => {
             console.info('Built map geometry')
             const sectors = createSectors(wadMap, map)
             linkSidesToSectors(wadMap, sectors)
-            const things = createThings(
+            things = createThings(
                 gl,
                 atlas,
                 wadMap,
@@ -204,12 +205,23 @@ const main = async () => {
 
         // let last = 0
         let then = 0
+        let lastAnim = 0
         const render = (now: number) => {
             now *= 0.001
             const deltaTime = now - then
             then = now
 
             const geometry = player!.geometry!
+
+            if (now - lastAnim > 0.2) {
+                things.forEach((thing) => {
+                    if (thing.geometry !== undefined) {
+                        thing.geometry.frame = (thing.geometry.frame! + 1) % thing.geometry.frameCount!
+                        //console.log(thing.geometry.frame)
+                    }
+                })
+                lastAnim = now
+            }
 
             if (Key.isDown(Key.UP)) forward(player, deltaTime * 500)
             if (Key.isDown(Key.LEFT)) geometry.rotation += deltaTime * 3

@@ -47,4 +47,10 @@ export const createThings = (
     sectors: Sector[],
     sectorThings: SectorThing[][]
 ): Thing[] =>
-    sectorThings.flat().map((st) => createThing(gl, atlas, sectors[st.sector], map.things[st.thing], st.thing))
+    sectorThings
+        .flat()
+        .filter((st) => {
+            const thing = map.things[st.thing]
+            return !thing.flags.multiplayerOnly && thing.flags.skill45
+        })
+        .map((st) => createThing(gl, atlas, sectors[st.sector], map.things[st.thing], st.thing))

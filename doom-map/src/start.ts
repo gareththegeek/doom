@@ -1,11 +1,12 @@
 import { readWad } from 'doom-wad'
 import { createAtlas } from 'doom-atlas/dist/index'
 import * as path from 'path'
-import { createSectorData } from './createSectorData'
+import { buildSectorList } from './buildSectorList'
 import { createSectorBufferSetParams } from './createSectorBufferSetParams'
 import { Wad } from 'doom-wad/dist/interfaces/Wad'
 
 import * as fs from 'fs'
+import { findSectorsThings } from './findSectorsThings'
 
 export const readFile = async (filename: string): Promise<Wad | null> =>
     new Promise((resolve, reject) => {
@@ -26,7 +27,8 @@ export const readFile = async (filename: string): Promise<Wad | null> =>
             throw new Error('Unable to load doom.wad')
         }
         const atlas = createAtlas(wad, 4096)
-        const sectorlist = createSectorData(wad, atlas, 'e1m1')
+        const sectorlist = buildSectorList(wad.maps['e1m1'], atlas)
+        const things = findSectorsThings(sectorlist, wad.maps['e1m1'].things)
         const params = createSectorBufferSetParams(sectorlist)
         console.log(params)
     } catch (e) {

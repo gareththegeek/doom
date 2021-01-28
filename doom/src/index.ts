@@ -7,14 +7,15 @@ import {
     createShaderProgram,
     createCamera,
     initialiseScene,
-    renderScene,
-    createSprite
+    renderScene
 } from 'doom-video'
 import { fetchWad } from 'doom-wad'
 import { createAtlas } from 'doom-atlas'
 import { createMapGeometry } from 'doom-map'
 import { Camera } from 'doom-video/dist/scene/Camera'
-import { ThingTypeNames } from './ThingTypeNames'
+import { createThings } from './things/createThing'
+import { createSectors } from './sectors/createSectors'
+import { linkSidesToSectors } from './sectors/linkSidesToSectors'
 
 const vsSource = `
 attribute vec4 aVertexPosition;
@@ -110,8 +111,6 @@ const forward = (camera: Camera, speed: number): void => {
     camera.position[2] -= result[1]
 }
 
-const getName = (type: number): string => ThingTypeNames[type]
-
 const main = async () => {
     try {
         const canvas = document.querySelector('#canvas') as HTMLCanvasElement
@@ -129,30 +128,25 @@ const main = async () => {
         const palette = createPalette(gl, wad.playpal.palettes[0].colours)
         const colourmaps = createColourMap(gl, wad.colormap.maps)
         console.info('Built textures')
-        const map = createMapGeometry(gl, wad, atlas, 'e1m1')
+
+        const mapName = 'e1m1'
+        console.log(`Loading map ${mapName}`)
+        const wadMap = wad.maps[mapName]
+        const map = createMapGeometry(gl, wad, atlas, mapName)
         console.info('Built map geometry')
-        const sectors: Geometry[] = map.map((buffers, index) => ({
-            position: [0.0, 0.0, 0.0],
-            rotation: 0,
-            buffers,
-            flat: false,
-            light: wad.maps['e1m1'].sectors[index].lightLevel
-        }))
+        const sectors = createSectors(wadMap, map)
+        linkSidesToSectors(wadMap, sectors)
+        const things = createThings(
+            gl,
+            atlas,
+            wadMap,
+            sectors,
+            map.map((info) => info.things)
+        )
+        console.log(things)
         console.info('Prepared scene')
 
-        const things = wad.maps['e1m1'].things
-            .filter((thing) => getName(thing.thingType) !== '-')
-            .map((thing) => {
-                const sprite = createSprite(gl, atlas, getName(thing.thingType))
-                sprite.position = [thing.x, 0, -thing.y] //TODO need to find sector to get height :/
-                return sprite
-            })
-
-        console.log(things)
-        const objects = [...sectors, ...things]
-        // const imp = createSprite(gl, atlas, 'trooa1')
-        // imp.position = [1760, 0, 2206]
-        // objects.push(imp)
+        const objects = [...sectors.map((sector) => sector.geometry), ...things.map((thing) => thing.geometry)]
 
         initialiseScene(gl)
         const program = createShaderProgram(gl, vsSource, fsSource)
@@ -163,7 +157,7 @@ const main = async () => {
 
         const scene = {
             camera,
-            objects,
+            objects: objects.filter((object) => object !== undefined) as Geometry[],
             texture,
             palette,
             colourmaps

@@ -175,9 +175,6 @@ const addWalls = (sectorlist: SectorData[], map: WadMapLump, atlas: TextureAtlas
 
 const addFlats = (sectorlist: SectorData[], map: WadMapLump, atlas: TextureAtlas): void => {
     map.sectors.forEach((sector, index) => {
-        if (index === 1) {
-            debugger
-        }
         const { adjacency, faces } = sectorlist[index]
 
         const loopIndices = processLoops(adjacency)
@@ -210,20 +207,11 @@ const addFlats = (sectorlist: SectorData[], map: WadMapLump, atlas: TextureAtlas
     })
 }
 
-const buildSectorList = (map: WadMapLump, atlas: TextureAtlas): SectorData[] => {
+export const buildSectorList = (map: WadMapLump, atlas: TextureAtlas): SectorData[] => {
     const sectorlist = map.sectors.map(() => ({ adjacency: [], faces: [] }))
 
     addWalls(sectorlist, map, atlas)
     addFlats(sectorlist, map, atlas)
 
     return sectorlist
-}
-
-export const createSectorData = (wad: Wad, atlas: TextureAtlas, name: string): SectorData[] => {
-    const wadmap = wad.maps[name]
-    if (!wadmap) {
-        throw new Error(`Unable to locate map ${name}`)
-    }
-
-    return buildSectorList(wadmap, atlas)
 }

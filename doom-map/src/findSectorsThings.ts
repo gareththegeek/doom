@@ -7,9 +7,6 @@ import { pointInPolygon } from './pointInPolygon'
 const vec3ToVec2 = (pos: vec3): vec2 => [pos[0], pos[2]]
 
 const thingInSector = (sectorData: SectorData, thing: WadThing, i: number, si: number): boolean => {
-    if (i === 87 && (si === 15 || si === 60)) {
-        debugger;
-    }
     const point = [thing.x, -thing.y] as vec2
     const floors = sectorData.faces.filter((face) => face.isFlat && !face.isCeiling)
     for (let floor of floors) {

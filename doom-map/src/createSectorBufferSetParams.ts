@@ -26,9 +26,6 @@ const triangulate = (face: FaceData, base: number): number[] =>
 const buildSectorParams = (sector: SectorData, index: number): BufferSetParams => {
     const params: BufferSetParams = { positions: [], indices: [], textures: [], atlas: [] }
     let base = 0
-    // if (index === 28) {
-    //     debugger
-    // }
     sector.faces.forEach((face) => {
         const all = [face.contour, ...face.holes]
         const newPositions = all.flatMap((loop) => loop.position)

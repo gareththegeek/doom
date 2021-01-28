@@ -35,7 +35,18 @@ interface CheckResult {
     collision: boolean
 }
 
-const sectorCheckInternal = (sector: Sector, p0: vec2, p1: vec2, skip: number): CheckResult => {
+const sectorCheckRecursive = (
+    sector: Sector,
+    p0: vec2,
+    p1: vec2,
+    skip: number,
+    count: number,
+    noclip: boolean
+): CheckResult => {
+    if (count === 5) {
+        console.warn('Recursive sector check called 5 times in a row, bailing out')
+        return { collision: false }
+    }
     for (let side of sector.sides) {
         if (side.index === skip) {
             continue
@@ -46,11 +57,20 @@ const sectorCheckInternal = (sector: Sector, p0: vec2, p1: vec2, skip: number): 
                 return { collision: true }
             }
             const next = side.other!.sector
-            if (next.floorHeight - sector.floorHeight > 24) {
-                return { collision: true }
+            if (!noclip) {
+                if (next.floorHeight - sector.floorHeight > 24) {
+                    return { collision: true }
+                }
+                // TODO reenable this when I get doors working!
+                // if (next.ceilingHeight - next.floorHeight < 56) {
+                //     return { collision: true }
+                // }
+                if (side.flags.blocks) {
+                    return { collision: true }
+                }
             }
 
-            const nextResult = sectorCheckInternal(next, p0, p1, side.other.index)
+            const nextResult = sectorCheckRecursive(next, p0, p1, side.other.index, count + 1, noclip)
             if (nextResult.collision || nextResult.newSector !== undefined) {
                 return nextResult
             }
@@ -70,8 +90,8 @@ const changeSector = (thing: Thing, next: Sector): void => {
     thing.geometry!.position[1] = next.floorHeight
 }
 
-export const sectorCheck = (thing: Thing, p0: vec2, p1: vec2): boolean => {
-    const result = sectorCheckInternal(thing.sector, p0, p1, -1)
+export const sectorCheck = (thing: Thing, p0: vec2, p1: vec2, noclip: boolean): boolean => {
+    const result = sectorCheckRecursive(thing.sector, p0, p1, -1, 1, noclip)
     if (result.newSector !== undefined) {
         changeSector(thing, result.newSector)
     }

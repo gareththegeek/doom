@@ -17,6 +17,7 @@ import { createSectors } from './sectors/createSectors'
 import { linkSidesToSectors } from './sectors/linkSidesToSectors'
 import { Thing } from './interfaces/Thing'
 import { sectorCheck } from './sectors/sectorCheck'
+import { Scene } from 'doom-video/dist/scene/Scene'
 
 const vsSource = `
 attribute vec4 aVertexPosition;
@@ -66,6 +67,11 @@ void main(void) {
 }
 `
 
+let noclip = false
+let loadMap: (mapName: string) => any
+let player: Thing | undefined
+let scene: Scene
+
 var Key = {
     _pressed: {} as { [keyCode: number]: boolean },
 
@@ -75,6 +81,7 @@ var Key = {
     DOWN: 40,
     Q: 81,
     A: 65,
+    code: 'AAAAAAAA',
 
     isDown: function (keyCode: number) {
         return this._pressed[keyCode]
@@ -82,6 +89,20 @@ var Key = {
 
     onKeydown: function (event: KeyboardEvent) {
         this._pressed[event.keyCode] = true
+        const letter = String.fromCharCode(event.keyCode)
+        if (/[A-Z0-9]/.test(letter)) {
+            this.code = this.code.substr(1) + letter
+            if (this.code.endsWith('IDCLIP')) {
+                noclip = !noclip
+                console.log(`noclip ${noclip}`)
+            }
+            if (/IDCLEV[1-4][1-9]/.test(this.code)) {
+                const e = this.code[this.code.length - 2]
+                const m = this.code[this.code.length - 1]
+                const mapName = `e${e}m${m}`
+                loadMap(mapName)
+            }
+        }
     },
 
     onKeyup: function (event: KeyboardEvent) {
@@ -104,7 +125,11 @@ window.addEventListener(
     false
 )
 
-const forward = (thing: Thing, speed: number): void => {
+const forward = (thing: Thing | undefined, speed: number): void => {
+    if (thing == undefined) {
+        return
+    }
+
     const geometry = thing.geometry!
     const result: vec2 = [0, 0]
     vec2.rotate(result, [0, speed], [0, 0], -geometry.rotation)
@@ -113,7 +138,7 @@ const forward = (thing: Thing, speed: number): void => {
     const t1 = vec2.create()
     vec2.subtract(t1, t0, result)
 
-    if (!sectorCheck(thing, t0, t1)) {
+    if (!sectorCheck(thing, t0, t1, noclip)) {
         return
     }
 
@@ -139,37 +164,40 @@ const main = async () => {
         const colourmaps = createColourMap(gl, wad.colormap.maps)
         console.info('Built textures')
 
-        const mapName = 'e1m1'
-        console.log(`Loading map ${mapName}`)
-        const wadMap = wad.maps[mapName]
-        const map = createMapGeometry(gl, wad, atlas, mapName)
-        console.info('Built map geometry')
-        const sectors = createSectors(wadMap, map)
-        linkSidesToSectors(wadMap, sectors)
-        const things = createThings(
-            gl,
-            atlas,
-            wadMap,
-            sectors,
-            map.map((info) => info.things)
-        )
-        const player = things.find((thing) => thing.type === 1)
-        if (player === undefined || player.geometry === undefined) {
-            throw new Error('Unable to find player start in level D:')
+        loadMap = (mapName: string) => {
+            console.log(`Loading map ${mapName}`)
+            const wadMap = wad.maps[mapName]
+            const map = createMapGeometry(gl, wad, atlas, mapName)
+            console.info('Built map geometry')
+            const sectors = createSectors(wadMap, map)
+            linkSidesToSectors(wadMap, sectors)
+            const things = createThings(
+                gl,
+                atlas,
+                wadMap,
+                sectors,
+                map.map((info) => info.things)
+            )
+            player = things.find((thing) => thing.type === 1)
+            if (player === undefined || player.geometry === undefined) {
+                throw new Error('Unable to find player start in level D:')
+            }
+            player.geometry.visible = false
+            const camera = createCamera(gl, { fieldOfView: 45, zNear: 1, zFar: 100000 })
+            camera.target = player.geometry
+            camera.position = [0.0, 48.0, 0.0]
+            const objects = [...sectors.map((sector) => sector.geometry), ...things.map((thing) => thing.geometry)]
+            scene = {
+                camera,
+                objects: objects.filter((object) => object !== undefined) as Geometry[],
+                texture,
+                palette,
+                colourmaps
+            }
+            console.info('Prepared scene')
         }
-        player.geometry.visible = false
-        const camera = createCamera(gl, { fieldOfView: 45, zNear: 1, zFar: 100000 })
-        camera.target = player.geometry
-        camera.position = [0.0, 56.0, 0.0]
-        const objects = [...sectors.map((sector) => sector.geometry), ...things.map((thing) => thing.geometry)]
-        const scene = {
-            camera,
-            objects: objects.filter((object) => object !== undefined) as Geometry[],
-            texture,
-            palette,
-            colourmaps
-        }
-        console.info('Prepared scene')
+
+        loadMap('e1m1')
 
         initialiseScene(gl)
         const program = createShaderProgram(gl, vsSource, fsSource)
@@ -181,7 +209,7 @@ const main = async () => {
             const deltaTime = now - then
             then = now
 
-            const geometry = player.geometry!
+            const geometry = player!.geometry!
 
             if (Key.isDown(Key.UP)) forward(player, deltaTime * 500)
             if (Key.isDown(Key.LEFT)) geometry.rotation += deltaTime * 3

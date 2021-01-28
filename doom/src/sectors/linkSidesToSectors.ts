@@ -21,8 +21,10 @@ const linkSideToSector = (
         start: [start.x, -start.y],
         end: [end.x, -end.y],
         sector,
+        flags: linedef.flags,
         other: undefined
     }
+
     sector.sides.push(side)
     if (wadOtherSide) {
         const otherSector = sectors[wadOtherSide.sector]
@@ -32,6 +34,7 @@ const linkSideToSector = (
             start: [end.x, -end.y],
             end: [start.x, -start.y],
             sector: otherSector,
+            flags: linedef.flags,
             other: side
         }
         side.other = other

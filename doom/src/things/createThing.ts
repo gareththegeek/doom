@@ -20,6 +20,7 @@ const createThing = (
     if (spriteName === '-') {
         return {
             index,
+            type: wadThing.thingType,
             geometry: undefined,
             sector
         }
@@ -28,12 +29,14 @@ const createThing = (
     const geometry = createSprite(gl, atlas, spriteName)
     geometry.position = [wadThing.x, sector.floorHeight, -wadThing.y]
     //TODO is wad angle === rotation?
-    geometry.rotation = (wadThing.angle * Math.PI) / 180.0
+    geometry.rotation = ((wadThing.angle - 90) * Math.PI) / 180.0
+    geometry.light = sector.lightLevel
 
     const thing = {
         index,
         geometry,
-        sector
+        sector,
+        type: wadThing.thingType
     }
     sector.things.push(thing)
 

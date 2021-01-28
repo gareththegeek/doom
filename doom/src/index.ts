@@ -16,6 +16,9 @@ import { Camera } from 'doom-video/dist/scene/Camera'
 import { createThings } from './things/createThing'
 import { createSectors } from './sectors/createSectors'
 import { linkSidesToSectors } from './sectors/linkSidesToSectors'
+import { SceneObject } from 'doom-video/dist/scene/SceneObject'
+import { Thing } from './interfaces/Thing'
+import { sectorCheck } from './sectors/sectorCheck'
 
 const vsSource = `
 attribute vec4 aVertexPosition;
@@ -103,12 +106,21 @@ window.addEventListener(
     false
 )
 
-const forward = (camera: Camera, speed: number): void => {
+const forward = (thing: Thing, speed: number): void => {
+    const geometry = thing.geometry!
     const result: vec2 = [0, 0]
-    vec2.rotate(result, [0, speed], [0, 0], -camera.rotation)
+    vec2.rotate(result, [0, speed], [0, 0], -geometry.rotation)
 
-    camera.position[0] -= result[0]
-    camera.position[2] -= result[1]
+    const t0 = [geometry.position[0], geometry.position[2]] as vec2
+    const t1 = vec2.create()
+    vec2.subtract(t1, t0, result)
+
+    if (!sectorCheck(thing, t0, t1)) {
+        return
+    }
+
+    geometry.position[0] = t1[0]
+    geometry.position[2] = t1[1]
 }
 
 const main = async () => {
@@ -143,18 +155,15 @@ const main = async () => {
             sectors,
             map.map((info) => info.things)
         )
-        console.log(things)
-        console.info('Prepared scene')
-
-        const objects = [...sectors.map((sector) => sector.geometry), ...things.map((thing) => thing.geometry)]
-
-        initialiseScene(gl)
-        const program = createShaderProgram(gl, vsSource, fsSource)
-
+        const player = things.find((thing) => thing.type === 1)
+        if (player === undefined || player.geometry === undefined) {
+            throw new Error('Unable to find player start in level D:')
+        }
+        player.geometry.visible = false
         const camera = createCamera(gl, { fieldOfView: 45, zNear: 1, zFar: 100000 })
-        camera.position = [2103.112593621454, 41.670000000014085, 2354.890666609926]
-        camera.rotation = 7.491532653589783
-
+        camera.target = player.geometry
+        camera.position = [0.0, 56.0, 0.0]
+        const objects = [...sectors.map((sector) => sector.geometry), ...things.map((thing) => thing.geometry)]
         const scene = {
             camera,
             objects: objects.filter((object) => object !== undefined) as Geometry[],
@@ -162,6 +171,10 @@ const main = async () => {
             palette,
             colourmaps
         }
+        console.info('Prepared scene')
+
+        initialiseScene(gl)
+        const program = createShaderProgram(gl, vsSource, fsSource)
 
         // let last = 0
         let then = 0
@@ -170,12 +183,14 @@ const main = async () => {
             const deltaTime = now - then
             then = now
 
-            if (Key.isDown(Key.UP)) forward(camera, deltaTime * 500)
-            if (Key.isDown(Key.LEFT)) camera.rotation += deltaTime * 3
-            if (Key.isDown(Key.DOWN)) forward(camera, -deltaTime * 500)
-            if (Key.isDown(Key.RIGHT)) camera.rotation -= deltaTime * 3
-            if (Key.isDown(Key.Q)) camera.position[1] += deltaTime * 500
-            if (Key.isDown(Key.A)) camera.position[1] -= deltaTime * 500
+            const geometry = player.geometry!
+
+            if (Key.isDown(Key.UP)) forward(player, deltaTime * 500)
+            if (Key.isDown(Key.LEFT)) geometry.rotation += deltaTime * 3
+            if (Key.isDown(Key.DOWN)) forward(player, -deltaTime * 500)
+            if (Key.isDown(Key.RIGHT)) geometry.rotation -= deltaTime * 3
+            if (Key.isDown(Key.Q)) geometry.position[1] += deltaTime * 500
+            if (Key.isDown(Key.A)) geometry.position[1] -= deltaTime * 500
 
             renderScene(gl, program, scene)
 

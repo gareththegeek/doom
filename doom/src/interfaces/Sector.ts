@@ -6,6 +6,7 @@ export interface Sector {
     index: number
     floorHeight: number
     ceilingHeight: number
+    lightLevel: number
     geometry: Geometry
     things: Thing[]
     sides: Side[]

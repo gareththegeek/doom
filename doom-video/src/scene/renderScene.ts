@@ -20,6 +20,10 @@ const renderGeometry = (
     camera: Camera,
     geometry: Geometry
 ): void => {
+    if (!geometry.visible) {
+        return
+    }
+
     const modelView = mat4.multiply(mat4.create(), getModelView(camera), getModelView(geometry))
     if (geometry.flat) {
         modelView[0] = 1.0

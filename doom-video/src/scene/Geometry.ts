@@ -5,4 +5,5 @@ export interface Geometry extends SceneObject {
     buffers: BufferSet
     light: number
     flat: boolean
+    visible: boolean
 }

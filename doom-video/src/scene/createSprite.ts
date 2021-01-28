@@ -37,6 +37,7 @@ export const createSprite = (gl: WebGL2RenderingContext, atlas: TextureAtlas, na
         rotation: 0,
         buffers,
         flat: true,
-        light: 144 //TODO
+        light: 0,
+        visible: true
     }
 }

@@ -12,6 +12,7 @@ export const createCamera = (gl: WebGL2RenderingContext, { fieldOfView, zNear, z
     return {
         projection,
         position: [0, 0, 0],
-        rotation: 0
+        rotation: 0,
+        target: undefined
     }
 }

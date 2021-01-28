@@ -10,6 +10,7 @@ const createSector = (wadSector: WadSector, { buffers }: SectorInfo, index: numb
         rotation: 0,
         buffers,
         flat: false,
+        visible: true,
         light: wadSector.lightLevel
     }
 
@@ -17,6 +18,7 @@ const createSector = (wadSector: WadSector, { buffers }: SectorInfo, index: numb
         index,
         floorHeight: wadSector.floorHeight,
         ceilingHeight: wadSector.ceilingHeight,
+        lightLevel: wadSector.lightLevel,
         geometry,
         things: [],
         sides: []

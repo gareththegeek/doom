@@ -12,11 +12,9 @@ import {
 import { fetchWad } from 'doom-wad'
 import { createAtlas } from 'doom-atlas'
 import { createMapGeometry } from 'doom-map'
-import { Camera } from 'doom-video/dist/scene/Camera'
 import { createThings } from './things/createThing'
 import { createSectors } from './sectors/createSectors'
 import { linkSidesToSectors } from './sectors/linkSidesToSectors'
-import { SceneObject } from 'doom-video/dist/scene/SceneObject'
 import { Thing } from './interfaces/Thing'
 import { sectorCheck } from './sectors/sectorCheck'
 

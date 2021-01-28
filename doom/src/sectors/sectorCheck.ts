@@ -1,4 +1,6 @@
 import { vec2 } from 'gl-matrix'
+import { Sector } from '../interfaces/Sector'
+import { Side } from '../interfaces/Side'
 import { Thing } from '../interfaces/Thing'
 
 // const turn = (p1: vec2, p2: vec2, p3: vec2): -1 | 0 | 1 => {
@@ -28,24 +30,50 @@ const removeThing = (thing: Thing): void => {
     thing.sector.things.splice(index, 1)
 }
 
-export const sectorCheck = (thing: Thing, p0: vec2, p1: vec2): boolean => {
-    for (let side of thing.sector.sides) {
+interface CheckResult {
+    newSector?: Sector
+    collision: boolean
+}
+
+const sectorCheckInternal = (sector: Sector, p0: vec2, p1: vec2, skip: number): CheckResult => {
+    for (let side of sector.sides) {
+        if (side.index === skip) {
+            continue
+        }
+
         if (isIntersecting(p0, p1, side.start, side.end)) {
             if (side.other === undefined) {
-                return false
+                return { collision: true }
             }
             const next = side.other!.sector
-            if (next.floorHeight - thing.sector.floorHeight > 24) {
-                return false
+            if (next.floorHeight - sector.floorHeight > 24) {
+                return { collision: true }
             }
-            console.log(`Sector ${thing.sector.index} -> ${next.index}`)
-            //If side.other is undefined we've hit a wall
-            removeThing(thing)
-            next.things.push(thing)
-            thing.sector = next
-            thing.geometry!.position[1] = next.floorHeight
-            return true
+
+            const nextResult = sectorCheckInternal(next, p0, p1, side.other.index)
+            if (nextResult.collision || nextResult.newSector !== undefined) {
+                return nextResult
+            }
+
+            return { collision: false, newSector: next }
         }
     }
-    return true
+    return { collision: false }
+}
+
+const changeSector = (thing: Thing, next: Sector): void => {
+    console.log(`Sector ${thing.sector.index} -> ${next.index}`)
+    //If side.other is undefined we've hit a wall
+    removeThing(thing)
+    next.things.push(thing)
+    thing.sector = next
+    thing.geometry!.position[1] = next.floorHeight
+}
+
+export const sectorCheck = (thing: Thing, p0: vec2, p1: vec2): boolean => {
+    const result = sectorCheckInternal(thing.sector, p0, p1, -1)
+    if (result.newSector !== undefined) {
+        changeSector(thing, result.newSector)
+    }
+    return !result.collision
 }

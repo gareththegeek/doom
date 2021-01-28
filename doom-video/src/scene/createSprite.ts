@@ -5,7 +5,13 @@ import { Geometry } from './Geometry'
 
 export const createSprite = (gl: WebGL2RenderingContext, atlas: TextureAtlas, name: string): Geometry => {
     //trooa1 41x57
-    const entry = atlas.lookup[name]
+    const entrya0 = atlas.lookup[`${name}a0`]
+    const entrya1 = atlas.lookup[`${name}a1`]
+    const entry = entrya0 ?? entrya1
+    if (entry === undefined) {
+        console.log(name)
+        throw new Error(`Just can't find that sprite '${name}'`)
+    }
     const atlasCoord: vec4 = [entry.left, entry.bottom, entry.right, entry.top]
     const hx = entry.pixelWidth / 2
     const he = entry.pixelHeight

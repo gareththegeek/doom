@@ -5,7 +5,7 @@ describe('readString', () => {
         const expected = 'I am a string'
         const buffer = Buffer.from(`1234${expected}5678`)
         const actual = readString(buffer, 4, expected.length + 4)
-        expect(actual).toEqual(expected)
+        expect(actual).toEqual(expected.toLowerCase())
     })
 
     it('removes null characters', () => {

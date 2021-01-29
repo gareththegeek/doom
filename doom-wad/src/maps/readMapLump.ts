@@ -30,7 +30,6 @@ export const readMapLump = (data: Buffer, entry: WadDirectoryEntry, directory?: 
     if (lumpIndex === -1) {
         throw new Error(`Unable to find wad directory entry ${entry.name}`)
     }
-
     return {
         things: readThingsLump(data, directory.entries[lumpIndex + MapLumpOffset.things]),
         linedefs: readLineDefsLump(data, directory.entries[lumpIndex + MapLumpOffset.linedefs]),

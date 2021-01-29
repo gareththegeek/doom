@@ -43,6 +43,19 @@
                 "<node_internals>/**"
             ],
             "type": "pwa-node"
+        },
+        {
+            "name": "Debug Wad Tests",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/doom-wad",
+            "runtimeArgs": [
+                "test"
+            ],
+            "runtimeExecutable": "yarn",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
         }
     ]
 }

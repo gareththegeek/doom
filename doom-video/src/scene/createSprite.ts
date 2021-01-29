@@ -55,10 +55,6 @@ export const createSprite = (
         params.atlas = params.atlas.concat(frame.atlas)
         base += frame.positions.length
     }
-    console.log(params.positions)
-    console.log(params.indices)
-    console.log(params.textures)
-    console.log(params.atlas)
 
     const buffers = createBufferSet(gl, params)
 

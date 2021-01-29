@@ -14,10 +14,11 @@ import { createAtlas } from 'doom-atlas'
 import { createMapGeometry } from 'doom-map'
 import { createThings } from './things/createThing'
 import { createSectors } from './sectors/createSectors'
-import { linkSidesToSectors } from './sectors/linkSidesToSectors'
+import { createLines } from './sectors/createLines'
 import { Thing } from './interfaces/Thing'
 import { sectorCheck } from './sectors/sectorCheck'
 import { Scene } from 'doom-video/dist/scene/Scene'
+import { createBlockMap } from './blockmap/createBlockMap'
 
 const vsSource = `
 attribute vec4 aVertexPosition;
@@ -171,7 +172,10 @@ const main = async () => {
             const map = createMapGeometry(gl, wad, atlas, mapName)
             console.info('Built map geometry')
             const sectors = createSectors(wadMap, map)
-            linkSidesToSectors(wadMap, sectors)
+            const lines = createLines(wadMap, sectors)
+            const blockmap = createBlockMap(wadMap.blockmap, lines)
+            console.log([wadMap.blockmap.xorigin,wadMap.blockmap.yorigin])
+            console.log(blockmap)
             things = createThings(
                 gl,
                 atlas,

@@ -13,7 +13,7 @@ describe('readDirectory', () => {
 
         const actual = readDirectory(wad)
 
-        expect(actual.identification).toEqual(expected)
+        expect(actual.identification).toEqual(expected.toLowerCase())
     })
 
     it('throws if identification is invalid', () => {
@@ -24,7 +24,7 @@ describe('readDirectory', () => {
         wad.writeInt32LE(0, 4)
         wad.writeInt32LE(0, 8)
 
-        expect(() => readDirectory(wad)).toThrow("Unsupported file format 'NWAD'")
+        expect(() => readDirectory(wad)).toThrow("Unsupported file format 'nwad'")
     })
 
     it('reads directory entries from wad', () => {
@@ -37,27 +37,7 @@ describe('readDirectory', () => {
         const actual = readDirectory(wad)
 
         expect(actual.entries.length).toEqual(expected.length)
-        expect(actual.entries[0]).toEqual({ ...expected[0], name: 'JOHN' })
-        expect(actual.entries[1]).toEqual({ ...expected[1], name: 'E1M1' })
-    })
-
-    it('sorts entries by filepos', () => {
-        const expected = [
-            { filepos: 123, size: 0, name: 'X' },
-            { filepos: 34, size: 0, name: 'X' },
-            { filepos: 2, size: 0, name: 'X' },
-            { filepos: 54, size: 0, name: 'X' },
-            { filepos: 98, size: 0, name: 'X' }
-        ]
-
-        const wad = buildWad(expected)
-        const actual = readDirectory(wad)
-
-        expect(actual.entries.length).toEqual(expected.length)
-        expect(actual.entries[0].filepos).toEqual(2)
-        expect(actual.entries[1].filepos).toEqual(34)
-        expect(actual.entries[2].filepos).toEqual(54)
-        expect(actual.entries[3].filepos).toEqual(98)
-        expect(actual.entries[4].filepos).toEqual(123)
+        expect(actual.entries[0]).toEqual({ ...expected[0], name: 'john' })
+        expect(actual.entries[1]).toEqual({ ...expected[1], name: 'e1m1' })
     })
 })

@@ -174,13 +174,12 @@ const main = async () => {
             const sectors = createSectors(wadMap, map)
             const lines = createLines(wadMap, sectors)
             const blockmap = createBlockMap(wadMap.blockmap, lines)
-            console.log([wadMap.blockmap.xorigin,wadMap.blockmap.yorigin])
-            console.log(blockmap)
             things = createThings(
                 gl,
                 atlas,
                 wadMap,
                 sectors,
+                blockmap,
                 map.map((info) => info.things)
             )
             player = things.find((thing) => thing.type === 1)

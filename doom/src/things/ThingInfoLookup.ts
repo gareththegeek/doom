@@ -38,6 +38,11 @@ const t = (
     artifact
 })
 
+// This guy should help
+//https://github.com/id-Software/DOOM/blob/77735c3ff0772609e9c8d29e3ce2ab42ff54d20b/linuxdoom-1.10/info.c
+// Also this dude
+//https://github.com/id-Software/DOOM/blob/77735c3ff0772609e9c8d29e3ce2ab42ff54d20b/linuxdoom-1.10/p_enemy.c
+
 export const ThingInfoLookup: { [type: number]: ThingInfo } = {
     1: t(16, 56, 'play', 'a', false, false, false, false, false, false, false), //	Player 1 start
     2: t(16, 56, 'play', 'a', false, false, false, false, false, false, false), //	Player 2 start

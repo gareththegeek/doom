@@ -20,6 +20,7 @@ export const thingCollisionCheck = (
 ): ThingCollisionCheckResult => {
     const potentialThings = blocks
         .flatMap((block) => block.things)
+        .filter((thing) => !!thing.geometry?.visible)
         .filter((thing) => thing.index !== index)
         .filter((thing) => thing.geometry !== undefined)
         .filter((thing) => {

@@ -48,7 +48,6 @@ export const lineCollisionCheck = (blocks: Block[], radius: number, p0: vec2, p1
             continue
         }
         if (other.sector.floorHeight - side.sector.floorHeight > 24) {
-            console.log(other.sector.floorHeight - side.sector.floorHeight)
             return { allow: false, lines }
         }
         // TODO enable this once doors and stuff work

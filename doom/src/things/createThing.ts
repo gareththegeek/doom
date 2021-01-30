@@ -7,7 +7,7 @@ import { Sector } from '../interfaces/Sector'
 import { Thing } from '../interfaces/Thing'
 import { ThingInfo, ThingInfoLookup } from './ThingInfoLookup'
 import { Block, BlockMap } from '../interfaces/BlockMap'
-import { getBlock } from '../blockmap/getBlock'
+import { getBlock } from '../collisions/getBlock'
 import { Geometry } from 'doom-video/dist/scene/Geometry'
 
 const getInfo = (type: number): ThingInfo => ThingInfoLookup[type]
@@ -38,7 +38,6 @@ const createThing = (
     const info = getInfo(wadThing.thingType)
 
     const block = getBlock(blockmap, [wadThing.x, -wadThing.y])
-
     if (info.sprite === '-') {
         return newThing(index, wadThing.thingType, undefined, sector, block)
     }

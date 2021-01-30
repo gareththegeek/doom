@@ -16,9 +16,10 @@ import { createThings } from './things/createThing'
 import { createSectors } from './sectors/createSectors'
 import { createLines } from './sectors/createLines'
 import { Thing } from './interfaces/Thing'
-import { sectorCheck } from './sectors/sectorCheck'
 import { Scene } from 'doom-video/dist/scene/Scene'
-import { createBlockMap } from './blockmap/createBlockMap'
+import { createBlockMap } from './collisions/createBlockMap'
+import { collisionCheck } from './collisions/collisionCheck'
+import { BlockMap } from './interfaces/BlockMap'
 
 const vsSource = `
 attribute vec4 aVertexPosition;
@@ -73,6 +74,7 @@ let loadMap: (mapName: string) => any
 let player: Thing | undefined
 let things: Thing[]
 let scene: Scene
+let blockmap: BlockMap
 
 var Key = {
     _pressed: {} as { [keyCode: number]: boolean },
@@ -137,11 +139,12 @@ const forward = (thing: Thing | undefined, speed: number): void => {
     vec2.rotate(result, [0, speed], [0, 0], -geometry.rotation)
 
     const t0 = [geometry.position[0], geometry.position[2]] as vec2
-    const t1 = vec2.create()
+    let t1 = vec2.create()
     vec2.subtract(t1, t0, result)
 
-    if (!sectorCheck(thing, t0, t1, noclip)) {
-        return
+    const postCollisionPosition = collisionCheck(blockmap, thing, t0, t1)
+    if (!noclip) {
+        t1 = postCollisionPosition
     }
 
     geometry.position[0] = t1[0]
@@ -173,7 +176,7 @@ const main = async () => {
             console.info('Built map geometry')
             const sectors = createSectors(wadMap, map)
             const lines = createLines(wadMap, sectors)
-            const blockmap = createBlockMap(wadMap.blockmap, lines)
+            blockmap = createBlockMap(wadMap.blockmap, lines)
             things = createThings(
                 gl,
                 atlas,

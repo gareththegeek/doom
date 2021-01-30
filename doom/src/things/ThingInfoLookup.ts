@@ -1,5 +1,5 @@
 export interface ThingInfo {
-    width: number
+    radius: number
     height: number
     sprite: string
     sequence: string
@@ -13,7 +13,7 @@ export interface ThingInfo {
 }
 
 const t = (
-    width: number,
+    radius: number,
     height: number,
     sprite: string,
     sequence: string,
@@ -25,7 +25,7 @@ const t = (
     weapon: boolean,
     artifact: boolean
 ): ThingInfo => ({
-    width,
+    radius,
     height,
     sprite,
     sequence,

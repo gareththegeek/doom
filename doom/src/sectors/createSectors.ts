@@ -21,7 +21,8 @@ const createSector = (wadSector: WadSector, { buffers }: SectorInfo, index: numb
         lightLevel: wadSector.lightLevel,
         geometry,
         things: [],
-        sides: []
+        sides: [],
+        tag: wadSector.tag
     }
 }
 

@@ -14,5 +14,5 @@ export const thingCollisionResponse = (thing: Thing, radius: number, p0: vec2, p
     const start = vec2.add(vec2.create(), pos, [sn[1], -sn[0]])
     const end = vec2.add(vec2.create(), pos, [-sn[1], sn[0]])
 
-    return lineCollisionResponse(start, end, radius + r2, p0, p1)
+    return lineCollisionResponse(start, end, radius + r2, p1)
 }

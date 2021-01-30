@@ -20,6 +20,8 @@ import { Scene } from 'doom-video/dist/scene/Scene'
 import { createBlockMap } from './collisions/createBlockMap'
 import { collisionCheck } from './collisions/collisionCheck'
 import { BlockMap } from './interfaces/BlockMap'
+import { use } from './collisions/use'
+import { Sector } from './interfaces/Sector'
 
 const vsSource = `
 attribute vec4 aVertexPosition;
@@ -74,6 +76,7 @@ let loadMap: (mapName: string) => any
 let player: Thing | undefined
 let things: Thing[]
 let scene: Scene
+let sectors: Sector[]
 let blockmap: BlockMap
 
 var Key = {
@@ -85,6 +88,7 @@ var Key = {
     DOWN: 40,
     Q: 81,
     A: 65,
+    SPACE: 32,
     code: 'AAAAAAAA',
 
     isDown: function (keyCode: number) {
@@ -93,6 +97,11 @@ var Key = {
 
     onKeydown: function (event: KeyboardEvent) {
         this._pressed[event.keyCode] = true
+        if (event.keyCode === Key.SPACE) {
+            if (player !== undefined) {
+                use(blockmap, sectors, player)
+            }
+        }
         const letter = String.fromCharCode(event.keyCode)
         if (/[A-Z0-9]/.test(letter)) {
             this.code = this.code.substr(1) + letter
@@ -174,7 +183,7 @@ const main = async () => {
             const wadMap = wad.maps[mapName]
             const map = createMapGeometry(gl, wad, atlas, mapName)
             console.info('Built map geometry')
-            const sectors = createSectors(wadMap, map)
+            sectors = createSectors(wadMap, map)
             const lines = createLines(wadMap, sectors)
             blockmap = createBlockMap(wadMap.blockmap, lines)
             things = createThings(

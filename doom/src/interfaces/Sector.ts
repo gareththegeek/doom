@@ -10,4 +10,5 @@ export interface Sector {
     geometry: Geometry
     things: Thing[]
     sides: Side[]
+    tag: number
 }

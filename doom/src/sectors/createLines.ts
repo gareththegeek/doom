@@ -61,6 +61,8 @@ export const createLines = (wadMap: WadMapLump, sectors: Sector[]): Line[] =>
             back,
             start,
             end,
-            flags: linedef.flags
+            flags: linedef.flags,
+            special: linedef.specialType,
+            sectorTag: linedef.sectorTag
         }
     })

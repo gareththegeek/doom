@@ -9,4 +9,6 @@ export interface Line {
     start: vec2
     end: vec2
     flags: WadLineDefFlags
+    special: number
+    sectorTag: number
 }

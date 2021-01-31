@@ -1,7 +1,4 @@
 import { vec2 } from 'gl-matrix'
-import { BlockMap } from '../interfaces/BlockMap'
-import { Thing } from '../interfaces/Thing'
-import { ThingInfoLookup } from '../things/ThingInfoLookup'
 import { blockCheck } from './blockCheck'
 import { lineCollisionResponse } from './lineCollisionResponse'
 import { getBlocks } from './getBlocks'
@@ -10,6 +7,7 @@ import { sectorCheck } from './sectorCheck'
 import { thingCollisionCheck, ThingCollisionCheckResult } from './thingCollisionCheck'
 import { thingCollisionResponse } from './thingCollisionResponse'
 import { pickups } from '../game/pickups'
+import { BlockMap, Thing, ThingInfoLookup } from 'doom-map'
 
 export const collisionCheck = (blockmap: BlockMap, thing: Thing, p0: vec2, p1: vec2): vec2 => {
     const blocks = getBlocks(blockmap, thing, p0, p1)

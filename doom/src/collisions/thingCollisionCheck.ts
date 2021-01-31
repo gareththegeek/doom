@@ -1,8 +1,7 @@
+import { Thing, ThingInfoLookup } from 'doom-map'
+import { Block } from 'doom-map/dist/interfaces/BlockMap'
 import { vec2, vec3 } from 'gl-matrix'
-import { Block } from '../interfaces/BlockMap'
-import { Thing } from '../interfaces/Thing'
 import { circleCircleIntersection } from '../maths/circleCircleIntersection'
-import { ThingInfoLookup } from '../things/ThingInfoLookup'
 
 export interface ThingCollisionCheckResult {
     allow: boolean

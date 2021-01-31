@@ -1,6 +1,6 @@
 import { BufferSetParams } from 'doom-video/dist/buffers/BufferSetParams'
-import { FaceData, SectorData } from './interfaces/SectorData'
-import { Line, Point, Triangulator } from 'pnltri'
+import { FaceData, SectorGeometryData } from '../interfaces/SectorGeometryData'
+import { Point, Triangulator } from 'pnltri'
 import { vec3 } from 'gl-matrix'
 
 const triangulateWall = (base: number): number[] => [base + 0, base + 1, base + 2, base + 0, base + 2, base + 3]
@@ -23,7 +23,7 @@ const triangulateFlat = (face: FaceData, base: number): number[] => {
 const triangulate = (face: FaceData, base: number): number[] =>
     face.isFlat ? triangulateFlat(face, base) : triangulateWall(base)
 
-const buildSectorParams = (sector: SectorData, index: number): BufferSetParams => {
+const buildSectorParams = (sector: SectorGeometryData, index: number): BufferSetParams => {
     const params: BufferSetParams = { positions: [], indices: [], textures: [], atlas: [] }
     let base = 0
     sector.faces.forEach((face) => {
@@ -44,5 +44,5 @@ const buildSectorParams = (sector: SectorData, index: number): BufferSetParams =
     return params
 }
 
-export const createSectorBufferSetParams = (sectorlist: SectorData[]): BufferSetParams[] =>
+export const createSectorBufferSetParams = (sectorlist: SectorGeometryData[]): BufferSetParams[] =>
     sectorlist.map((sector, i) => buildSectorParams(sector, i))

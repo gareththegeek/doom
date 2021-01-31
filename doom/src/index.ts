@@ -11,17 +11,11 @@ import {
 } from 'doom-video'
 import { fetchWad } from 'doom-wad'
 import { createAtlas } from 'doom-atlas'
-import { createMapGeometry } from 'doom-map'
-import { createThings } from './things/createThing'
-import { createSectors } from './sectors/createSectors'
-import { createLines } from './sectors/createLines'
-import { Thing } from './interfaces/Thing'
-import { Scene } from 'doom-video/dist/scene/Scene'
-import { createBlockMap } from './collisions/createBlockMap'
+import { BlockMap, createMap, Sector, Thing, Map } from 'doom-map'
 import { collisionCheck } from './collisions/collisionCheck'
-import { BlockMap } from './interfaces/BlockMap'
+import { Scene } from 'doom-video/dist/scene/Scene'
 import { use } from './collisions/use'
-import { Sector } from './interfaces/Sector'
+import { SkillType } from 'doom-map/dist/interfaces/MapFlags'
 
 const vsSource = `
 attribute vec4 aVertexPosition;
@@ -74,10 +68,8 @@ void main(void) {
 let noclip = false
 let loadMap: (mapName: string) => any
 let player: Thing | undefined
-let things: Thing[]
 let scene: Scene
-let sectors: Sector[]
-let blockmap: BlockMap
+let map: Map
 
 var Key = {
     _pressed: {} as { [keyCode: number]: boolean },
@@ -99,7 +91,7 @@ var Key = {
         this._pressed[event.keyCode] = true
         if (event.keyCode === Key.SPACE) {
             if (player !== undefined) {
-                use(blockmap, sectors, player)
+                use(map.blockmap, map.sectors, player)
             }
         }
         const letter = String.fromCharCode(event.keyCode)
@@ -151,7 +143,7 @@ const forward = (thing: Thing | undefined, speed: number): void => {
     let t1 = vec2.create()
     vec2.subtract(t1, t0, result)
 
-    const postCollisionPosition = collisionCheck(blockmap, thing, t0, t1)
+    const postCollisionPosition = collisionCheck(map.blockmap, thing, t0, t1)
     if (!noclip) {
         t1 = postCollisionPosition
     }
@@ -181,20 +173,10 @@ const main = async () => {
         loadMap = (mapName: string) => {
             console.log(`Loading map ${mapName}`)
             const wadMap = wad.maps[mapName]
-            const map = createMapGeometry(gl, wad, atlas, mapName)
-            console.info('Built map geometry')
-            sectors = createSectors(wadMap, map)
-            const lines = createLines(wadMap, sectors)
-            blockmap = createBlockMap(wadMap.blockmap, lines)
-            things = createThings(
-                gl,
-                atlas,
-                wadMap,
-                sectors,
-                blockmap,
-                map.map((info) => info.things)
-            )
-            player = things.find((thing) => thing.type === 1)
+            map = createMap(gl, atlas, wadMap, { multiplayer: false, skill: SkillType.skill45 })
+            console.info('Map loaded')
+            console.info('Configuring player')
+            player = map.things.find((thing) => thing.type === 1)
             if (player === undefined || player.geometry === undefined) {
                 throw new Error('Unable to find player start in level D:')
             }
@@ -202,7 +184,10 @@ const main = async () => {
             const camera = createCamera(gl, { fieldOfView: 45, zNear: 1, zFar: 100000 })
             camera.target = player.geometry
             camera.position = [0.0, 48.0, 0.0]
-            const objects = [...sectors.map((sector) => sector.geometry), ...things.map((thing) => thing.geometry)]
+            const objects = [
+                ...map.sectors.map((sector) => sector.geometry),
+                ...map.things.map((thing) => thing.geometry)
+            ]
             scene = {
                 camera,
                 objects: objects.filter((object) => object !== undefined) as Geometry[],
@@ -229,7 +214,7 @@ const main = async () => {
             const geometry = player!.geometry!
 
             if (now - lastAnim > 0.2) {
-                things.forEach((thing) => {
+                map.things.forEach((thing) => {
                     if (thing.geometry !== undefined) {
                         thing.geometry.frame = (thing.geometry.frame! + 1) % thing.geometry.frameCount!
                         //console.log(thing.geometry.frame)

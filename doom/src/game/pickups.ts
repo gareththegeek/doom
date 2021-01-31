@@ -1,5 +1,4 @@
-import { Thing } from '../interfaces/Thing'
-import { ThingInfoLookup } from '../things/ThingInfoLookup'
+import { Thing, ThingInfoLookup } from 'doom-map'
 
 export const pickups = (things: Thing[]): void => {
     const pickupable = things.filter((thing) => ThingInfoLookup[thing.type].pickup)

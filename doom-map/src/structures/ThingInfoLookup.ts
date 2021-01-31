@@ -1,3 +1,4 @@
+//TODO this doesn't belong in doom-map package
 export interface ThingInfo {
     radius: number
     height: number

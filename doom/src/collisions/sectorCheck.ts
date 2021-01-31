@@ -1,7 +1,5 @@
+import { Thing, Sector, Line } from 'doom-map'
 import { vec2 } from 'gl-matrix'
-import { Line } from '../interfaces/Line'
-import { Sector } from '../interfaces/Sector'
-import { Thing } from '../interfaces/Thing'
 import { findLineSideForPoint } from '../maths/findLineSideForPoint'
 import { lineLineIntersection } from '../maths/lineLineIntersection'
 

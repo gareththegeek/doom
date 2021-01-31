@@ -1,8 +1,6 @@
+import { BlockMap, Sector, Thing } from 'doom-map'
 import { vec2, vec3 } from 'gl-matrix'
 import { activate } from '../game/activate'
-import { BlockMap } from '../interfaces/BlockMap'
-import { Sector } from '../interfaces/Sector'
-import { Thing } from '../interfaces/Thing'
 import { lineLineIntersection } from '../maths/lineLineIntersection'
 import { getBlocks } from './getBlocks'
 

@@ -1,7 +1,6 @@
 import { WadLineDef } from 'doom-wad/dist/interfaces/WadLineDefsLump'
 import { WadMapLump } from 'doom-wad/dist/interfaces/WadMapLump'
 import { WadSideDef } from 'doom-wad/dist/interfaces/WadSideDefsLump'
-import { WadVertex } from 'doom-wad/dist/interfaces/WadVertexLump'
 import { vec2 } from 'gl-matrix'
 import { Line } from '../interfaces/Line'
 import { Sector } from '../interfaces/Sector'
@@ -20,12 +19,17 @@ const linkSideToSector = (
     const side: Side = {
         index: linedef.front,
         lineIndex,
+        lowerTexture: wadSide.lowerTexture,
+        middleTexture: wadSide.middleTexture,
+        upperTexture: wadSide.upperTexture,
+        xoffset: wadSide.xoffset,
+        yoffset: wadSide.yoffset,
         start,
         end,
         sector,
         flags: linedef.flags,
         other: undefined
-    }
+    } as Side
 
     sector.sides.push(side)
     let other: Side | undefined = undefined
@@ -34,12 +38,17 @@ const linkSideToSector = (
         other = {
             index: linedef.back,
             lineIndex,
+            lowerTexture: wadOtherSide.lowerTexture,
+            middleTexture: wadOtherSide.middleTexture,
+            upperTexture: wadOtherSide.upperTexture,
+            xoffset: wadOtherSide.xoffset,
+            yoffset: wadOtherSide.yoffset,
             start: end,
             end: start,
             sector: otherSector,
             flags: linedef.flags,
             other: side
-        }
+        } as Side
         side.other = other
         otherSector.sides.push(other)
     }
@@ -55,7 +64,7 @@ export const createLines = (wadMap: WadMapLump, sectors: Sector[]): Line[] =>
         const start: vec2 = [vstart.x, -vstart.y]
         const end: vec2 = [vend.x, -vend.y]
         const { front, back } = linkSideToSector(sectors, linedef, index, start, end, wfront, wback)
-        return {
+        const line = {
             index,
             front,
             back,
@@ -65,4 +74,9 @@ export const createLines = (wadMap: WadMapLump, sectors: Sector[]): Line[] =>
             special: linedef.specialType,
             sectorTag: linedef.sectorTag
         }
+        front.line = line
+        if (back !== undefined) {
+            back.line = line
+        }
+        return line
     })

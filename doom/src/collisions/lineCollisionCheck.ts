@@ -1,6 +1,6 @@
+import { Line } from 'doom-map'
+import { Block } from 'doom-map/dist/interfaces/BlockMap'
 import { vec2 } from 'gl-matrix'
-import { Block } from '../interfaces/BlockMap'
-import { Line } from '../interfaces/Line'
 import { findLineSideForPoint } from '../maths/findLineSideForPoint'
 import { lineCircleIntersection } from '../maths/lineCircleIntersection'
 

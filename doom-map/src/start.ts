@@ -1,12 +1,10 @@
 import { readWad } from 'doom-wad'
 import { createAtlas } from 'doom-atlas/dist/index'
 import * as path from 'path'
-import { buildSectorList } from './buildSectorList'
-import { createSectorBufferSetParams } from './createSectorBufferSetParams'
 import { Wad } from 'doom-wad/dist/interfaces/Wad'
-
 import * as fs from 'fs'
-import { findSectorsThings } from './findSectorsThings'
+import { createMap } from '.'
+import { SkillType } from './interfaces/MapFlags'
 
 export const readFile = async (filename: string): Promise<Wad | null> =>
     new Promise((resolve, reject) => {
@@ -27,10 +25,11 @@ export const readFile = async (filename: string): Promise<Wad | null> =>
             throw new Error('Unable to load doom.wad')
         }
         const atlas = createAtlas(wad, 4096)
-        const sectorlist = buildSectorList(wad.maps['e1m1'], atlas)
-        const things = findSectorsThings(sectorlist, wad.maps['e1m1'].things)
-        const params = createSectorBufferSetParams(sectorlist)
-        console.log(params)
+        const map = createMap({} as WebGL2RenderingContext, atlas, wad.maps['e1m1'], {
+            multiplayer: false,
+            skill: SkillType.skill45
+        })
+        console.log(map)
     } catch (e) {
         console.error(e.message)
     }

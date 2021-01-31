@@ -1,6 +1,6 @@
 import { WadVertex } from 'doom-wad/dist/interfaces/WadVertexLump'
 import { vec2 } from 'gl-matrix'
-import { pointInPolygon } from './pointInPolygon'
+import { pointInPolygon } from '../pointInPolygon'
 
 const flatWadVertexToVec2 = (vertex: WadVertex): vec2 => [vertex.x, vertex.y]
 

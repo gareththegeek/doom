@@ -2,13 +2,15 @@ import { TextureAtlas } from 'doom-atlas/dist/interfaces/TextureAtlas'
 import { createSprite } from 'doom-video'
 import { WadMapLump } from 'doom-wad/dist/interfaces/WadMapLump'
 import { WadThing } from 'doom-wad/dist/interfaces/WadThingsLump'
-import { SectorThing } from 'doom-map/dist/interfaces/SectorInfo'
 import { Sector } from '../interfaces/Sector'
 import { Thing } from '../interfaces/Thing'
 import { ThingInfo, ThingInfoLookup } from './ThingInfoLookup'
 import { Block, BlockMap } from '../interfaces/BlockMap'
-import { getBlock } from '../collisions/getBlock'
+import { getBlock } from './getBlock'
 import { Geometry } from 'doom-video/dist/scene/Geometry'
+import { MapFlags, SkillType } from '../interfaces/MapFlags'
+import { SectorGeometryData } from '../interfaces/SectorGeometryData'
+import { thingInSector } from './thingInSector'
 
 const getInfo = (type: number): ThingInfo => ThingInfoLookup[type]
 
@@ -31,11 +33,19 @@ const createThing = (
     gl: WebGL2RenderingContext,
     atlas: TextureAtlas,
     blockmap: BlockMap,
-    sector: Sector,
+    sectors: Sector[],
+    data: SectorGeometryData[],
     wadThing: WadThing,
     index: number
 ): Thing => {
+    // TODO find the sector using findSectorsThings - reworked
+
     const info = getInfo(wadThing.thingType)
+
+    const sector = sectors.find((_, index) => thingInSector(data[index], wadThing))
+    if (sector === undefined) {
+        throw new Error(`Unable to find sector for thing ${index}`)
+    }
 
     const block = getBlock(blockmap, [wadThing.x, -wadThing.y])
     if (info.sprite === '-') {
@@ -44,7 +54,6 @@ const createThing = (
 
     const geometry = createSprite(gl, atlas, info.sprite, info.sequence)
     geometry.position = [wadThing.x, sector.floorHeight, -wadThing.y]
-    //TODO is wad angle === rotation?
     geometry.rotation = ((wadThing.angle - 90) * Math.PI) / 180.0
     geometry.light = sector.lightLevel
 
@@ -54,15 +63,20 @@ const createThing = (
 export const createThings = (
     gl: WebGL2RenderingContext,
     atlas: TextureAtlas,
-    map: WadMapLump,
+    { things }: WadMapLump,
     sectors: Sector[],
+    data: SectorGeometryData[],
     blockmap: BlockMap,
-    sectorThings: SectorThing[][]
+    flags: MapFlags
 ): Thing[] =>
-    sectorThings
-        .flat()
-        .filter((st) => {
-            const thing = map.things[st.thing]
-            return !thing.flags.multiplayerOnly && thing.flags.skill45
+    things
+        .filter((thing) => {
+            const multi = !thing.flags.multiplayerOnly || flags.multiplayer
+            const skill =
+                (thing.flags.skill12 && flags.skill === SkillType.skill12) ||
+                (thing.flags.skill3 && flags.skill === SkillType.skill3) ||
+                (thing.flags.skill45 && flags.skill === SkillType.skill45)
+
+            return multi && skill
         })
-        .map((st) => createThing(gl, atlas, blockmap, sectors[st.sector], map.things[st.thing], st.thing))
+        .map((thing, index) => createThing(gl, atlas, blockmap, sectors, data, thing, index))

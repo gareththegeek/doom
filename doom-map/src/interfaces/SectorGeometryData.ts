@@ -13,7 +13,7 @@ export interface FaceData {
     isCeiling: boolean
 }
 
-export interface SectorData {
+export interface SectorGeometryData {
     faces: FaceData[]
     adjacency: number[][]
 }

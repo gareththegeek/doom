@@ -1,5 +1,5 @@
+import { Line } from 'doom-map'
 import { vec2 } from 'gl-matrix'
-import { Line } from '../interfaces/Line'
 import { lineCircleIntersection } from './lineCircleIntersection'
 
 describe('lineCircleIntersection', () => {

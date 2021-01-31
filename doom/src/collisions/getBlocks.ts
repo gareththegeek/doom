@@ -1,8 +1,6 @@
+import { BlockMap, getBlock, Thing, ThingInfoLookup } from 'doom-map'
+import { Block } from 'doom-map/dist/interfaces/BlockMap'
 import { vec2 } from 'gl-matrix'
-import { Block, BlockMap } from '../interfaces/BlockMap'
-import { Thing } from '../interfaces/Thing'
-import { ThingInfoLookup } from '../things/ThingInfoLookup'
-import { getBlock } from './getBlock'
 
 const getBoxCorners = (centre: vec2, radius: number): vec2[] => {
     const hradius = radius / 2

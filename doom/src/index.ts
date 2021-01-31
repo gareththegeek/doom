@@ -4,72 +4,13 @@ import { fetchWad } from 'doom-wad'
 import { createAtlas } from 'doom-atlas'
 import { Thing, Line, rebuildSectorGeometry, initialiseMapSystem } from 'doom-map'
 import { collisionCheck } from './collisions/collisionCheck'
-import { use } from './collisions/use'
 import { ActivateLookup } from './game/activate'
 import { getAdjacenctSectors } from './getAdjacentSectors'
 import { G } from './global'
 import { loadMap } from './maps/loadMap'
-
-var Key = {
-    _pressed: {} as { [keyCode: number]: boolean },
-
-    LEFT: 37,
-    UP: 38,
-    RIGHT: 39,
-    DOWN: 40,
-    Q: 81,
-    A: 65,
-    SPACE: 32,
-    code: 'AAAAAAAA',
-
-    isDown: function (keyCode: number) {
-        return this._pressed[keyCode]
-    },
-
-    onKeydown: function (event: KeyboardEvent) {
-        const { cheats, map, player } = G
-
-        this._pressed[event.keyCode] = true
-        if (event.keyCode === Key.SPACE) {
-            if (player !== undefined) {
-                use(map.blockmap, map.sectors, player)
-            }
-        }
-        const letter = String.fromCharCode(event.keyCode)
-        if (/[A-Z0-9]/.test(letter)) {
-            this.code = this.code.substr(1) + letter
-            if (this.code.endsWith('IDCLIP')) {
-                cheats.noclip = !cheats.noclip
-                console.log(`noclip ${cheats.noclip}`)
-            }
-            if (/IDCLEV[1-4][1-9]/.test(this.code)) {
-                const e = this.code[this.code.length - 2]
-                const m = this.code[this.code.length - 1]
-                const mapName = `e${e}m${m}`
-                loadMap(mapName)
-            }
-        }
-    },
-
-    onKeyup: function (event: KeyboardEvent) {
-        delete this._pressed[event.keyCode]
-    }
-}
-
-window.addEventListener(
-    'keyup',
-    function (event) {
-        Key.onKeyup(event)
-    },
-    false
-)
-window.addEventListener(
-    'keydown',
-    function (event) {
-        Key.onKeydown(event)
-    },
-    false
-)
+import { isPressed } from './input/isPressed'
+require('./input')
+require('./cheats')
 
 const forward = (thing: Thing | undefined, speed: number): void => {
     const {
@@ -152,6 +93,7 @@ const main = async () => {
 
             const geometry = player!.geometry!
 
+            // TODO use doom state and ticks to manage this and ideally move animation logic to doom-video
             if (now - lastAnim > 0.2) {
                 map.things.forEach((thing) => {
                     if (thing.geometry !== undefined) {
@@ -162,12 +104,12 @@ const main = async () => {
                 lastAnim = now
             }
 
-            if (Key.isDown(Key.UP)) forward(player, deltaTime * 500)
-            if (Key.isDown(Key.LEFT)) geometry.rotation += deltaTime * 3
-            if (Key.isDown(Key.DOWN)) forward(player, -deltaTime * 500)
-            if (Key.isDown(Key.RIGHT)) geometry.rotation -= deltaTime * 3
-            if (Key.isDown(Key.Q)) geometry.position[1] += deltaTime * 500
-            if (Key.isDown(Key.A)) geometry.position[1] -= deltaTime * 500
+            if (isPressed('ArrowUp')) forward(player, deltaTime * 500)
+            if (isPressed('ArrowLeft')) geometry.rotation += deltaTime * 3
+            if (isPressed('ArrowDown')) forward(player, -deltaTime * 500)
+            if (isPressed('ArrowRight')) geometry.rotation -= deltaTime * 3
+            if (isPressed('q')) geometry.position[1] += deltaTime * 500
+            if (isPressed('a')) geometry.position[1] -= deltaTime * 500
 
             renderScene()
 

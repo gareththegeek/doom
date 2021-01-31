@@ -8,7 +8,7 @@ const USE_RANGE = 48
 
 const vec3tovec2 = (vec3: vec3): vec2 => [vec3[0], vec3[2]]
 
-export const use = (blockmap: BlockMap, sectors: Sector[], player: Thing): void => {
+export const use = (blockmap: BlockMap, player: Thing): void => {
     const p0 = vec3tovec2(player.geometry!.position)
     const direction = vec2.rotate(vec2.create(), [0, USE_RANGE], [0, 0], player.geometry!.rotation)
     const p1 = vec2.add(vec2.create(), p0, direction)

@@ -896,6 +896,11 @@
   resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-2.1.6.tgz#f4b1efa784e8db479cdb8b14403e2144b1e9ff03"
   integrity sha512-6gOkRe7OIioWAXfnO/2lFiv+SJichKVSys1mSsgyrYHSEjk8Ctv4tSR/Odvnu+HWlH2C8j53dahU03XmQdd5fA==
 
+"@types/pubsub-js@^1.8.2":
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/@types/pubsub-js/-/pubsub-js-1.8.2.tgz#4f4592dd28a2c832f60ffca99e4a991886db682e"
+  integrity sha512-cj3ZoAopr2ZmUYwRuXUiq48PlfNj5sBcUIkBnSJunfXlmf6y8o2kx4l70h1X1j0fR3IBorPrPM3B9SoyWwoqLg==
+
 "@types/stack-utils@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.0.tgz#7036640b4e21cc2f259ae826ce843d277dad8cff"
@@ -3834,6 +3839,11 @@ psl@^1.1.28:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/psl/-/psl-1.8.0.tgz#9326f8bcfb013adcc005fdff056acce020e51c24"
   integrity sha512-RIdOzyoavK+hA18OGGWDqUTsCLhtA7IcZ/6NCs4fFJaHBDab+pDDmDIByWFRQJq2Cd7r1OoQxBGKOaztq+hjIQ==
+
+pubsub-js@^1.9.2:
+  version "1.9.2"
+  resolved "https://registry.yarnpkg.com/pubsub-js/-/pubsub-js-1.9.2.tgz#4d01fe4df7d1957efa681f6338ebc9ba11b7ef3a"
+  integrity sha512-t+djzDvEKv4GoP5nPJ5Ar5h+4MrwPw+C9/9l75GV8TzO49HezXnxR1G6E/QJZdE2EDsXRNMu6O9MFjpjkSV7zg==
 
 pump@^3.0.0:
   version "3.0.0"

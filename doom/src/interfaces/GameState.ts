@@ -4,4 +4,5 @@ export interface GameState {
     player: Thing
     map: Map
     cheats: { noclip: boolean }
+    input: { isPressed: { [key: string]: boolean } }
 }

@@ -11,11 +11,13 @@ import {
 } from 'doom-video'
 import { fetchWad } from 'doom-wad'
 import { createAtlas } from 'doom-atlas'
-import { BlockMap, createMap, Sector, Thing, Map } from 'doom-map'
+import { BlockMap, createMap, Sector, Thing, Map, Line, rebuildSectorGeometry } from 'doom-map'
 import { collisionCheck } from './collisions/collisionCheck'
 import { Scene } from 'doom-video/dist/scene/Scene'
 import { use } from './collisions/use'
 import { SkillType } from 'doom-map/dist/interfaces/MapFlags'
+import { ActivateLookup } from './game/activate'
+import { getAdjacenctSectors } from './getAdjacentSectors'
 
 const vsSource = `
 attribute vec4 aVertexPosition;
@@ -184,18 +186,36 @@ const main = async () => {
             const camera = createCamera(gl, { fieldOfView: 45, zNear: 1, zFar: 100000 })
             camera.target = player.geometry
             camera.position = [0.0, 48.0, 0.0]
-            const objects = [
-                ...map.sectors.map((sector) => sector.geometry),
-                ...map.things.map((thing) => thing.geometry)
-            ]
+            const objects = [...map.sectors.map((sector) => sector), ...map.things.map((thing) => thing)]
             scene = {
                 camera,
-                objects: objects.filter((object) => object !== undefined) as Geometry[],
+                objects,
                 texture,
                 palette,
                 colourmaps
             }
             console.info('Prepared scene')
+
+            const DOOR_LIP = 4
+            ActivateLookup[1] = (line: Line): void => {
+                const sector = line.back?.sector
+                if (sector === undefined) {
+                    console.warn(`Unable to find door sector`)
+                    return
+                }
+
+                const adjacent = getAdjacenctSectors(sector)
+                const target = adjacent.reduce((a, c) => Math.min(a, c.ceilingHeight), 0x7fff) - DOOR_LIP
+                const id = setInterval(() => {
+                    sector.ceilingHeight += 2
+                    if (sector.ceilingHeight >= target) {
+                        sector.ceilingHeight = target
+                        clearInterval(id)
+                    }
+                    rebuildSectorGeometry(gl, atlas, map, sector)
+                    adjacent.forEach((sector) => rebuildSectorGeometry(gl, atlas, map, sector))
+                }, 1000 / 35)
+            }
         }
 
         loadMap('e1m1')

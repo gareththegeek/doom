@@ -1,5 +1,12 @@
-import { createSectorBufferSetParams } from './createSectorBufferSetParams'
-import { createSectorBufferSets } from './createSectorBufferSets'
-import { createSectorGeometryData } from './createSectorGeometryData'
+import { createSectorBufferSetParams, createSingleSectorBufferSetParams } from './createSectorBufferSetParams'
+import { createSectorGeometry, createSingleSectorGeometry } from './createSectorGeometry'
+import { createSectorGeometryData, createSingleSectorGeometryData } from './createSectorGeometryData'
 
-export { createSectorBufferSetParams, createSectorBufferSets, createSectorGeometryData }
+export {
+    createSectorBufferSetParams,
+    createSingleSectorBufferSetParams,
+    createSectorGeometry,
+    createSingleSectorGeometry,
+    createSectorGeometryData,
+    createSingleSectorGeometryData
+}

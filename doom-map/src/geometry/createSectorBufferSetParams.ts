@@ -23,7 +23,7 @@ const triangulateFlat = (face: FaceData, base: number): number[] => {
 const triangulate = (face: FaceData, base: number): number[] =>
     face.isFlat ? triangulateFlat(face, base) : triangulateWall(base)
 
-const buildSectorParams = (sector: SectorGeometryData, index: number): BufferSetParams => {
+export const createSingleSectorBufferSetParams = (sector: SectorGeometryData): BufferSetParams => {
     const params: BufferSetParams = { positions: [], indices: [], textures: [], atlas: [] }
     let base = 0
     sector.faces.forEach((face) => {
@@ -45,4 +45,4 @@ const buildSectorParams = (sector: SectorGeometryData, index: number): BufferSet
 }
 
 export const createSectorBufferSetParams = (sectorlist: SectorGeometryData[]): BufferSetParams[] =>
-    sectorlist.map((sector, i) => buildSectorParams(sector, i))
+    sectorlist.map((sector) => createSingleSectorBufferSetParams(sector))

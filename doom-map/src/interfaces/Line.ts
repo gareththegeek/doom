@@ -6,6 +6,8 @@ export interface Line {
     index: number
     front: Side
     back: Side | undefined
+    startIndex: number
+    endIndex: number
     start: vec2
     end: vec2
     flags: WadLineDefFlags

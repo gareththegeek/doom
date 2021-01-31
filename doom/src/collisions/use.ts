@@ -20,11 +20,6 @@ export const use = (blockmap: BlockMap, sectors: Sector[], player: Thing): void 
     const special = intersected.filter((line) => line.special > 0)
 
     special.forEach((line) => {
-        const sector = sectors.find((sector) => sector.tag === line.sectorTag)
-        if (sector === undefined) {
-            console.warn(`Unable to find sector with tag ${line.sectorTag}`)
-            return
-        }
-        activate(line, sector)
+        activate(line)
     })
 }

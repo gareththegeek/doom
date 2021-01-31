@@ -1,6 +1,7 @@
 import { TextureAtlas, TextureAtlasEntry } from 'doom-atlas/dist/interfaces/TextureAtlas'
 import { WadLineDef, WadLineDefFlags } from 'doom-wad/dist/interfaces/WadLineDefsLump'
 import { vec2 } from 'gl-matrix'
+import { Line } from '../..'
 import { Sector } from '../../interfaces/Sector'
 import { FaceData, SectorGeometryData } from '../../interfaces/SectorGeometryData'
 import { Side } from '../../interfaces/Side'
@@ -134,20 +135,14 @@ const processSidedef = (
     }
 }
 
-export const addWalls = (
-    atlas: TextureAtlas,
-    linedefs: WadLineDef[],
-    { adjacency, faces }: SectorGeometryData,
-    sector: Sector
-): void => {
+export const addWalls = (atlas: TextureAtlas, { adjacency, faces }: SectorGeometryData, sector: Sector): void => {
     sector.sides.forEach((side) => {
         const isFront = side.line.front === side
-        const linedef = linedefs[side.lineIndex]
+        
+        const starti = isFront ? side.line.startIndex : side.line.endIndex
+        const endi = isFront ? side.line.endIndex : side.line.startIndex
 
-        const start = isFront ? linedef.start : linedef.end
-        const end = isFront ? linedef.end : linedef.start
-
-        adjacency.push([start, end])
+        adjacency.push([starti, endi])
         processSidedef(atlas, faces, side, side.start, side.end, side.flags, sector, side.other?.sector)
     })
 }

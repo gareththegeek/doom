@@ -1,9 +1,9 @@
 import { Camera } from './Camera'
-import { Geometry } from './Geometry'
+import { GeometryBox } from './GeometryBox'
 
 export interface Scene {
     camera: Camera
-    objects: Geometry[]
+    objects: GeometryBox[]
     texture: WebGLTexture
     palette: WebGLTexture
     colourmaps: WebGLTexture

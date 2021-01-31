@@ -53,5 +53,7 @@ export const renderScene = (gl: WebGL2RenderingContext, program: ShaderProgram, 
     clearScene(gl)
     bindTextures(gl, scene)
     applyCamera(gl, program, scene.camera)
-    scene.objects.forEach((object) => renderGeometry(gl, program, scene.camera, object))
+    scene.objects
+        .filter((object) => object.geometry !== undefined)
+        .forEach((object) => renderGeometry(gl, program, scene.camera, object.geometry!))
 }

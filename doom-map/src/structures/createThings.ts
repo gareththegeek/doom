@@ -1,4 +1,3 @@
-import { TextureAtlas } from 'doom-atlas/dist/interfaces/TextureAtlas'
 import { Geometry, createSprite } from 'doom-video'
 import { WadMapLump } from 'doom-wad/dist/interfaces/WadMapLump'
 import { WadThing } from 'doom-wad/dist/interfaces/WadThingsLump'
@@ -10,6 +9,7 @@ import { getBlock } from './getBlock'
 import { MapFlags, SkillType } from '../interfaces/MapFlags'
 import { SectorGeometryData } from '../interfaces/SectorGeometryData'
 import { thingInSector } from './thingInSector'
+import { M } from '../global'
 
 const getInfo = (type: number): ThingInfo => ThingInfoLookup[type]
 
@@ -29,7 +29,6 @@ const newThing = (index: number, type: number, geometry: Geometry | undefined, s
 }
 
 const createThing = (
-    atlas: TextureAtlas,
     blockmap: BlockMap,
     sectors: Sector[],
     data: SectorGeometryData[],
@@ -48,7 +47,7 @@ const createThing = (
         return newThing(index, wadThing.thingType, undefined, sector, block)
     }
 
-    const geometry = createSprite(atlas, info.sprite, info.sequence)
+    const geometry = createSprite(M.atlas, info.sprite, info.sequence)
     geometry.position = [wadThing.x, sector.floorHeight, -wadThing.y]
     geometry.rotation = ((wadThing.angle - 90) * Math.PI) / 180.0
     geometry.light = sector.lightLevel
@@ -57,7 +56,6 @@ const createThing = (
 }
 
 export const createThings = (
-    atlas: TextureAtlas,
     { things }: WadMapLump,
     sectors: Sector[],
     data: SectorGeometryData[],
@@ -74,4 +72,4 @@ export const createThings = (
 
             return multi && skill
         })
-        .map((thing, index) => createThing(atlas, blockmap, sectors, data, thing, index))
+        .map((thing, index) => createThing(blockmap, sectors, data, thing, index))

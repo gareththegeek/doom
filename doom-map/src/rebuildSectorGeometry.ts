@@ -1,17 +1,12 @@
-import { TextureAtlas } from 'doom-atlas/dist/interfaces/TextureAtlas'
-import { Sector, Map } from '.'
+import { Sector } from '.'
 import {
     createSingleSectorGeometryData,
     createSingleSectorBufferSetParams,
     createSingleSectorGeometry
 } from './geometry'
 
-export const rebuildSectorGeometry = (
-    atlas: TextureAtlas,
-    map: Map,
-    sector: Sector
-): void => {
-    const data = createSingleSectorGeometryData(atlas, map.vertices, sector)
+export const rebuildSectorGeometry = (sector: Sector): void => {
+    const data = createSingleSectorGeometryData(sector)
     const params = createSingleSectorBufferSetParams(data)
     createSingleSectorGeometry(sector, params)
 }

@@ -142,8 +142,8 @@ const main = async () => {
                         sector.ceilingHeight = target
                         clearInterval(id)
                     }
-                    rebuildSectorGeometry(atlas, map, sector)
-                    adjacent.forEach((sector) => rebuildSectorGeometry(atlas, map, sector))
+                    rebuildSectorGeometry(sector)
+                    adjacent.forEach((sector) => rebuildSectorGeometry(sector))
                 }, 1000 / 35)
             }
         }

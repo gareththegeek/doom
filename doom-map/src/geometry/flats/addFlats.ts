@@ -1,5 +1,6 @@
-import { TextureAtlas, TextureAtlasEntry } from 'doom-atlas/dist/interfaces/TextureAtlas'
+import { TextureAtlasEntry } from 'doom-atlas/dist/interfaces/TextureAtlas'
 import { WadVertex } from 'doom-wad/dist/interfaces/WadVertexLump'
+import { M } from '../../global'
 import { Sector } from '../../interfaces/Sector'
 import { LineLoop, SectorGeometryData } from '../../interfaces/SectorGeometryData'
 import { findPerimeterIndices, insidePerimeter } from './findPerimeters'
@@ -15,12 +16,8 @@ const buildFlat = (vertices: WadVertex[], y: number, texture: TextureAtlasEntry)
     }
 }
 
-export const addFlats = (
-    atlas: TextureAtlas,
-    vertices: WadVertex[],
-    { adjacency, faces }: SectorGeometryData,
-    sector: Sector
-): void => {
+export const addFlats = ({ adjacency, faces }: SectorGeometryData, sector: Sector): void => {
+    const { atlas, vertices } = M
     const loopIndices = processLoops(adjacency)
     const vertexLoops = loopIndices.map((indices) => indices.map((index) => vertices[index]))
     const perimeterIndices = findPerimeterIndices(vertexLoops)

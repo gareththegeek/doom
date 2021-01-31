@@ -1,7 +1,7 @@
-import { TextureAtlas, TextureAtlasEntry } from 'doom-atlas/dist/interfaces/TextureAtlas'
-import { WadLineDef, WadLineDefFlags } from 'doom-wad/dist/interfaces/WadLineDefsLump'
+import { TextureAtlasEntry } from 'doom-atlas/dist/interfaces/TextureAtlas'
+import { WadLineDefFlags } from 'doom-wad/dist/interfaces/WadLineDefsLump'
 import { vec2 } from 'gl-matrix'
-import { Line } from '../..'
+import { M } from '../../global'
 import { Sector } from '../../interfaces/Sector'
 import { FaceData, SectorGeometryData } from '../../interfaces/SectorGeometryData'
 import { Side } from '../../interfaces/Side'
@@ -79,7 +79,6 @@ enum TextureOriginType {
 }
 
 const processSidedef = (
-    atlas: TextureAtlas,
     faces: FaceData[],
     side: Side,
     start: vec2,
@@ -88,6 +87,7 @@ const processSidedef = (
     frontSector: Sector,
     backSector: Sector | undefined
 ): void => {
+    const { atlas } = M
     if (hasMiddle(side)) {
         faces.push(
             buildFace(
@@ -135,14 +135,14 @@ const processSidedef = (
     }
 }
 
-export const addWalls = (atlas: TextureAtlas, { adjacency, faces }: SectorGeometryData, sector: Sector): void => {
+export const addWalls = ({ adjacency, faces }: SectorGeometryData, sector: Sector): void => {
     sector.sides.forEach((side) => {
         const isFront = side.line.front === side
-        
+
         const starti = isFront ? side.line.startIndex : side.line.endIndex
         const endi = isFront ? side.line.endIndex : side.line.startIndex
 
         adjacency.push([starti, endi])
-        processSidedef(atlas, faces, side, side.start, side.end, side.flags, sector, side.other?.sector)
+        processSidedef(faces, side, side.start, side.end, side.flags, sector, side.other?.sector)
     })
 }

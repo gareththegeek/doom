@@ -1,13 +1,11 @@
 import { Map } from './interfaces/Map'
-import { WadMapLump } from 'doom-wad/dist/interfaces/WadMapLump'
-import { TextureAtlas } from 'doom-atlas/dist/interfaces/TextureAtlas'
 import { createBlockMap, createLines, createSectors, createThings } from './structures'
 import { createSectorGeometry, createSectorGeometryData, createSectorBufferSetParams } from './geometry'
 import { MapFlags } from './interfaces/MapFlags'
 import { M } from './global'
 
-export const createMap = (atlas: TextureAtlas, wadMap: WadMapLump, flags: MapFlags): Map => {
-    M.atlas = atlas
+export const createMap = (mapName: string, flags: MapFlags): Map => {
+    const wadMap = M.wad.maps[mapName]
     M.vertices = wadMap.vertices
     const sectors = createSectors(wadMap)
     const lines = createLines(wadMap, sectors)

@@ -5,6 +5,7 @@ import { Wad } from 'doom-wad/dist/interfaces/Wad'
 import * as fs from 'fs'
 import { createMap } from '.'
 import { SkillType } from './interfaces/MapFlags'
+import { initialiseMapSystem } from './initialiseMapSystem'
 
 export const readFile = async (filename: string): Promise<Wad | null> =>
     new Promise((resolve, reject) => {
@@ -25,7 +26,8 @@ export const readFile = async (filename: string): Promise<Wad | null> =>
             throw new Error('Unable to load doom.wad')
         }
         const atlas = createAtlas(wad, 4096)
-        const map = createMap(atlas, wad.maps['e1m1'], {
+        initialiseMapSystem(wad, atlas)
+        const map = createMap('e1m1', {
             multiplayer: false,
             skill: SkillType.skill45
         })

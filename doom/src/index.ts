@@ -1,8 +1,8 @@
 import { vec2 } from 'gl-matrix'
-import { initialiseSystem, renderScene } from 'doom-video'
+import { initialiseVideoSystem, renderScene } from 'doom-video'
 import { fetchWad } from 'doom-wad'
 import { createAtlas } from 'doom-atlas'
-import { Thing, Line, rebuildSectorGeometry } from 'doom-map'
+import { Thing, Line, rebuildSectorGeometry, initialiseMapSystem } from 'doom-map'
 import { collisionCheck } from './collisions/collisionCheck'
 import { use } from './collisions/use'
 import { ActivateLookup } from './game/activate'
@@ -108,12 +108,13 @@ const main = async () => {
         }
 
         console.info('Loading...')
-        G.wad = await fetchWad('doom.wad')
+        const wad = await fetchWad('doom.wad')
         console.info('Loaded doom.wad')
 
         const ATLAS_SIZE = 4096
-        G.atlas = createAtlas(G.wad, ATLAS_SIZE)
-        initialiseSystem(gl, G.atlas.image, ATLAS_SIZE, G.wad.playpal.palettes[0].colours, G.wad.colormap.maps)
+        const atlas = createAtlas(wad, ATLAS_SIZE)
+        initialiseVideoSystem(gl, atlas.image, ATLAS_SIZE, wad.playpal.palettes[0].colours, wad.colormap.maps)
+        initialiseMapSystem(wad, atlas)
         console.info('Built textures')
 
         loadMap('e1m1')

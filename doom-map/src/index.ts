@@ -1,4 +1,5 @@
 import { createMap } from './createMap'
+import { initialiseMapSystem } from './initialiseMapSystem'
 import { BlockMap } from './interfaces/BlockMap'
 import { Line } from './interfaces/Line'
 import { Map } from './interfaces/Map'
@@ -11,6 +12,7 @@ import { ThingInfoLookup } from './structures'
 import { getBlock } from './structures/getBlock'
 
 export {
+    initialiseMapSystem,
     createMap,
     rebuildSectorGeometry,
     getBlock,

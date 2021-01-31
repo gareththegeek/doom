@@ -8,7 +8,7 @@ import { PerspectiveParams } from './interfaces/PerspectiveParams'
 import { Scene } from './interfaces/Scene'
 import { SceneObject } from './interfaces/SceneObject'
 import { renderScene, createSprite, createScene } from './scene'
-import { initialiseSystem } from './system/initialiseSystem'
+import { initialiseVideoSystem } from './system/initialiseVideoSystem'
 
 export {
     BufferSet,
@@ -19,7 +19,7 @@ export {
     PerspectiveParams,
     Scene,
     SceneObject,
-    initialiseSystem,
+    initialiseVideoSystem,
     createBufferSet,
     createSprite,
     createScene,

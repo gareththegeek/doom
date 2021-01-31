@@ -3,7 +3,7 @@ import { WadColour } from 'doom-wad/dist/interfaces/WadPlayPalLump'
 import { createResources } from './createResources'
 import { V } from './global'
 
-export const initialiseSystem = (
+export const initialiseVideoSystem = (
     gl: WebGL2RenderingContext,
     texture: number[],
     textureSize: number,

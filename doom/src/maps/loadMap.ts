@@ -4,12 +4,8 @@ import { createScene } from 'doom-video'
 import { G } from '../global'
 
 export const loadMap = (mapName: string): void => {
-    const { wad } = G
-
     console.info(`Loading map ${mapName}`)
-    const wadMap = wad.maps[mapName]
-    
-    const map = createMap(G.atlas, wadMap, { multiplayer: false, skill: SkillType.skill45 })
+    const map = createMap(mapName, { multiplayer: false, skill: SkillType.skill45 })
     G.map = map
     
     console.info('Configuring player')

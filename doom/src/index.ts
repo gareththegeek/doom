@@ -1,76 +1,17 @@
 import { vec2 } from 'gl-matrix'
-import { Geometry } from 'doom-video/dist/scene/Geometry'
-import {
-    createIndexedTexture,
-    createPalette,
-    createColourMap,
-    createShaderProgram,
-    createCamera,
-    initialiseScene,
-    renderScene
-} from 'doom-video'
+import { initialiseSystem, renderScene, createScene } from 'doom-video'
 import { fetchWad } from 'doom-wad'
 import { createAtlas } from 'doom-atlas'
-import { BlockMap, createMap, Sector, Thing, Map, Line, rebuildSectorGeometry } from 'doom-map'
+import { createMap, Thing, Map, Line, rebuildSectorGeometry } from 'doom-map'
 import { collisionCheck } from './collisions/collisionCheck'
-import { Scene } from 'doom-video/dist/scene/Scene'
 import { use } from './collisions/use'
 import { SkillType } from 'doom-map/dist/interfaces/MapFlags'
 import { ActivateLookup } from './game/activate'
 import { getAdjacenctSectors } from './getAdjacentSectors'
 
-const vsSource = `
-attribute vec4 aVertexPosition;
-attribute vec2 aTextureCoord;
-attribute vec4 aAtlasCoord;
-
-uniform mat4 uModelViewMatrix;
-uniform mat4 uProjectionMatrix;
-
-varying highp vec2 vTextureCoord;
-varying highp vec4 vAtlasCoord;
-varying highp float depth;
-
-void main(void) {
-  gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-  vTextureCoord = aTextureCoord;
-  vAtlasCoord = aAtlasCoord;
-  depth = gl_Position.z;
-}
-`
-
-const fsSource = `
-varying highp vec2 vTextureCoord;
-varying highp vec4 vAtlasCoord;
-varying highp float depth;
-
-uniform highp float uLightLevel;
-uniform sampler2D uSamplerAtlas;
-uniform sampler2D uSamplerPalette;
-uniform sampler2D uSamplerColourMap;
-
-const highp float MIN_LIGHT = 32.0 / 34.0;
-const highp float ONE_LIGHT_LEVEL = 1.0 / 34.0;
-const highp float HALF_LIGHT_LEVEL = ONE_LIGHT_LEVEL / 2.0;
-const highp float MAX_DIMINISH = 12.0 * ONE_LIGHT_LEVEL;
-
-void main(void) {
-   highp vec2 sampleCoords = mix(vec2(vAtlasCoord.rg), vec2(vAtlasCoord.ba), fract(vTextureCoord));
-   highp vec2 cmindex = texture2D(uSamplerAtlas, sampleCoords.yx).rg;
-   if(cmindex.g < 0.5)
-      discard;
-   highp float diminish = clamp((floor(depth / 20.0) - 16.0) * ONE_LIGHT_LEVEL, -MAX_DIMINISH, MAX_DIMINISH);
-   highp float final_light = clamp(uLightLevel + diminish, 0.0, MIN_LIGHT) + HALF_LIGHT_LEVEL;
-   highp float index = texture2D(uSamplerColourMap, vec2(cmindex.r, final_light)).a;
-   highp vec3 colour = texture2D(uSamplerPalette, vec2(index, 0.5)).rgb;
-   gl_FragColor = vec4(colour, 1.0);
-}
-`
-
 let noclip = false
 let loadMap: (mapName: string) => any
 let player: Thing | undefined
-let scene: Scene
 let map: Map
 
 var Key = {
@@ -166,34 +107,23 @@ const main = async () => {
         console.info('Loading...')
         const wad = await fetchWad('doom.wad')
         console.info('Loaded doom.wad')
-        const atlas = createAtlas(wad, 4096)
-        const texture = createIndexedTexture(gl, atlas.image, 4096)
-        const palette = createPalette(gl, wad.playpal.palettes[0].colours)
-        const colourmaps = createColourMap(gl, wad.colormap.maps)
+        const ATLAS_SIZE = 4096
+        const atlas = createAtlas(wad, ATLAS_SIZE)
+        initialiseSystem(gl, atlas.image, ATLAS_SIZE, wad.playpal.palettes[0].colours, wad.colormap.maps)
         console.info('Built textures')
 
         loadMap = (mapName: string) => {
-            console.log(`Loading map ${mapName}`)
+            console.info(`Loading map ${mapName}`)
             const wadMap = wad.maps[mapName]
-            map = createMap(gl, atlas, wadMap, { multiplayer: false, skill: SkillType.skill45 })
-            console.info('Map loaded')
+            map = createMap(atlas, wadMap, { multiplayer: false, skill: SkillType.skill45 })
             console.info('Configuring player')
             player = map.things.find((thing) => thing.type === 1)
             if (player === undefined || player.geometry === undefined) {
                 throw new Error('Unable to find player start in level D:')
             }
             player.geometry.visible = false
-            const camera = createCamera(gl, { fieldOfView: 45, zNear: 1, zFar: 100000 })
-            camera.target = player.geometry
-            camera.position = [0.0, 48.0, 0.0]
             const objects = [...map.sectors.map((sector) => sector), ...map.things.map((thing) => thing)]
-            scene = {
-                camera,
-                objects,
-                texture,
-                palette,
-                colourmaps
-            }
+            createScene(objects, player.geometry, [0, 48, 0])
             console.info('Prepared scene')
 
             const DOOR_LIP = 4
@@ -212,16 +142,13 @@ const main = async () => {
                         sector.ceilingHeight = target
                         clearInterval(id)
                     }
-                    rebuildSectorGeometry(gl, atlas, map, sector)
-                    adjacent.forEach((sector) => rebuildSectorGeometry(gl, atlas, map, sector))
+                    rebuildSectorGeometry(atlas, map, sector)
+                    adjacent.forEach((sector) => rebuildSectorGeometry(atlas, map, sector))
                 }, 1000 / 35)
             }
         }
 
         loadMap('e1m1')
-
-        initialiseScene(gl)
-        const program = createShaderProgram(gl, vsSource, fsSource)
 
         // let last = 0
         let then = 0
@@ -250,7 +177,7 @@ const main = async () => {
             if (Key.isDown(Key.Q)) geometry.position[1] += deltaTime * 500
             if (Key.isDown(Key.A)) geometry.position[1] -= deltaTime * 500
 
-            renderScene(gl, program, scene)
+            renderScene()
 
             // if (now - last > 1) {
             //     console.log(`${camera.position} ${camera.rotation}`)

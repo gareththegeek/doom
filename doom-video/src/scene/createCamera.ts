@@ -1,8 +1,14 @@
-import { mat4 } from 'gl-matrix'
-import { Camera } from './Camera'
-import { PerspectiveParams } from './PerspectiveParams'
+import { mat4, vec3 } from 'gl-matrix'
+import { Camera, SceneObject } from '..'
+import { PerspectiveParams } from '../interfaces/PerspectiveParams'
+import { V } from '../system/global'
 
-export const createCamera = (gl: WebGL2RenderingContext, { fieldOfView, zNear, zFar }: PerspectiveParams): Camera => {
+export const createCamera = (
+    { fieldOfView, zNear, zFar }: PerspectiveParams,
+    target: SceneObject,
+    offset: vec3
+): Camera => {
+    const { gl } = V
     const fieldOfViewRadians = (fieldOfView * Math.PI) / 180
     const { clientWidth, clientHeight } = gl.canvas as HTMLCanvasElement
     const aspect = clientWidth / clientHeight
@@ -11,8 +17,8 @@ export const createCamera = (gl: WebGL2RenderingContext, { fieldOfView, zNear, z
 
     return {
         projection,
-        position: [0, 0, 0],
+        position: offset,
         rotation: 0,
-        target: undefined
+        target
     }
 }

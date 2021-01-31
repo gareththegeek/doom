@@ -1,4 +1,4 @@
-import { BufferSet } from '../buffers/BufferSet'
+import { BufferSet } from './BufferSet'
 import { SceneObject } from './SceneObject'
 
 export interface Geometry extends SceneObject {

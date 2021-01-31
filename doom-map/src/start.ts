@@ -25,7 +25,7 @@ export const readFile = async (filename: string): Promise<Wad | null> =>
             throw new Error('Unable to load doom.wad')
         }
         const atlas = createAtlas(wad, 4096)
-        const map = createMap({} as WebGL2RenderingContext, atlas, wad.maps['e1m1'], {
+        const map = createMap(atlas, wad.maps['e1m1'], {
             multiplayer: false,
             skill: SkillType.skill45
         })

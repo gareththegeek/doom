@@ -1,5 +1,5 @@
 import { TextureAtlas } from 'doom-atlas/dist/interfaces/TextureAtlas'
-import { createSprite } from 'doom-video'
+import { Geometry, createSprite } from 'doom-video'
 import { WadMapLump } from 'doom-wad/dist/interfaces/WadMapLump'
 import { WadThing } from 'doom-wad/dist/interfaces/WadThingsLump'
 import { Sector } from '../interfaces/Sector'
@@ -7,7 +7,6 @@ import { Thing } from '../interfaces/Thing'
 import { ThingInfo, ThingInfoLookup } from './ThingInfoLookup'
 import { Block, BlockMap } from '../interfaces/BlockMap'
 import { getBlock } from './getBlock'
-import { Geometry } from 'doom-video/dist/scene/Geometry'
 import { MapFlags, SkillType } from '../interfaces/MapFlags'
 import { SectorGeometryData } from '../interfaces/SectorGeometryData'
 import { thingInSector } from './thingInSector'
@@ -30,7 +29,6 @@ const newThing = (index: number, type: number, geometry: Geometry | undefined, s
 }
 
 const createThing = (
-    gl: WebGL2RenderingContext,
     atlas: TextureAtlas,
     blockmap: BlockMap,
     sectors: Sector[],
@@ -38,8 +36,6 @@ const createThing = (
     wadThing: WadThing,
     index: number
 ): Thing => {
-    // TODO find the sector using findSectorsThings - reworked
-
     const info = getInfo(wadThing.thingType)
 
     const sector = sectors.find((_, index) => thingInSector(data[index], wadThing))
@@ -52,7 +48,7 @@ const createThing = (
         return newThing(index, wadThing.thingType, undefined, sector, block)
     }
 
-    const geometry = createSprite(gl, atlas, info.sprite, info.sequence)
+    const geometry = createSprite(atlas, info.sprite, info.sequence)
     geometry.position = [wadThing.x, sector.floorHeight, -wadThing.y]
     geometry.rotation = ((wadThing.angle - 90) * Math.PI) / 180.0
     geometry.light = sector.lightLevel
@@ -61,7 +57,6 @@ const createThing = (
 }
 
 export const createThings = (
-    gl: WebGL2RenderingContext,
     atlas: TextureAtlas,
     { things }: WadMapLump,
     sectors: Sector[],
@@ -79,4 +74,4 @@ export const createThings = (
 
             return multi && skill
         })
-        .map((thing, index) => createThing(gl, atlas, blockmap, sectors, data, thing, index))
+        .map((thing, index) => createThing(atlas, blockmap, sectors, data, thing, index))

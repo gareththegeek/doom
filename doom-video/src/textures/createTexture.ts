@@ -1,15 +1,15 @@
 import { WadColorMap } from 'doom-wad/dist/interfaces/WadColorMapLump'
-import { IndexedPixel } from 'doom-wad/dist/interfaces/WadPictureLump'
 import { WadColour } from 'doom-wad/dist/interfaces/WadPlayPalLump'
+import { V } from '../system/global'
 
 const createTextureInternal = (
-    gl: WebGL2RenderingContext,
     width: number,
     height: number,
     pixels: ArrayBufferView,
     internalFormat: number,
     srcFormat: number
 ): WebGLTexture => {
+    const { gl } = V
     const texture = gl.createTexture()
     if (!texture) {
         throw new Error('Unable to create texture')
@@ -24,17 +24,20 @@ const createTextureInternal = (
     return texture
 }
 
-export const createPalette = (gl: WebGL2RenderingContext, pixels: WadColour[]): WebGLTexture => {
+export const createPalette = (pixels: WadColour[]): WebGLTexture => {
+    const { gl } = V
     const image = new Uint8Array(pixels.flat())
-    return createTextureInternal(gl, pixels.length, 1, image, gl.RGB8, gl.RGB)
+    return createTextureInternal(pixels.length, 1, image, gl.RGB8, gl.RGB)
 }
 
-export const createColourMap = (gl: WebGL2RenderingContext, maps: WadColorMap[]): WebGLTexture => {
+export const createColourMap = (maps: WadColorMap[]): WebGLTexture => {
+    const { gl } = V
     const image = new Uint8Array(maps.flatMap((map) => map.indices))
-    return createTextureInternal(gl, maps[0].indices.length, maps.length, image, gl.ALPHA, gl.ALPHA)
+    return createTextureInternal(maps[0].indices.length, maps.length, image, gl.ALPHA, gl.ALPHA)
 }
 
-export const createIndexedTexture = (gl: WebGL2RenderingContext, pixels: number[], size: number): WebGLTexture => {
+export const createIndexedTexture = (pixels: number[], size: number): WebGLTexture => {
+    const { gl } = V
     const image = new Uint8Array(pixels)
-    return createTextureInternal(gl, size, size, image, gl.RG8, gl.RG)
+    return createTextureInternal(size, size, image, gl.RG8, gl.RG)
 }

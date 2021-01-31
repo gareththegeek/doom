@@ -1,4 +1,4 @@
-import { BufferSetParams } from 'doom-video/dist/buffers/BufferSetParams'
+import { BufferSetParams } from 'doom-video'
 import { FaceData, SectorGeometryData } from '../interfaces/SectorGeometryData'
 import { Point, Triangulator } from 'pnltri'
 import { vec3 } from 'gl-matrix'

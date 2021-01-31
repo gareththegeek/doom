@@ -1,6 +1,6 @@
 import { mat4, vec3 } from 'gl-matrix'
-import { Camera } from './Camera'
-import { SceneObject } from './SceneObject'
+import { Camera } from '..'
+import { SceneObject } from '../interfaces/SceneObject'
 
 const isCamera = (object: SceneObject): object is Camera => 'projection' in object
 
@@ -9,7 +9,7 @@ export const getModelView = (object: SceneObject): mat4 => {
     if (isCamera(object)) {
         let position = [...object.position] as vec3
         let rotation = object.rotation
-        if (object.target !== undefined ){
+        if (object.target !== undefined) {
             vec3.add(position, object.position, object.target.position)
             rotation = object.target.rotation
         }

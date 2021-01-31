@@ -6,7 +6,6 @@ import { createSectorGeometry, createSectorGeometryData, createSectorBufferSetPa
 import { MapFlags } from './interfaces/MapFlags'
 
 export const createMap = (
-    gl: WebGL2RenderingContext,
     atlas: TextureAtlas,
     wadMap: WadMapLump,
     flags: MapFlags
@@ -16,8 +15,8 @@ export const createMap = (
     const blockmap = createBlockMap(wadMap.blockmap, lines)
     const data = createSectorGeometryData(atlas, wadMap.vertices, sectors)
     const params = createSectorBufferSetParams(data)
-    const things = createThings(gl, atlas, wadMap, sectors, data, blockmap, flags)
-    createSectorGeometry(gl, sectors, params)
+    const things = createThings(atlas, wadMap, sectors, data, blockmap, flags)
+    createSectorGeometry(sectors, params)
 
     return {
         sectors,

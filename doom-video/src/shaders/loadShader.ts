@@ -1,4 +1,7 @@
-export const loadShader = (gl: WebGL2RenderingContext, type: number, source: string): WebGLShader => {
+import { V } from '../system/global'
+
+export const loadShader = (type: number, source: string): WebGLShader => {
+    const { gl } = V
     const shader = gl.createShader(type)
 
     if (!shader) {

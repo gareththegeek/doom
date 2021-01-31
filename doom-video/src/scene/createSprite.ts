@@ -1,8 +1,8 @@
-import { vec3, vec4 } from 'gl-matrix'
+import { vec4 } from 'gl-matrix'
 import { TextureAtlas, TextureAtlasEntry } from 'doom-atlas/dist/interfaces/TextureAtlas'
 import { createBufferSet } from '../buffers'
-import { Geometry } from './Geometry'
-import { BufferSetParams } from '../buffers/BufferSetParams'
+import { Geometry } from '../interfaces/Geometry'
+import { BufferSetParams } from '..'
 
 const INDICES_PER_FRAME = 6
 
@@ -31,12 +31,7 @@ const createSpriteFrame = (entry: TextureAtlasEntry, base: number): BufferSetPar
     }
 }
 
-export const createSprite = (
-    gl: WebGL2RenderingContext,
-    atlas: TextureAtlas,
-    name: string,
-    sequence: string
-): Geometry => {
+export const createSprite = (atlas: TextureAtlas, name: string, sequence: string): Geometry => {
     const number = getAnimationNumber(atlas, name, sequence[0])
     const entries = sequence.split('').map((ordinal) => atlas.lookup[`${name}${ordinal}${number}`])
 
@@ -56,7 +51,7 @@ export const createSprite = (
         base += frame.positions.length
     }
 
-    const buffers = createBufferSet(gl, params)
+    const buffers = createBufferSet(params)
 
     return {
         position: [0, 0, 0],

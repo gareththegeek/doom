@@ -1,4 +1,4 @@
-import { Geometry } from 'doom-video/dist/scene/Geometry'
+import { Geometry } from 'doom-video'
 import { Block } from './BlockMap'
 import { Sector } from './Sector'
 

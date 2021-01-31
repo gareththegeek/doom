@@ -1,12 +1,8 @@
-import { ShaderProgram } from '../shaders/ShaderProgram'
-import { BufferSet } from './BufferSet'
+import { V } from '../system/global'
+import { BufferSet } from '..'
 
-const bindArray = (
-    gl: WebGL2RenderingContext,
-    buffer: WebGLBuffer,
-    index: number,
-    size: number
-): void => {
+const bindArray = (buffer: WebGLBuffer, index: number, size: number): void => {
+    const { gl } = V
     const type = gl.FLOAT
     const normalize = false
     const stride = 0
@@ -16,9 +12,13 @@ const bindArray = (
     gl.enableVertexAttribArray(index)
 }
 
-export const bindBufferSet = (gl: WebGL2RenderingContext, program: ShaderProgram, buffers: BufferSet): void => {
-    bindArray(gl, buffers.position, program.attribLocations.vertexPosition, 3)
-    bindArray(gl, buffers.texture, program.attribLocations.textureCoord, 2)
-    bindArray(gl, buffers.atlas, program.attribLocations.atlasCoord, 4)
+export const bindBufferSet = (buffers: BufferSet): void => {
+    const {
+        gl,
+        resources: { program }
+    } = V
+    bindArray(buffers.position, program.attribLocations.vertexPosition, 3)
+    bindArray(buffers.texture, program.attribLocations.textureCoord, 2)
+    bindArray(buffers.atlas, program.attribLocations.atlasCoord, 4)
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.index)
 }

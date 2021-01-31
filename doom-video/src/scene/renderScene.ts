@@ -2,24 +2,31 @@ import { mat4 } from 'gl-matrix'
 import { getModelView } from '.'
 import { bindBufferSet, renderBufferSet } from '../buffers'
 import { ShaderProgram } from '../shaders/ShaderProgram'
-import { Camera } from './Camera'
-import { Geometry } from './Geometry'
-import { Scene } from './Scene'
+import { Geometry } from '../interfaces/Geometry'
+import { Scene } from '../interfaces/Scene'
+import { VideoResources } from '../interfaces/VideoResources'
+import { Camera } from '..'
+import { V } from '../system/global'
 
-const clearScene = (gl: WebGL2RenderingContext) => {
+const clearScene = () => {
+    const { gl } = V
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 }
 
-const applyCamera = (gl: WebGL2RenderingContext, program: ShaderProgram, camera: Camera): void => {
+const applyCamera = (camera: Camera): void => {
+    const {
+        gl,
+        resources: { program }
+    } = V
     gl.uniformMatrix4fv(program.uniformLocations.projectionMatrix, false, camera.projection)
 }
 
-const renderGeometry = (
-    gl: WebGL2RenderingContext,
-    program: ShaderProgram,
-    camera: Camera,
-    geometry: Geometry
-): void => {
+const renderGeometry = (camera: Camera, geometry: Geometry): void => {
+    const {
+        gl,
+        resources: { program }
+    } = V
+
     if (!geometry.visible) {
         return
     }
@@ -36,11 +43,15 @@ const renderGeometry = (
     gl.uniformMatrix4fv(program.uniformLocations.modelViewMatrix, false, modelView)
     gl.uniform1f(program.uniformLocations.lightLevel, ((1 - geometry.light / 255) * 32) / 34)
 
-    bindBufferSet(gl, program, geometry.buffers)
-    renderBufferSet(gl, geometry)
+    bindBufferSet(geometry.buffers)
+    renderBufferSet(geometry)
 }
 
-const bindTextures = (gl: WebGL2RenderingContext, { texture, palette, colourmaps }: Scene): void => {
+const bindTextures = (): void => {
+    const {
+        gl,
+        resources: { texture, palette, colourmaps }
+    } = V
     gl.activeTexture(gl.TEXTURE0)
     gl.bindTexture(gl.TEXTURE_2D, texture)
     gl.activeTexture(gl.TEXTURE1)
@@ -49,11 +60,14 @@ const bindTextures = (gl: WebGL2RenderingContext, { texture, palette, colourmaps
     gl.bindTexture(gl.TEXTURE_2D, colourmaps)
 }
 
-export const renderScene = (gl: WebGL2RenderingContext, program: ShaderProgram, scene: Scene): void => {
-    clearScene(gl)
-    bindTextures(gl, scene)
-    applyCamera(gl, program, scene.camera)
-    scene.objects
+export const renderScene = (): void => {
+    const {
+        scene: { camera, objects }
+    } = V
+    clearScene()
+    bindTextures()
+    applyCamera(camera)
+    objects
         .filter((object) => object.geometry !== undefined)
-        .forEach((object) => renderGeometry(gl, program, scene.camera, object.geometry!))
+        .forEach((object) => renderGeometry(camera, object.geometry!))
 }

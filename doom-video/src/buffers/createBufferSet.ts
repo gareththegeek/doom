@@ -1,7 +1,8 @@
-import { BufferSet } from './BufferSet'
-import { BufferSetParams } from './BufferSetParams'
+import { BufferSet, BufferSetParams } from '..'
+import { V } from '../system/global'
 
-const buildBuffer = (gl: WebGL2RenderingContext, target: number, data: ArrayBuffer): WebGLBuffer => {
+const buildBuffer = (target: number, data: ArrayBuffer): WebGLBuffer => {
+    const { gl } = V
     const buffer = gl.createBuffer()
     if (!buffer) {
         throw new Error('Unable to create buffer')
@@ -13,10 +14,10 @@ const buildBuffer = (gl: WebGL2RenderingContext, target: number, data: ArrayBuff
     return buffer
 }
 
-export const createBufferSet = (gl: WebGL2RenderingContext, { positions, indices, textures, atlas }: BufferSetParams): BufferSet => ({
+export const createBufferSet = ({ positions, indices, textures, atlas }: BufferSetParams): BufferSet => ({
     vertexCount: indices.length,
-    position: buildBuffer(gl, gl.ARRAY_BUFFER, new Float32Array(positions.map((vec) => Array.from(vec)).flat())),
-    index: buildBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices)),
-    texture: buildBuffer(gl, gl.ARRAY_BUFFER, new Float32Array(textures.map((vec) => Array.from(vec)).flat())),
-    atlas: buildBuffer(gl, gl.ARRAY_BUFFER, new Float32Array(atlas.map((vec) => Array.from(vec)).flat()))
+    position: buildBuffer(V.gl.ARRAY_BUFFER, new Float32Array(positions.map((vec) => Array.from(vec)).flat())),
+    index: buildBuffer(V.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices)),
+    texture: buildBuffer(V.gl.ARRAY_BUFFER, new Float32Array(textures.map((vec) => Array.from(vec)).flat())),
+    atlas: buildBuffer(V.gl.ARRAY_BUFFER, new Float32Array(atlas.map((vec) => Array.from(vec)).flat()))
 })

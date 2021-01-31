@@ -1,18 +1,14 @@
 import { vec2 } from 'gl-matrix'
-import { initialiseSystem, renderScene, createScene } from 'doom-video'
+import { initialiseSystem, renderScene } from 'doom-video'
 import { fetchWad } from 'doom-wad'
 import { createAtlas } from 'doom-atlas'
-import { createMap, Thing, Map, Line, rebuildSectorGeometry } from 'doom-map'
+import { Thing, Line, rebuildSectorGeometry } from 'doom-map'
 import { collisionCheck } from './collisions/collisionCheck'
 import { use } from './collisions/use'
-import { SkillType } from 'doom-map/dist/interfaces/MapFlags'
 import { ActivateLookup } from './game/activate'
 import { getAdjacenctSectors } from './getAdjacentSectors'
-
-let noclip = false
-let loadMap: (mapName: string) => any
-let player: Thing | undefined
-let map: Map
+import { G } from './global'
+import { loadMap } from './maps/loadMap'
 
 var Key = {
     _pressed: {} as { [keyCode: number]: boolean },
@@ -31,6 +27,8 @@ var Key = {
     },
 
     onKeydown: function (event: KeyboardEvent) {
+        const { cheats, map, player } = G
+
         this._pressed[event.keyCode] = true
         if (event.keyCode === Key.SPACE) {
             if (player !== undefined) {
@@ -41,8 +39,8 @@ var Key = {
         if (/[A-Z0-9]/.test(letter)) {
             this.code = this.code.substr(1) + letter
             if (this.code.endsWith('IDCLIP')) {
-                noclip = !noclip
-                console.log(`noclip ${noclip}`)
+                cheats.noclip = !cheats.noclip
+                console.log(`noclip ${cheats.noclip}`)
             }
             if (/IDCLEV[1-4][1-9]/.test(this.code)) {
                 const e = this.code[this.code.length - 2]
@@ -74,6 +72,11 @@ window.addEventListener(
 )
 
 const forward = (thing: Thing | undefined, speed: number): void => {
+    const {
+        map,
+        cheats: { noclip }
+    } = G
+
     if (thing == undefined) {
         return
     }
@@ -105,50 +108,36 @@ const main = async () => {
         }
 
         console.info('Loading...')
-        const wad = await fetchWad('doom.wad')
+        G.wad = await fetchWad('doom.wad')
         console.info('Loaded doom.wad')
+
         const ATLAS_SIZE = 4096
-        const atlas = createAtlas(wad, ATLAS_SIZE)
-        initialiseSystem(gl, atlas.image, ATLAS_SIZE, wad.playpal.palettes[0].colours, wad.colormap.maps)
+        G.atlas = createAtlas(G.wad, ATLAS_SIZE)
+        initialiseSystem(gl, G.atlas.image, ATLAS_SIZE, G.wad.playpal.palettes[0].colours, G.wad.colormap.maps)
         console.info('Built textures')
 
-        loadMap = (mapName: string) => {
-            console.info(`Loading map ${mapName}`)
-            const wadMap = wad.maps[mapName]
-            map = createMap(atlas, wadMap, { multiplayer: false, skill: SkillType.skill45 })
-            console.info('Configuring player')
-            player = map.things.find((thing) => thing.type === 1)
-            if (player === undefined || player.geometry === undefined) {
-                throw new Error('Unable to find player start in level D:')
-            }
-            player.geometry.visible = false
-            const objects = [...map.sectors.map((sector) => sector), ...map.things.map((thing) => thing)]
-            createScene(objects, player.geometry, [0, 48, 0])
-            console.info('Prepared scene')
-
-            const DOOR_LIP = 4
-            ActivateLookup[1] = (line: Line): void => {
-                const sector = line.back?.sector
-                if (sector === undefined) {
-                    console.warn(`Unable to find door sector`)
-                    return
-                }
-
-                const adjacent = getAdjacenctSectors(sector)
-                const target = adjacent.reduce((a, c) => Math.min(a, c.ceilingHeight), 0x7fff) - DOOR_LIP
-                const id = setInterval(() => {
-                    sector.ceilingHeight += 2
-                    if (sector.ceilingHeight >= target) {
-                        sector.ceilingHeight = target
-                        clearInterval(id)
-                    }
-                    rebuildSectorGeometry(sector)
-                    adjacent.forEach((sector) => rebuildSectorGeometry(sector))
-                }, 1000 / 35)
-            }
-        }
-
         loadMap('e1m1')
+
+        const DOOR_LIP = 4
+        ActivateLookup[1] = (line: Line): void => {
+            const sector = line.back?.sector
+            if (sector === undefined) {
+                console.warn(`Unable to find door sector`)
+                return
+            }
+
+            const adjacent = getAdjacenctSectors(sector)
+            const target = adjacent.reduce((a, c) => Math.min(a, c.ceilingHeight), 0x7fff) - DOOR_LIP
+            const id = setInterval(() => {
+                sector.ceilingHeight += 2
+                if (sector.ceilingHeight >= target) {
+                    sector.ceilingHeight = target
+                    clearInterval(id)
+                }
+                rebuildSectorGeometry(sector)
+                adjacent.forEach((sector) => rebuildSectorGeometry(sector))
+            }, 1000 / 35)
+        }
 
         // let last = 0
         let then = 0
@@ -157,6 +146,8 @@ const main = async () => {
             now *= 0.001
             const deltaTime = now - then
             then = now
+
+            const { player, map } = G
 
             const geometry = player!.geometry!
 

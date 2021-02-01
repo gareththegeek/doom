@@ -1,6 +1,6 @@
 import { vec2 } from 'gl-matrix'
 
-export const pointInPolygon = (point: vec2, vs: vec2[]) => {
+export const pointInPolygon = (point: vec2, vs: vec2[], includeBoundary = false) => {
     const x = point[0]
     const y = point[1]
     let inside = false
@@ -18,7 +18,7 @@ export const pointInPolygon = (point: vec2, vs: vec2[]) => {
 
         if (yj === yi && yj === y && x > Math.min(xj, xi) && x < Math.max(xj, xi)) {
             // Check if point is on an horizontal polygon boundary
-            return false
+            return includeBoundary
         }
 
         if (y > Math.min(yj, yi) && y <= Math.max(yj, yi) && x <= Math.max(xj, xi) && yj !== yi) {
@@ -27,7 +27,7 @@ export const pointInPolygon = (point: vec2, vs: vec2[]) => {
             if (ss === x) {
                 // Check if point is on the polygon boundary (other than horizontal)
 
-                return false
+                return includeBoundary
             }
 
             if (xj === xi || x <= ss) {

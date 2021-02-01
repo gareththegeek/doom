@@ -9,7 +9,7 @@ export const thingInSector = (sectorData: SectorGeometryData, thing: WadThing): 
     const point = [thing.x, -thing.y] as vec2
     const floors = sectorData.faces.filter((face) => face.isFlat && !face.isCeiling)
     for (let floor of floors) {
-        if (!pointInPolygon(point, floor.contour.position.map(vec3ToVec2))) {
+        if (!pointInPolygon(point, floor.contour.position.map(vec3ToVec2), true)) {
             continue
         }
 

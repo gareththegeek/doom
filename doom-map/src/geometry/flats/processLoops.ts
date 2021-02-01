@@ -17,7 +17,15 @@ const buildAdjacencyTree = (adjacency: number[][]): AdjacencyLeaf[] => {
     }, {} as AdjacencyLookup)
     adjacency.forEach((a) => {
         const leaf = lookup[a[0]]
-        leaf.children.push(lookup[a[1]])
+        const next = lookup[a[1]]
+        if (next === undefined) {
+            // Build an adjacency leaf - this is an unclosed sector :/
+            leaf.children.push({
+                index: a[1],
+                children: []
+            })
+        }
+        leaf.children.push(next)
     })
     return Object.values(lookup)
 }
@@ -33,6 +41,13 @@ const processLeaf = (rootIndex: number, seen: number[], leaf: AdjacencyLeaf): Pr
         return {
             success: false,
             loop: []
+        }
+    }
+    if (leaf.children.length === 0) {
+        console.warn('Closing unclosed sector')
+        return {
+            success: true,
+            loop: [leaf.index]
         }
     }
     for (let child of leaf.children) {

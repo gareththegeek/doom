@@ -4,12 +4,19 @@ import { addFlats } from './flats/addFlats'
 import { addWalls } from './walls/addWalls'
 
 export const createSingleSectorGeometryData = (sector: Sector) => {
-    const result = { adjacency: [], faces: [] }
-    addWalls(result, sector)
-    addFlats(result, sector)
-    return result
+    try {
+        const result = { adjacency: [], faces: [] }
+        addWalls(result, sector)
+        addFlats(result, sector)
+        return result
+    } catch (e) {
+        console.error(e.message)
+        throw new Error(`Error creating sector geometry data for sector ${sector.index}`)
+    }
 }
 
-export const createSectorGeometryData = (
-    sectors: Sector[]
-): SectorGeometryData[] => sectors.map((sector) => createSingleSectorGeometryData(sector))
+export const createSectorGeometryData = (sectors: Sector[]): SectorGeometryData[] =>
+    sectors
+        .filter((sector) => sector.sides.length > 1)
+        // Some maps have degenerate sectors with fewer than 3 lines (no area) e.g. e3m2 sector 21
+        .map((sector) => createSingleSectorGeometryData(sector))

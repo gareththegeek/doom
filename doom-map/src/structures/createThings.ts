@@ -47,6 +47,7 @@ const createThing = (
         return newThing(index, wadThing.thingType, undefined, sector, block)
     }
 
+    // const geometry = undefined
     const geometry = createSprite(M.atlas, info.sprite, info.sequence)
     geometry.position = [wadThing.x, sector.floorHeight, -wadThing.y]
     geometry.rotation = ((wadThing.angle - 90) * Math.PI) / 180.0
@@ -70,6 +71,7 @@ export const createThings = (
                 (thing.flags.skill3 && flags.skill === SkillType.skill3) ||
                 (thing.flags.skill45 && flags.skill === SkillType.skill45)
 
-            return multi && skill
+            // Some maps (I'm looking at you e4m4) have the player start disabled for all difficulties :/
+            return thing.thingType === 1 || (multi && skill)
         })
         .map((thing, index) => createThing(blockmap, sectors, data, thing, index))

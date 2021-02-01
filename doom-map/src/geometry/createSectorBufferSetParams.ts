@@ -23,26 +23,39 @@ const triangulateFlat = (face: FaceData, base: number): number[] => {
 const triangulate = (face: FaceData, base: number): number[] =>
     face.isFlat ? triangulateFlat(face, base) : triangulateWall(base)
 
-export const createSingleSectorBufferSetParams = (sector: SectorGeometryData): BufferSetParams => {
+const MAX_TRIANGULATION_RETRIES = 5
+
+export const createSingleSectorBufferSetParams = (sector: SectorGeometryData, i = 0): BufferSetParams => {
     const params: BufferSetParams = { positions: [], indices: [], textures: [], atlas: [] }
     let base = 0
     sector.faces.forEach((face) => {
-        const all = [face.contour, ...face.holes]
-        const newPositions = all.flatMap((loop) => loop.position)
-        const newTextures = all.flatMap((loop) => loop.texture)
-        const newAtlas = all.flatMap((loop) => loop.atlas)
-        const newIndices = triangulate(face, base)
+        try {
+            const all = [face.contour, ...face.holes]
+            const newPositions = all.flatMap((loop) => loop.position)
+            const newTextures = all.flatMap((loop) => loop.texture)
+            const newAtlas = all.flatMap((loop) => loop.atlas)
+            let newIndices: number[] = []
+            let i = 0
+            while (i++ < MAX_TRIANGULATION_RETRIES && newIndices.length === 0) {
+                try {
+                    newIndices = triangulate(face, base)
+                } catch {}
+            }
 
-        params.positions = params.positions.concat(newPositions)
-        params.textures = params.textures.concat(newTextures)
-        params.atlas = params.atlas.concat(newAtlas)
-        params.indices = params.indices.concat(face.isCeiling ? newIndices.reverse() : newIndices)
+            params.positions = params.positions.concat(newPositions)
+            params.textures = params.textures.concat(newTextures)
+            params.atlas = params.atlas.concat(newAtlas)
+            params.indices = params.indices.concat(face.isCeiling ? newIndices.reverse() : newIndices)
 
-        base += newPositions.length
+            base += newPositions.length
+        } catch (e) {
+            console.error(e.message)
+            throw new Error(`Error creating buffer set params for sector ${i}`)
+        }
     })
 
     return params
 }
 
 export const createSectorBufferSetParams = (sectorlist: SectorGeometryData[]): BufferSetParams[] =>
-    sectorlist.map((sector) => createSingleSectorBufferSetParams(sector))
+    sectorlist.map((sector, i) => createSingleSectorBufferSetParams(sector, i))

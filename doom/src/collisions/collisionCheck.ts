@@ -18,10 +18,6 @@ export const collisionCheck = (blockmap: BlockMap, thing: Thing, p0: vec2, p1: v
 
     let infiniteLoopProtection = 0
     while (!(thingCollisions.allow && lineCollisions.allow)) {
-        if (infiniteLoopProtection++ > 2) {
-            console.warn('Bailing out of collision detection to prevent infinite loop')
-        }
-
         // TODO maybe we can merge collision response and check logic for things and lines?
         thingCollisions = thingCollisionCheck(blocks, thing.index, radius, p0, p1)
         if (!thingCollisions.allow) {
@@ -33,6 +29,11 @@ export const collisionCheck = (blockmap: BlockMap, thing: Thing, p0: vec2, p1: v
             const lines = lineCollisions.lines
             const { start, end } = lines[lines.length - 1]
             p1 = lineCollisionResponse(start, end, radius, p0, p1)
+        }
+
+        if (++infiniteLoopProtection > 2) {
+            p1 = p0
+            break
         }
     }
 

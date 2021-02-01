@@ -2,7 +2,12 @@ import { Line } from 'doom-map'
 import { Block } from 'doom-map/dist/interfaces/BlockMap'
 import { vec2 } from 'gl-matrix'
 import { findLineSideForPoint } from '../maths/findLineSideForPoint'
-import { lineCircleIntersection } from '../maths/lineCircleIntersection'
+import { lineCircleSweep } from '../maths/lineCircleSweep'
+
+// export interface LineIntersection {
+//     line: Line
+//     point: vec2
+// }
 
 export interface LineCollisionCheckResult {
     allow: boolean
@@ -25,7 +30,7 @@ export const lineCollisionCheck = (blocks: Block[], radius: number, p0: vec2, p1
         .flatMap((block) => block.lines)
         .map((line) => ({
             line,
-            intersection: lineCircleIntersection(line, p1, radius)
+            intersection: lineCircleSweep(line, p0, p1, radius)
         }))
         .filter(intersects)
         .sort((a, b) => a.intersection - b.intersection)

@@ -20,7 +20,7 @@ const buildAdjacencyTree = (adjacency: number[][], ends: number[]): AdjacencyLea
         const next = lookup[a[1]]
         if (next === undefined) {
             // Build an adjacency leaf - this is an unclosed sector :/
-            console.warn('Unclosed sector')
+            console.warn('Closing unclosed sector')
             if (ends.includes(a[1]) && ends.length === 2) {
                 const end2index = ends.find((end) => end !== a[1])!
                 const end2 = lookup[end2index]

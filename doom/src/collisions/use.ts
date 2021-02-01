@@ -15,7 +15,7 @@ export const use = (blockmap: BlockMap, player: Thing): void => {
 
     const blocks = getBlocks(blockmap, player, p0, p1)
     const lines = blocks.flatMap((block) => block.lines)
-    const intersected = lines.filter((line) => lineLineIntersection(line.start, line.end, p0, p1))
+    const intersected = lines.filter((line) => lineLineIntersection(line.start, line.end, p0, p1) !== undefined)
     //TODO only take the nearest intersected line - currently not supported by lineline intersection :(
     const special = intersected.filter((line) => line.special > 0)
 

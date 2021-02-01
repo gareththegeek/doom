@@ -18,7 +18,7 @@ export const collisionCheck = (blockmap: BlockMap, thing: Thing, p0: vec2, p1: v
 
     let infiniteLoopProtection = 0
     while (!(thingCollisions.allow && lineCollisions.allow)) {
-        if (infiniteLoopProtection++ > 10) {
+        if (infiniteLoopProtection++ > 2) {
             console.warn('Bailing out of collision detection to prevent infinite loop')
         }
 
@@ -32,7 +32,7 @@ export const collisionCheck = (blockmap: BlockMap, thing: Thing, p0: vec2, p1: v
         if (!lineCollisions.allow) {
             const lines = lineCollisions.lines
             const { start, end } = lines[lines.length - 1]
-            p1 = lineCollisionResponse(start, end, radius, p1)
+            p1 = lineCollisionResponse(start, end, radius, p0, p1)
         }
     }
 

@@ -18,7 +18,7 @@ const buildFlat = (vertices: WadVertex[], y: number, texture: TextureAtlasEntry)
 
 export const addFlats = ({ adjacency, faces }: SectorGeometryData, sector: Sector): void => {
     const { atlas, vertices } = M
-    const loopIndices = processLoops(adjacency)
+    const loopIndices = processLoops(adjacency).filter((loop) => loop.length > 2)
     const vertexLoops = loopIndices.map((indices) => indices.map((index) => vertices[index]))
     const perimeterIndices = findPerimeterIndices(vertexLoops)
 

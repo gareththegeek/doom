@@ -10,7 +10,6 @@ export const createSingleSectorGeometryData = (sector: Sector) => {
             // Some maps have degenerate sectors with fewer than 3 lines (no area) e.g. e3m2 sector 21
             return result
         }
-
         addWalls(result, sector)
         addFlats(result, sector)
         return result

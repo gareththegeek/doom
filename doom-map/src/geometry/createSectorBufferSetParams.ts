@@ -39,7 +39,9 @@ export const createSingleSectorBufferSetParams = (sector: SectorGeometryData, i 
             while (i++ < MAX_TRIANGULATION_RETRIES && newIndices.length === 0) {
                 try {
                     newIndices = triangulate(face, base)
-                } catch {}
+                } catch {
+                    console.warn(`Retrying triangulation for sector ${i}`)
+                }
             }
 
             params.positions = params.positions.concat(newPositions)

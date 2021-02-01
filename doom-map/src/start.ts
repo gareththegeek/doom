@@ -27,7 +27,7 @@ export const readFile = async (filename: string): Promise<Wad | null> =>
         }
         const atlas = createAtlas(wad, 4096)
         initialiseMapSystem(wad, atlas)
-        const map = createMap('e4m3', {
+        const map = createMap('e1m3', {
             multiplayer: false,
             skill: SkillType.skill45
         })

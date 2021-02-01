@@ -1,10 +1,11 @@
-import { BlockMap, Line, Sector, Thing } from 'doom-map'
+import PubSub from 'pubsub-js'
+import { BlockMap, Line, Thing } from 'doom-map'
 import { vec2, vec3 } from 'gl-matrix'
-import { activate } from '../game/activate'
+import { SWITCH_LINE } from '../interfaces/messageTypes'
 import { lineLineIntersection } from '../maths/lineLineIntersection'
 import { getBlocks } from './getBlocks'
 
-const USE_RANGE = 48
+const USE_RANGE = 64
 
 const vec3tovec2 = (vec3: vec3): vec2 => [vec3[0], vec3[2]]
 
@@ -30,12 +31,16 @@ export const use = (blockmap: BlockMap, player: Thing): void => {
         .sort((a, b) => a.distance - b.distance)
 
     for (const line of intersections.map(({ line }) => line)) {
+        console.log('use intersection')
+        console.log(intersections)
+        //Something weird is happening with 
+        //the end doors on  e1m1 where the switch action is getting blocked by the line in front of the door
         if (line.special > 0) {
-            activate(line)
+            PubSub.publish(SWITCH_LINE, { line })
             return
         }
         if (line.back === undefined || line.back.sector.floorHeight !== line.front.sector.floorHeight) {
             return
-        }
+        } 
     }
 }

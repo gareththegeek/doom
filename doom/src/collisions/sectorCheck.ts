@@ -1,5 +1,7 @@
+import PubSub from 'pubsub-js'
 import { Thing, Sector, Line } from 'doom-map'
 import { vec2 } from 'gl-matrix'
+import { WALK_LINE } from '../interfaces/messageTypes'
 import { findLineSideForPoint } from '../maths/findLineSideForPoint'
 import { lineLineIntersection } from '../maths/lineLineIntersection'
 
@@ -26,6 +28,7 @@ export const sectorCheck = (lines: Line[], thing: Thing, p0: vec2, p1: vec2): vo
                 continue
             }
             changeSector(thing, side.sector)
+            PubSub.publish(WALK_LINE, { line })
         }
     }
 }

@@ -2,13 +2,12 @@ import { vec2 } from 'gl-matrix'
 import { initialiseVideoSystem, renderScene } from 'doom-video'
 import { fetchWad } from 'doom-wad'
 import { createAtlas } from 'doom-atlas'
-import { Thing, Line, rebuildSectorGeometry, initialiseMapSystem } from 'doom-map'
+import { Thing, initialiseMapSystem } from 'doom-map'
 import { collisionCheck } from './collisions/collisionCheck'
-import { ActivateLookup } from './game/activate'
-import { getAdjacenctSectors } from './getAdjacentSectors'
 import { G } from './global'
 import { loadMap } from './maps/loadMap'
 import { isPressed } from './input/isPressed'
+require('./game/activate')
 require('./input')
 require('./cheats')
 
@@ -59,27 +58,6 @@ const main = async () => {
         console.info('Built textures')
 
         loadMap('e1m1')
-
-        const DOOR_LIP = 4
-        ActivateLookup[1] = (line: Line): void => {
-            const sector = line.back?.sector
-            if (sector === undefined) {
-                console.warn(`Unable to find door sector`)
-                return
-            }
-
-            const adjacent = getAdjacenctSectors(sector)
-            const target = adjacent.reduce((a, c) => Math.min(a, c.ceilingHeight), 0x7fff) - DOOR_LIP
-            const id = setInterval(() => {
-                sector.ceilingHeight += 2
-                if (sector.ceilingHeight >= target) {
-                    sector.ceilingHeight = target
-                    clearInterval(id)
-                }
-                rebuildSectorGeometry(sector)
-                adjacent.forEach((sector) => rebuildSectorGeometry(sector))
-            }, 1000 / 35)
-        }
 
         // let last = 0
         let then = 0

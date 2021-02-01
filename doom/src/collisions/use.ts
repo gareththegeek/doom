@@ -16,9 +16,9 @@ const hasIntersection = (lineIntersection: {
 
 export const use = (blockmap: BlockMap, player: Thing): void => {
     const p0 = vec3tovec2(player.geometry!.position)
-    const direction = vec2.rotate(vec2.create(), [0, USE_RANGE], [0, 0], player.geometry!.rotation)
+    const direction = vec2.rotate(vec2.create(), [0, -USE_RANGE], [0, 0], -player.geometry!.rotation)
     const p1 = vec2.add(vec2.create(), p0, direction)
-
+    
     const blocks = getBlocks(blockmap, player, p0, p1)
     const lines = blocks.flatMap((block) => block.lines)
     const intersections = lines
@@ -31,10 +31,6 @@ export const use = (blockmap: BlockMap, player: Thing): void => {
         .sort((a, b) => a.distance - b.distance)
 
     for (const line of intersections.map(({ line }) => line)) {
-        console.log('use intersection')
-        console.log(intersections)
-        //Something weird is happening with 
-        //the end doors on  e1m1 where the switch action is getting blocked by the line in front of the door
         if (line.special > 0) {
             PubSub.publish(SWITCH_LINE, { line })
             return

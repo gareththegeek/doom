@@ -10,13 +10,14 @@ const cheat = (() => {
         const letter = key
         const { cheats } = G
         
-        if (/[a-z0-9]/.test(letter)) {
+        if (/^[a-z0-9]{1}$/.test(letter)) {
             code = code.substr(1) + letter
             if (code.endsWith('idclip')) {
                 cheats.noclip = !cheats.noclip
                 console.log(`noclip ${cheats.noclip}`)
             }
-            if (/idclev[1-4]{1}[1-9]{1}/.test(code)) {
+            if (/idclev[1-4]{1}[1-9]{1}$/.test(code)) {
+                console.log(code)
                 const e = code[code.length - 2]
                 const m = code[code.length - 1]
                 const mapName = `e${e}m${m}`

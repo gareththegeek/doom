@@ -34,12 +34,14 @@ const createThing = (
     data: SectorGeometryData[],
     wadThing: WadThing,
     index: number
-): Thing => {
+): Thing | undefined => {
     const info = getInfo(wadThing.thingType)
-
-    const sector = sectors.find((_, index) => thingInSector(data[index], wadThing))
+    
+    const sector = sectors.find((_, si) => thingInSector(data[si], wadThing))
     if (sector === undefined) {
-        throw new Error(`Unable to find sector for thing ${index}`)
+        // This happens sometimes (you know who I mean e4m3 thing #232)
+        console.warn(`Unable to find sector for thing ${index}`)
+        return undefined
     }
 
     const block = getBlock(blockmap, [wadThing.x, -wadThing.y])
@@ -56,6 +58,8 @@ const createThing = (
     return newThing(index, wadThing.thingType, geometry, sector, block)
 }
 
+const isDefined = (thing: Thing | undefined): thing is Thing => thing !== undefined
+
 export const createThings = (
     { things }: WadMapLump,
     sectors: Sector[],
@@ -64,7 +68,8 @@ export const createThings = (
     flags: MapFlags
 ): Thing[] =>
     things
-        .filter((thing) => {
+        .map((thing, index) => ({ thing, index }))
+        .filter(({ thing }) => {
             const multi = !thing.flags.multiplayerOnly || flags.multiplayer
             const skill =
                 (thing.flags.skill12 && flags.skill === SkillType.skill12) ||
@@ -74,4 +79,5 @@ export const createThings = (
             // Some maps (I'm looking at you e4m4) have the player start disabled for all difficulties :/
             return thing.thingType === 1 || (multi && skill)
         })
-        .map((thing, index) => createThing(blockmap, sectors, data, thing, index))
+        .map(({ thing, index }) => createThing(blockmap, sectors, data, thing, index))
+        .filter(isDefined)

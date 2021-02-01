@@ -6,6 +6,11 @@ import { addWalls } from './walls/addWalls'
 export const createSingleSectorGeometryData = (sector: Sector) => {
     try {
         const result = { adjacency: [], faces: [] }
+        if (sector.sides.length <= 1) {
+            // Some maps have degenerate sectors with fewer than 3 lines (no area) e.g. e3m2 sector 21
+            return result
+        }
+
         addWalls(result, sector)
         addFlats(result, sector)
         return result
@@ -16,7 +21,4 @@ export const createSingleSectorGeometryData = (sector: Sector) => {
 }
 
 export const createSectorGeometryData = (sectors: Sector[]): SectorGeometryData[] =>
-    sectors
-        .filter((sector) => sector.sides.length > 1)
-        // Some maps have degenerate sectors with fewer than 3 lines (no area) e.g. e3m2 sector 21
-        .map((sector) => createSingleSectorGeometryData(sector))
+    sectors.map((sector) => createSingleSectorGeometryData(sector))

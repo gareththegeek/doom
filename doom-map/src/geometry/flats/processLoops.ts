@@ -85,12 +85,29 @@ const pruneAdjacency = (adjacency: number[][], loop: number[]): void => {
     })
 }
 
+const getEnds = (adjacency: number[][]): number[] => {
+    const groups = adjacency.flat().reduce<{ [index: number]: number }>((a, c) => {
+        a[c] === undefined ? (a[c] = 1) : (a[c] = a[c] + 1)
+        return a
+    }, {})
+    return Object.entries(groups)
+        .filter(([_, value]) => value === 1)
+        .map(([key]) => parseInt(key))
+}
+
 export const processLoops = (adjacency: number[][]): number[][] => {
     const loops: number[][] = []
-    while (adjacency.length > 0) {
-        const leaves = buildAdjacencyTree(adjacency)
+    // Ends occur in degenerate sectors in two forms
+    // Sometimes there is a hole in a sector because part of the sector's lines are assigned to a second
+    // degenerate sector like sector 22 in e3m2
+    // Sometimes there is a random dead-end such as in sector 81 of e4m3
+    const ends = getEnds(adjacency)
+    const adjacencyNoEnds = adjacency.filter((a) => !ends.includes(a[0]) && !ends.includes(a[1]))
+    
+    while (adjacencyNoEnds.length > 0) {
+        const leaves = buildAdjacencyTree(adjacencyNoEnds)
         const nextLoop = processLoop(leaves)
-        pruneAdjacency(adjacency, nextLoop)
+        pruneAdjacency(adjacencyNoEnds, nextLoop)
         loops.push(nextLoop)
     }
 

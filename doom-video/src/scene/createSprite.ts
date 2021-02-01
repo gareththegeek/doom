@@ -33,7 +33,14 @@ const createSpriteFrame = (entry: TextureAtlasEntry, base: number): BufferSetPar
 
 export const createSprite = (atlas: TextureAtlas, name: string, sequence: string): Geometry => {
     const number = getAnimationNumber(atlas, name, sequence[0])
-    const entries = sequence.split('').map((ordinal) => atlas.lookup[`${name}${ordinal}${number}`])
+    const entries = sequence.split('').map((ordinal) => {
+        const frameName = `${name}${ordinal}${number}`
+        const result = atlas.lookup[frameName]
+        if (result === undefined) {
+            throw new Error(`Unable to find sprite animation frame ${frameName}`)
+        }
+        return result
+    })
 
     const params: BufferSetParams = {
         positions: [],

@@ -16,6 +16,7 @@ export const createMap = (mapName: string, flags: MapFlags): Map => {
     createSectorGeometry(sectors, params)
 
     M.map = {
+        name: mapName,
         sectors,
         lines,
         blockmap,

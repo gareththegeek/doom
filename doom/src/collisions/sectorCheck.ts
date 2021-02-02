@@ -7,9 +7,6 @@ import { lineLineIntersection } from '../maths/lineLineIntersection'
 import { changeSector } from './changeSector'
 
 export const sectorCheck = (lines: Line[], thing: Thing, p0: vec2, p1: vec2): void => {
-    //TODO check if _centre_ of thing has intersected the lines
-    // for all intersected lines find furthest intersection from p0
-    // move thing to new sector (on far side of furthest intersected line)
     for (let i = lines.length - 1; i >= 0; i--) {
         const line = lines[i]
         // Lines are sorted from closest to farthest - work backwards to find the furthest line crossing
@@ -21,7 +18,9 @@ export const sectorCheck = (lines: Line[], thing: Thing, p0: vec2, p1: vec2): vo
                 continue
             }
             changeSector(thing, side.sector)
-            PubSub.publish(WALK_LINE, { line })
+            if (side !== side.line.front) {
+                PubSub.publish(WALK_LINE, { line })
+            }
         }
     }
 }

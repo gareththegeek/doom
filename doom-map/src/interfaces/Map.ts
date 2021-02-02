@@ -5,6 +5,7 @@ import { Sector } from './Sector'
 import { Thing } from './Thing'
 
 export interface Map {
+    name: string,
     sectors: Sector[]
     blockmap: BlockMap
     lines: Line[]

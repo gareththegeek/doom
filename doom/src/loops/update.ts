@@ -1,6 +1,7 @@
-import { Thing } from 'doom-map'
+import { Sector, Thing } from 'doom-map'
 import { vec2 } from 'gl-matrix'
 import { collisionCheck } from '../collisions/collisionCheck'
+import { getAdjacenctSectors } from '../getAdjacentSectors'
 import { G } from '../global'
 import { isPressed } from '../input/isPressed'
 
@@ -38,8 +39,19 @@ export const update = (() => {
         const deltaTime = now - then
         then = now
 
-        const { player } = G
+        const {
+            player,
+            map: { sectors }
+        } = G
         const geometry = player.geometry!
+        
+        sectors
+            .filter((sector) => sector.update !== undefined)
+            .forEach((sector) => {
+                sector.update!(deltaTime)
+                sector.dirty = true
+                getAdjacenctSectors(sector).forEach((sector) => (sector.dirty = true))
+            })
 
         if (isPressed('ArrowUp')) forward(player, deltaTime * 500)
         if (isPressed('ArrowLeft')) geometry.rotation += deltaTime * 3

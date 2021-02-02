@@ -33,8 +33,8 @@ const blitColumn = (
         const sourceIdx = (sourcex * size + sourcey) * 2
         image.splice(targetIdx, height, ...image.slice(sourceIdx, sourceIdx + height))
     } catch (e) {
-        console.log(e.message)
-        console.log(`${sourcex} ${sourcey} ${height} ${targetx}`)
+        console.error(e.message)
+        console.error(`${sourcex} ${sourcey} ${height} ${targetx}`)
     }
 }
 

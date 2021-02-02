@@ -14,10 +14,9 @@ const cheat = (() => {
             code = code.substr(1) + letter
             if (code.endsWith('idclip')) {
                 cheats.noclip = !cheats.noclip
-                console.log(`noclip ${cheats.noclip}`)
+                console.info(`noclip ${cheats.noclip}`)
             }
             if (/idclev[1-4]{1}[1-9]{1}$/.test(code)) {
-                console.log(code)
                 const e = code[code.length - 2]
                 const m = code[code.length - 1]
                 const mapName = `e${e}m${m}`

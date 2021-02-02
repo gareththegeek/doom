@@ -33,7 +33,7 @@ const activate = (type: string, { line }: { line: Line }): void => {
         return
     }
 
-    console.log(
+    console.info(
         `${type} Activated line ${line.index} with special type ${line.special} and sector tag ${line.sectorTag}`
     )
     const handler = ActivateLookup[line.special]

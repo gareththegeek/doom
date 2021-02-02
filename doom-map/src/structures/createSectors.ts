@@ -10,6 +10,7 @@ const createSector = (wadSector: WadSector, index: number): Sector => ({
     ceilingTexture: wadSector.ceilingTexture,
     lightLevel: wadSector.lightLevel,
     geometry: undefined,
+    dirty: true,
     things: [],
     sides: [],
     tag: wadSector.tag

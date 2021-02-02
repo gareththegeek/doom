@@ -15,6 +15,8 @@ export const createSingleSectorGeometry = (sector: Sector, params: BufferSetPara
 
 export const createSectorGeometry = (sectors: Sector[], params: BufferSetParams[]): void => {
     params.forEach((params, index) => {
-        createSingleSectorGeometry(sectors[index], params)
+        const sector = sectors[index]
+        createSingleSectorGeometry(sector, params)
+        sector.dirty = false
     })
 }

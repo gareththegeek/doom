@@ -31,7 +31,7 @@ export const readFile = async (filename: string): Promise<Wad | null> =>
             multiplayer: false,
             skill: SkillType.skill45
         })
-        console.log(map)
+        console.info(map)
     } catch (e) {
         console.error(e.message)
     }

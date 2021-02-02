@@ -18,7 +18,5 @@ export const initialiseVideoSystem = (
     gl.enable(gl.CULL_FACE)
     gl.cullFace(gl.BACK)
     gl.frontFace(gl.CW)
-    console.log('Set gl context')
     V.resources = createResources(texture, textureSize, palette, colormaps)
-    console.log('Set resources')
 }

@@ -108,7 +108,7 @@ export const readWad = (data: Buffer): Wad => {
 
     if (unusedLumps.length !== 0) {
         console.warn('Unused lumps')
-        unusedLumps.forEach((lump) => console.log(lump))
+        unusedLumps.forEach((lump) => console.warn(lump))
     }
 
     return wad

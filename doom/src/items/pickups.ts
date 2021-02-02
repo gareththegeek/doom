@@ -6,6 +6,6 @@ export const pickups = (things: Thing[]): void => {
         thing.block.things.splice(thing.block.things.indexOf(thing))
         thing.sector.things.splice(thing.sector.things.indexOf(thing))
         thing.geometry!.visible = false
-        console.log(`Picked up ${ThingInfoLookup[thing.type].sprite}`)
+        console.info(`Picked up ${ThingInfoLookup[thing.type].sprite}`)
     })
 }

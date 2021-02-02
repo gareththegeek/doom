@@ -3,7 +3,6 @@ import { ActivationType } from './ActivateLookup'
 import { openDoor } from './openDoor'
 
 export const d1_door_open_stay = (type: ActivationType, line: Line) => {
-    console.log('door')
     if (type !== ActivationType.Switch) {
         return
     }

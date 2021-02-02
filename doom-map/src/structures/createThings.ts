@@ -36,7 +36,7 @@ const createThing = (
     index: number
 ): Thing | undefined => {
     const info = getInfo(wadThing.thingType)
-    
+
     const sector = sectors.find((_, si) => thingInSector(data[si], wadThing))
     if (sector === undefined) {
         // This happens sometimes (you know who I mean e4m3 thing #232)
@@ -45,6 +45,11 @@ const createThing = (
     }
 
     const block = getBlock(blockmap, [wadThing.x, -wadThing.y])
+    if (block === undefined) {
+        console.warn(`Unable to find block for thing ${index}`)
+        return undefined
+    }
+
     if (info.sprite === '-') {
         return newThing(index, wadThing.thingType, undefined, sector, block)
     }

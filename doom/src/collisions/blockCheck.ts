@@ -5,8 +5,12 @@ export const blockCheck = (blockmap: BlockMap, thing: Thing, p0: vec2, p1: vec2)
     const oldBlock = getBlock(blockmap, p0)
     const newBlock = getBlock(blockmap, p1)
     if (newBlock !== oldBlock) {
-        oldBlock.things.splice(oldBlock.things.indexOf(thing))
-        newBlock.things.push(thing)
-        thing.block = newBlock
+        if (oldBlock !== undefined) {
+            oldBlock.things.splice(oldBlock.things.indexOf(thing))
+        }
+        if (newBlock !== undefined) {
+            newBlock.things.push(thing)
+            thing.block = newBlock
+        }
     }
 }

@@ -12,9 +12,12 @@ const getBoxCorners = (centre: vec2, radius: number): vec2[] => {
     ]
 }
 
+const isDefined = (block: Block | undefined): block is Block => block !== undefined
+
 export const getBlocks = (blockmap: BlockMap, thing: Thing, p0: vec2, p1: vec2): Block[] => {
     // Based upon thing radius, find all intersected blocks from the blockmap
     const info = ThingInfoLookup[thing.type]
     const corners = [...getBoxCorners(p0, info.radius), ...getBoxCorners(p1, info.radius)]
-    return [...new Set(corners.map((corner) => getBlock(blockmap, corner)))]
+    const blocks = corners.map((corner) => getBlock(blockmap, corner)).filter(isDefined)
+    return [...new Set(blocks)]
 }

@@ -1,7 +1,8 @@
-import { TextureAtlas } from 'doom-atlas/dist/interfaces/TextureAtlas'
 import { Map, Thing } from 'doom-map'
+import { Player } from './Player'
+
 export interface GameState {
-    player: Thing
+    player: Player
     map: Map
     cheats: { noclip: boolean }
     input: { isPressed: { [key: string]: boolean } }

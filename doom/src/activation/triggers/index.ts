@@ -1,5 +1,16 @@
 import { d1 } from './d1'
+import { d1_blue } from './d1_blue'
+import { d1_red } from './d1_red'
+import { d1_yellow } from './d1_yellow'
+import { dr } from './dr'
+import { dr_blue } from './dr_blue'
+import { dr_red } from './dr_red'
+import { dr_yellow } from './dr_yellow'
+import { g1 } from './g1'
+import { gr } from './gr'
 import { s1 } from './s1'
+import { sr } from './sr'
 import { w1 } from './w1'
+import { wr } from './wr'
 
-export { d1, s1, w1 }
+export { d1, s1, w1, dr, sr, wr, g1, gr, dr_blue, dr_red, dr_yellow, d1_blue, d1_red, d1_yellow }

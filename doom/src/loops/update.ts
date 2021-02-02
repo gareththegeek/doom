@@ -45,7 +45,7 @@ export const update = (() => {
             player,
             map: { sectors }
         } = G
-        const geometry = player.geometry!
+        const geometry = player.thing.geometry!
 
         sectors
             .filter((sector) => sector.update !== undefined)
@@ -60,9 +60,9 @@ export const update = (() => {
                 getAdjacenctSectors(sector).forEach((sector) => (sector.dirty = true))
             })
 
-        if (isPressed('ArrowUp')) forward(player, deltaTime * 500)
+        if (isPressed('ArrowUp')) forward(player.thing, deltaTime * 500)
         if (isPressed('ArrowLeft')) geometry.rotation += deltaTime * 3
-        if (isPressed('ArrowDown')) forward(player, -deltaTime * 500)
+        if (isPressed('ArrowDown')) forward(player.thing, -deltaTime * 500)
         if (isPressed('ArrowRight')) geometry.rotation -= deltaTime * 3
         if (isPressed('q')) geometry.position[1] += deltaTime * 500
         if (isPressed('a')) geometry.position[1] -= deltaTime * 500

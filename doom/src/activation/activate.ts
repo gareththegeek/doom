@@ -11,10 +11,10 @@ PubSub.subscribe(ON_KEY_DOWN, (_: string, { key }: { key: string }) => {
     }
 
     const {
-        player,
+        player: { thing },
         map: { blockmap }
     } = G
-    use(blockmap, player)
+    use(blockmap, thing)
 })
 
 const getActivationType = (type: string): ActivationType => {

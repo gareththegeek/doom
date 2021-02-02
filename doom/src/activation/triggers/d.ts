@@ -1,9 +1,9 @@
 import { Line, Sector } from 'doom-map'
 import { ActivationType } from '../ActivateLookup'
 
-export const d = (type: ActivationType, line: Line, once: boolean): Sector | undefined => {
+export const d = (type: ActivationType, line: Line, once: boolean): Sector[] => {
     if (type !== ActivationType.Switch) {
-        return undefined
+        return []
     }
     if (once) {
         line.special = 0
@@ -12,7 +12,8 @@ export const d = (type: ActivationType, line: Line, once: boolean): Sector | und
     const sector = line.back?.sector
     if (sector === undefined) {
         console.warn(`Unable to find door sector`)
+        return []
     }
 
-    return sector
+    return [sector]
 }

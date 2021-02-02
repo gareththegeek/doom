@@ -39,10 +39,8 @@ const activate = (type: string, { line }: { line: Line }): void => {
     const activation = ActivateLookup[line.special]
     if (activation !== undefined) {
         const { trigger, handler } = activation
-        const sector = trigger(getActivationType(type), line)
-        if (sector !== undefined) {
-            handler(sector)
-        }
+        const sectors = trigger(getActivationType(type), line)
+        sectors.forEach((sector) => handler(sector))
     }
 }
 

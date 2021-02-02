@@ -47,7 +47,7 @@ export enum ActivationType {
     Gun
 }
 
-export type ActivateTrigger = (type: ActivationType, line: Line) => Sector | undefined
+export type ActivateTrigger = (type: ActivationType, line: Line) => Sector[]
 export type ActivateHandler = (sector: Sector) => void
 export type ActivateAmountHandler = (sector: Sector, amount: number) => void
 

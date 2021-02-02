@@ -16,7 +16,6 @@ import { floor_start_moving_up_and_down } from './floor_start_moving_up_and_down
 import { floor_stop_moving } from './floor_stop_moving'
 import { lift_lower_wait_raise } from './lift_lower_wait_raise'
 import { light_change_to } from './light_change_to'
-import { light_change_to_brightest_adjacent } from './light_change_to_brightest_adjacent'
 import { light_start_blinking } from './light_start_blinking'
 import { stairs_raise_by } from './stairs_raise_by'
 import { teleport_monsters_only } from './teleport_monsters_only'
@@ -31,7 +30,6 @@ export {
     floor_raise_donut,
     lift_lower_wait_raise,
     exit_level,
-    light_change_to_brightest_adjacent,
     light_change_to,
     floor_raise_by,
     door_close_wait_open,

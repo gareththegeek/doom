@@ -1,6 +1,14 @@
 import { Sector } from 'doom-map'
+import { lowest_ceiling } from '../amounts'
+import { lowerFloor } from '../mutations/lowerFloor'
+import { raiseFloor } from '../mutations/raiseFloor'
 
-export const floor_start_moving_up_and_down = (sector: Sector) => {
-    //TODO
-    console.info('TODO floor_start_moving_up_and_down')
+export const floor_start_moving_up_and_down = async (sector: Sector) => {
+    //TODO is this right?
+    const floor = sector.floorHeight
+    while (true) {
+        if (await raiseFloor(sector, sector.ceilingHeight)) break
+        if (await lowerFloor(sector, floor)) break
+    }
+    sector.update = undefined
 }

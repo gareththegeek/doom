@@ -1,6 +1,7 @@
 import { Sector } from 'doom-map'
-import { openDoor } from '../openDoor'
+import { openDoor } from '../mutations/openDoor'
 
-export const door_open_stay = (sector: Sector, amount: number) => {
-    openDoor(sector)
+export const door_open_stay = async (sector: Sector, amount: number) => {
+    await openDoor(sector, amount)
+    sector.update = undefined
 }

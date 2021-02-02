@@ -2,6 +2,10 @@ import { Geometry } from 'doom-video'
 import { Side } from './Side'
 import { Thing } from './Thing'
 
+export interface SectorUpdate {
+    cancel: boolean
+    function: SectorUpdateFunction
+}
 export type SectorUpdateFunction = (deltaTime: number) => void
 
 export interface Sector {
@@ -11,7 +15,7 @@ export interface Sector {
     floorTexture: string
     ceilingTexture: string
     lightLevel: number
-    update?: SectorUpdateFunction
+    update?: SectorUpdate
     geometry: Geometry | undefined
     dirty: boolean
     things: Thing[]

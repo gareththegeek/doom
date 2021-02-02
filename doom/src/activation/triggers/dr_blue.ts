@@ -8,7 +8,8 @@ export const dr_blue = (type: ActivationType, line: Line): Sector | undefined =>
         player: { keys }
     } = G
     if (!keys.blue) {
+        console.info('You need the blue key to open this door')
         return undefined
     }
-    d(type, line, false)
+    return d(type, line, false)
 }

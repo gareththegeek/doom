@@ -4,14 +4,7 @@ import { vec2 } from 'gl-matrix'
 import { WALK_LINE } from '../interfaces/messageTypes'
 import { findLineSideForPoint } from '../maths/findLineSideForPoint'
 import { lineLineIntersection } from '../maths/lineLineIntersection'
-
-const changeSector = (thing: Thing, sector: Sector): void => {
-    const index = thing.sector.things.indexOf(thing)
-    thing.sector.things.splice(index, 1)
-    sector.things.push(thing)
-    thing.sector = sector
-    thing.geometry!.position[1] = sector.floorHeight
-}
+import { changeSector } from './changeSector'
 
 export const sectorCheck = (lines: Line[], thing: Thing, p0: vec2, p1: vec2): void => {
     //TODO check if _centre_ of thing has intersected the lines

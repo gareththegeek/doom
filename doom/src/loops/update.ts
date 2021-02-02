@@ -1,7 +1,7 @@
 import { Sector, Thing } from 'doom-map'
 import { vec2 } from 'gl-matrix'
 import { collisionCheck } from '../collisions/collisionCheck'
-import { getAdjacenctSectors } from '../getAdjacentSectors'
+import { getAdjacentSectors } from '../getAdjacentSectors'
 import { G } from '../global'
 import { isPressed } from '../input/isPressed'
 
@@ -50,21 +50,21 @@ export const update = (() => {
         sectors
             .filter((sector) => sector.update !== undefined)
             .forEach((sector) => {
-                sector.update!(deltaTime)
+                sector.update!.function(deltaTime)
                 sector.dirty = true
                 sector.things
                     .map((thing) => thing.geometry)
                     .filter(isDefined)
                     //TODO falling rather than being glued to the floor
                     .forEach((geometry) => (geometry.position[1] = sector.floorHeight))
-                getAdjacenctSectors(sector).forEach((sector) => (sector.dirty = true))
+                getAdjacentSectors(sector).forEach((sector) => (sector.dirty = true))
             })
 
         if (isPressed('ArrowUp')) forward(player.thing, deltaTime * 500)
         if (isPressed('ArrowLeft')) geometry.rotation += deltaTime * 3
         if (isPressed('ArrowDown')) forward(player.thing, -deltaTime * 500)
         if (isPressed('ArrowRight')) geometry.rotation -= deltaTime * 3
-        if (isPressed('q')) geometry.position[1] += deltaTime * 500
-        if (isPressed('a')) geometry.position[1] -= deltaTime * 500
+        // if (isPressed('q')) geometry.position[1] += deltaTime * 500
+        // if (isPressed('a')) geometry.position[1] -= deltaTime * 500
     }
 })()

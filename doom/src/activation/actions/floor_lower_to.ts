@@ -1,7 +1,7 @@
 import { Sector } from 'doom-map'
-import { lowerFloor } from '../lowerFloor'
+import { lowerFloor } from '../mutations/lowerFloor'
 
-export const floor_lower_to = (sector: Sector, amount: number) => {
-    //TODO
-    lowerFloor(sector)
+export const floor_lower_to = async (sector: Sector, amount: number) => {
+    await lowerFloor(sector, amount)
+    sector.update = undefined
 }

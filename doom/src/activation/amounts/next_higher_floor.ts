@@ -1,9 +1,9 @@
 import { Sector } from 'doom-map'
-import { getAdjacenctSectors } from '../../getAdjacentSectors'
+import { getAdjacentSectors } from '../../getAdjacentSectors'
 import { highest_floor } from './highest_floor'
 
 export const next_higher_floor = (sector: Sector): number => {
-    const adjacent = getAdjacenctSectors(sector)
+    const adjacent = getAdjacentSectors(sector)
     if (adjacent.length < 2) {
         return highest_floor(sector)
     }

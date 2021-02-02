@@ -8,7 +8,8 @@ export const d1_yellow = (type: ActivationType, line: Line): Sector | undefined 
         player: { keys }
     } = G
     if (!keys.yellow) {
+        console.info('You need the yellow key to open this door')
         return undefined
     }
-    d(type, line, true)
+    return d(type, line, true)
 }

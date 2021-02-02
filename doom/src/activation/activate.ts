@@ -36,9 +36,13 @@ const activate = (type: string, { line }: { line: Line }): void => {
     console.info(
         `${type} Activated line ${line.index} with special type ${line.special} and sector tag ${line.sectorTag}`
     )
-    const handler = ActivateLookup[line.special]
-    if (handler !== undefined) {
-        handler(getActivationType(type), line)
+    const activation = ActivateLookup[line.special]
+    if (activation !== undefined) {
+        const { trigger, handler } = activation
+        const sector = trigger(getActivationType(type), line)
+        if (sector !== undefined) {
+            handler(sector)
+        }
     }
 }
 

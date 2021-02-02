@@ -1,70 +1,78 @@
-import { Line } from 'doom-map'
-import { d1_door_open_stay } from './d1_door_open_stay'
-import { s1_door_open_stay } from './s1_door_open_stay'
-import { s1_floor_lowers } from './s1_floor_lowers'
-import { w1_door_open_stay } from './w1_door_open_stay'
-import { w1_floor_lowers } from './w1_floor_lowers'
+import { Line, Sector } from 'doom-map'
+import { door_open_stay, floor_lowers } from './actions'
+import { d1, s1, w1 } from './triggers'
 
 export enum ActivationType {
     Switch,
     Walk
 }
 
-export type ActivateHandler = (type: ActivationType, line: Line) => void
+export type ActivateTrigger = (type: ActivationType, line: Line) => Sector | undefined
+export type ActivateHandler = (sector: Sector) => void
 
-export const ActivateLookup: { [special: number]: ActivateHandler } = {
-    1: d1_door_open_stay,
-    2: w1_door_open_stay,
-    3: w1_door_open_stay,
-    4: w1_door_open_stay,
-    10: w1_floor_lowers,
-    19: w1_floor_lowers,
-    21: s1_floor_lowers,
-    23: s1_floor_lowers,
-    26: d1_door_open_stay,
-    27: d1_door_open_stay,
-    28: d1_door_open_stay,
-    29: s1_door_open_stay,
-    31: d1_door_open_stay,
-    32: d1_door_open_stay,
-    33: d1_door_open_stay,
-    34: d1_door_open_stay,
-    36: w1_floor_lowers,
-    37: w1_floor_lowers,
-    38: w1_floor_lowers,
-    45: s1_floor_lowers,
-    60: s1_floor_lowers,
-    61: s1_door_open_stay,
-    62: s1_floor_lowers,
-    63: s1_door_open_stay,
-    70: s1_floor_lowers,
-    71: s1_floor_lowers,
-    82: w1_floor_lowers,
-    83: w1_floor_lowers,
-    84: w1_floor_lowers,
-    86: w1_door_open_stay,
-    88: w1_floor_lowers,
-    98: w1_floor_lowers,
-    99: s1_door_open_stay,
-    102: s1_floor_lowers,
-    103: s1_door_open_stay,
-    105: w1_door_open_stay,
-    106: w1_door_open_stay,
-    108: w1_door_open_stay,
-    109: w1_door_open_stay,
-    111: s1_door_open_stay,
-    112: s1_door_open_stay,
-    114: s1_door_open_stay,
-    115: s1_door_open_stay,
-    117: d1_door_open_stay,
-    118: d1_door_open_stay,
-    120: w1_floor_lowers,
-    121: w1_floor_lowers,
-    122: s1_floor_lowers,
-    123: s1_floor_lowers,
-    133: s1_door_open_stay,
-    134: s1_door_open_stay,
-    135: s1_door_open_stay,
-    136: s1_door_open_stay,
-    137: s1_door_open_stay
+type ActivateLookupEntry = {
+    trigger: ActivateTrigger
+    handler: ActivateHandler
+}
+
+const a = (trigger: ActivateTrigger, handler: ActivateHandler): ActivateLookupEntry => ({
+    trigger,
+    handler
+})
+
+export const ActivateLookup: { [special: number]: ActivateLookupEntry } = {
+    1: a(d1, door_open_stay),
+    2: a(w1, door_open_stay),
+    3: a(w1, door_open_stay),
+    4: a(w1, door_open_stay),
+    10: a(w1, floor_lowers),
+    19: a(w1, floor_lowers),
+    21: a(s1, floor_lowers),
+    23: a(s1, floor_lowers),
+    26: a(d1, door_open_stay),
+    27: a(d1, door_open_stay),
+    28: a(d1, door_open_stay),
+    29: a(s1, door_open_stay),
+    31: a(d1, door_open_stay),
+    32: a(d1, door_open_stay),
+    33: a(d1, door_open_stay),
+    34: a(d1, door_open_stay),
+    36: a(w1, floor_lowers),
+    37: a(w1, floor_lowers),
+    38: a(w1, floor_lowers),
+    45: a(s1, floor_lowers),
+    60: a(s1, floor_lowers),
+    61: a(s1, door_open_stay),
+    62: a(s1, floor_lowers),
+    63: a(s1, door_open_stay),
+    70: a(s1, floor_lowers),
+    71: a(s1, floor_lowers),
+    82: a(w1, floor_lowers),
+    83: a(w1, floor_lowers),
+    84: a(w1, floor_lowers),
+    86: a(w1, door_open_stay),
+    88: a(w1, floor_lowers),
+    98: a(w1, floor_lowers),
+    99: a(s1, door_open_stay),
+    102: a(s1, floor_lowers),
+    103: a(s1, door_open_stay),
+    105: a(w1, door_open_stay),
+    106: a(w1, door_open_stay),
+    108: a(w1, door_open_stay),
+    109: a(w1, door_open_stay),
+    111: a(s1, door_open_stay),
+    112: a(s1, door_open_stay),
+    114: a(s1, door_open_stay),
+    115: a(s1, door_open_stay),
+    117: a(d1, door_open_stay),
+    118: a(d1, door_open_stay),
+    120: a(w1, floor_lowers),
+    121: a(w1, floor_lowers),
+    122: a(s1, floor_lowers),
+    123: a(s1, floor_lowers),
+    133: a(s1, door_open_stay),
+    134: a(s1, door_open_stay),
+    135: a(s1, door_open_stay),
+    136: a(s1, door_open_stay),
+    137: a(s1, door_open_stay)
 }

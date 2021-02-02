@@ -30,7 +30,6 @@ import {
     brightest_adjacent,
     ceiling_lower_to,
     darkest_adjacent,
-    fast_damage,
     floor,
     highest_ceiling,
     highest_floor,
@@ -38,7 +37,6 @@ import {
     lowest_floor,
     next_higher_floor,
     shortest_lower_texture,
-    slow_damage,
     v
 } from './amounts'
 import { d1, d1_blue, d1_red, d1_yellow, dr, dr_blue, dr_red, dr_yellow, g1, gr, s1, sr, w1, wr } from './triggers'
@@ -76,6 +74,8 @@ const cr = (
 
 const DOOR_SPEED_SLOW = 70
 const DOOR_SPEED_FAST = DOOR_SPEED_SLOW * 2
+const FAST_DAMAGE = 2 //TODO
+const SLOW_DAMAGE = 1 //TODO
 
 //TODO some of the floor changes should change texture and some not
 export const ActivateLookup: { [special: number]: ActivateLookupEntry } = {
@@ -84,7 +84,7 @@ export const ActivateLookup: { [special: number]: ActivateLookupEntry } = {
     3: a(w1, c(door_close_stay, v(DOOR_SPEED_SLOW))),
     4: a(w1, c(door_open_wait_close, v(DOOR_SPEED_SLOW))),
     5: a(w1, c(floor_raise_to, lowest_ceiling)),
-    6: a(w1, c(crusher_start_with, fast_damage)),
+    6: a(w1, c(crusher_start_with, v(FAST_DAMAGE))),
     7: a(s1, c(stairs_raise_by, v(8))),
     8: a(w1, c(stairs_raise_by, v(8))),
     9: a(s1, floor_raise_donut),
@@ -103,7 +103,7 @@ export const ActivateLookup: { [special: number]: ActivateLookupEntry } = {
     22: a(w1, c(floor_raise_to, next_higher_floor)),
     23: a(s1, c(floor_lower_to, lowest_floor)),
     24: a(g1, c(floor_raise_to, lowest_ceiling)),
-    25: a(w1, c(crusher_start_with, slow_damage)),
+    25: a(w1, c(crusher_start_with, v(SLOW_DAMAGE))),
     26: a(dr_blue, c(door_open_wait_close, v(DOOR_SPEED_SLOW))),
     27: a(dr_yellow, c(door_open_wait_close, v(DOOR_SPEED_SLOW))),
     28: a(dr_red, c(door_open_wait_close, v(DOOR_SPEED_SLOW))),
@@ -151,11 +151,11 @@ export const ActivateLookup: { [special: number]: ActivateLookupEntry } = {
     70: a(sr, cr(floor_lower_to, 8, above_highest_floor)),
     71: a(s1, cr(floor_lower_to, 8, above_highest_floor)),
     72: a(wr, cr(ceiling_lower_to, 8, above_floor)),
-    73: a(wr, c(crusher_start_with, slow_damage)),
+    73: a(wr, c(crusher_start_with, v(SLOW_DAMAGE))),
     74: a(wr, crusher_stop),
     75: a(wr, c(door_close_stay, v(DOOR_SPEED_SLOW))),
     76: a(wr, c(door_close_stay_open, v(DOOR_SPEED_SLOW))),
-    77: a(wr, c(crusher_start_with, fast_damage)),
+    77: a(wr, c(crusher_start_with, v(FAST_DAMAGE))),
     79: a(wr, c(light_change_to, v(35))),
     80: a(wr, c(light_change_to, brightest_adjacent)),
     81: a(wr, c(light_change_to, v(255))),
@@ -217,5 +217,5 @@ export const ActivateLookup: { [special: number]: ActivateLookupEntry } = {
     138: a(sr, c(light_change_to, v(255))),
     139: a(sr, c(light_change_to, v(35))),
     140: a(s1, c(floor_raise_by, v(512))),
-    141: a(w1, c(crusher_start_with, slow_damage))
+    141: a(w1, c(crusher_start_with, v(SLOW_DAMAGE)))
 }

@@ -29,7 +29,6 @@ const getActivationType = (type: string): ActivationType => {
 }
 
 const activate = (type: string, { line }: { line: Line }): void => {
-    console.log('activate')
     if (line.special === 0) {
         return
     }

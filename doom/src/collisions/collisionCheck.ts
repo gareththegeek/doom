@@ -6,7 +6,7 @@ import { lineCollisionCheck, LineCollisionCheckResult } from './lineCollisionChe
 import { sectorCheck } from './sectorCheck'
 import { thingCollisionCheck, ThingCollisionCheckResult } from './thingCollisionCheck'
 import { thingCollisionResponse } from './thingCollisionResponse'
-import { pickups } from '../game/pickups'
+import { pickups } from '../items/pickups'
 import { BlockMap, Thing, ThingInfoLookup } from 'doom-map'
 
 export const collisionCheck = (blockmap: BlockMap, thing: Thing, p0: vec2, p1: vec2): vec2 => {

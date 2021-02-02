@@ -32,6 +32,8 @@ const forward = (thing: Thing | undefined, speed: number): void => {
     geometry.position[2] = t1[1]
 }
 
+const isDefined = <T>(object: T | undefined): object is T => object !== undefined
+
 export const update = (() => {
     let then = 0
     return (now: number) => {
@@ -44,12 +46,17 @@ export const update = (() => {
             map: { sectors }
         } = G
         const geometry = player.geometry!
-        
+
         sectors
             .filter((sector) => sector.update !== undefined)
             .forEach((sector) => {
                 sector.update!(deltaTime)
                 sector.dirty = true
+                sector.things
+                    .map((thing) => thing.geometry)
+                    .filter(isDefined)
+                    //TODO falling rather than being glued to the floor
+                    .forEach((geometry) => (geometry.position[1] = sector.floorHeight))
                 getAdjacenctSectors(sector).forEach((sector) => (sector.dirty = true))
             })
 

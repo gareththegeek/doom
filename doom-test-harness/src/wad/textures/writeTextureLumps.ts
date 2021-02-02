@@ -18,10 +18,7 @@ const writePatch = (
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
             const colourIndex = patch.pixels[x][y]
-            if (colourIndex === undefined) {
-                continue
-            }
-            const colour = [...palette.colours[colormap.indices[colourIndex]], 0xff]
+            const colour = [...palette.colours[colormap.indices[colourIndex[0]]], colourIndex[1]]
 
             const hex = Jimp.rgbaToInt(colour[0], colour[1], colour[2], colour[3])
             image.setPixelColour(hex, originx + x, originy + y)

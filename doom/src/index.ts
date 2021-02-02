@@ -24,6 +24,7 @@ const main = async () => {
 
         const ATLAS_SIZE = 4096
         const atlas = createAtlas(wad, ATLAS_SIZE)
+        console.log(wad.colormap.maps.length)
         initialiseVideoSystem(gl, atlas.image, ATLAS_SIZE, wad.playpal.palettes[0].colours, wad.colormap.maps)
         initialiseMapSystem(wad, atlas)
         console.info('Built textures')

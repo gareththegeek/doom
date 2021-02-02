@@ -18,9 +18,7 @@ const writePicture = async (
             for (let x = 0; x < width; x++) {
                 const colourIndex = picture.pixels[x][y]
                 const colour =
-                    colourIndex === undefined
-                        ? [0, 0, 0, 0]
-                        : [...palette.colours[colormap.indices[colourIndex]], 0xff]
+                        [...palette.colours[colormap.indices[colourIndex[0]]], colourIndex[1]]
                 const hex = Jimp.rgbaToInt(colour[0], colour[1], colour[2], colour[3])
                 image.setPixelColour(hex, x, y)
             }

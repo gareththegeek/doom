@@ -17,8 +17,8 @@ void main(void) {
    highp vec2 cmindex = texture2D(uSamplerAtlas, sampleCoords.yx).rg;
    if(cmindex.g < 0.5)
       discard;
-   highp float diminish = clamp((floor(depth / 20.0) - 16.0) * ONE_LIGHT_LEVEL, -MAX_DIMINISH, MAX_DIMINISH);
-   highp float final_light = clamp(uLightLevel + diminish, 0.0, MIN_LIGHT) + HALF_LIGHT_LEVEL;
+   //highp float diminish = clamp((floor(depth / 20.0) - 16.0) * ONE_LIGHT_LEVEL, -MAX_DIMINISH, MAX_DIMINISH);
+   highp float final_light = clamp(uLightLevel /*+ diminish*/, 0.0, MIN_LIGHT);
    highp float index = texture2D(uSamplerColourMap, vec2(cmindex.r, final_light)).a;
    highp vec3 colour = texture2D(uSamplerPalette, vec2(index, 0.5)).rgb;
    gl_FragColor = vec4(colour, 1.0);

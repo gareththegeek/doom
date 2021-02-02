@@ -9,7 +9,7 @@ import { writeAtlas } from './writeAtlas'
             throw new Error('Unable to load doom.wad')
         }
         const atlas = createAtlas(wad, 4096)
-        await writeAtlas(wad, atlas, path.join(__dirname, '../../out/atlas.png'))
+        await writeAtlas(wad, atlas, path.join(__dirname, '../../out/atlas.png'), 4096)
     } catch (e) {
         console.error(e.message)
     }

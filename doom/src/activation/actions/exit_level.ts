@@ -20,7 +20,7 @@ export const exit_level = (_: Sector) => {
         m = 1
     }
     if (e > 4) {
-        console.log('Ran out of levels')
+        console.info('Ran out of levels')
         return
     }
 

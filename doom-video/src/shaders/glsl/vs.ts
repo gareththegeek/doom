@@ -1,3 +1,4 @@
+export default `
 attribute vec4 aVertexPosition;
 attribute vec2 aTextureCoord;
 attribute vec4 aAtlasCoord;
@@ -15,3 +16,4 @@ void main(void) {
   vAtlasCoord = aAtlasCoord;
   depth = gl_Position.z;
 }
+`

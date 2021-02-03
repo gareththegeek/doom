@@ -32,6 +32,19 @@
             "type": "pwa-node"
         },
         {
+            "name": "Debug Atlas",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/doom-atlas",
+            "runtimeArgs": [
+                "start"
+            ],
+            "runtimeExecutable": "yarn",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
+        },
+        {
             "name": "Debug Map Tests",
             "request": "launch",
             "cwd": "${workspaceFolder}/doom-map",

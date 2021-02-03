@@ -15,7 +15,7 @@ export const getFlatEntries = (image: number[], size: number, wad: Wad): AtlasEn
     Object.entries(wad.flats).map(([name, flat]) => ({
         width: FLAT_SIZE,
         height: FLAT_SIZE,
-        name,
+        name: `f_${name}`,
         data: flat,
         blit: (flat: AtlasEntry<WadFlatLump>, x: number, y: number): void => blitFlat(image, size, flat.data, x, y)
     }))

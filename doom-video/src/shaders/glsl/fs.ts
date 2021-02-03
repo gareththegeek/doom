@@ -1,3 +1,4 @@
+export default `
 varying highp vec2 vTextureCoord;
 varying highp vec4 vAtlasCoord;
 varying highp float depth;
@@ -23,3 +24,4 @@ void main(void) {
    highp vec3 colour = texture2D(uSamplerPalette, vec2(index, 0.5)).rgb;
    gl_FragColor = vec4(colour, 1.0);
 }
+`

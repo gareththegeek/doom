@@ -1,9 +1,8 @@
 import { V } from '../system/global'
 import { loadShader } from './loadShader'
 import { ShaderProgram } from './ShaderProgram'
-
-const vsSource = require('./vs.glsl')
-const fsSource = require('./fs.glsl')
+import vsSource from './glsl/vs'
+import fsSource from './glsl/fs'
 
 const getUniformLocation = (program: WebGLProgram, name: string): WebGLUniformLocation => {
     const { gl } = V

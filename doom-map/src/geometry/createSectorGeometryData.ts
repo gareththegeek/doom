@@ -11,6 +11,9 @@ export const createSingleSectorGeometryData = (sector: Sector) => {
             return result
         }
         addWalls(result, sector)
+        if (sector.index === 137) {
+            debugger
+        }
         addFlats(result, sector)
         return result
     } catch (e) {

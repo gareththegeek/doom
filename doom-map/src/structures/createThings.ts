@@ -1,4 +1,4 @@
-import { Geometry, createSprite } from 'doom-video'
+import { Geometry } from 'doom-video'
 import { WadMapLump } from 'doom-wad/dist/interfaces/WadMapLump'
 import { WadThing } from 'doom-wad/dist/interfaces/WadThingsLump'
 import { Sector } from '../interfaces/Sector'
@@ -9,6 +9,7 @@ import { getBlock } from './getBlock'
 import { MapFlags, SkillType } from '../interfaces/MapFlags'
 import { SectorGeometryData } from '../interfaces/SectorGeometryData'
 import { thingInSector } from './thingInSector'
+import { createSpriteGeometry } from 'doom-sprite'
 import { M } from '../global'
 
 const getInfo = (type: number): ThingInfo => ThingInfoLookup[type]
@@ -55,7 +56,7 @@ const createThing = (
     }
 
     // const geometry = undefined
-    const geometry = createSprite(M.atlas, info.sprite, info.sequence)
+    const geometry = createSpriteGeometry(info.sprite)
     geometry.position = [wadThing.x, sector.floorHeight, -wadThing.y]
     geometry.rotation = ((wadThing.angle - 90) * Math.PI) / 180.0
     geometry.light = sector.lightLevel

@@ -1,7 +1,8 @@
 import { initialiseVideoSystem } from 'doom-video'
+import { initialiseMapSystem } from 'doom-map'
+import { initialiseSpriteSystem } from 'doom-sprite'
 import { fetchWad } from 'doom-wad'
 import { createAtlas } from 'doom-atlas'
-import { initialiseMapSystem } from 'doom-map'
 import { loadMap } from './maps/loadMap'
 import { render } from './loops/render'
 import { update } from './loops/update'
@@ -26,7 +27,8 @@ const main = async () => {
         const atlas = createAtlas(wad, ATLAS_SIZE)
         initialiseVideoSystem(gl, atlas.image, ATLAS_SIZE, wad.playpal.palettes[0].colours, wad.colormap.maps)
         initialiseMapSystem(wad, atlas)
-        console.info('Built textures')
+        initialiseSpriteSystem(wad.sprites, atlas)
+        console.info('Initialised subsystems')
 
         loadMap('e1m1')
 

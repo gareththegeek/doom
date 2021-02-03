@@ -2,10 +2,11 @@ import { BufferSet } from './BufferSet'
 import { SceneObject } from './SceneObject'
 
 export interface Geometry extends SceneObject {
+    spriteName?: string
     buffers: BufferSet
     light: number
     flat: boolean
     visible: boolean
-    frame?: number
-    frameCount?: number
+    startIndex?: number
+    indexCount?: number
 }

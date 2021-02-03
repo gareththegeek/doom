@@ -7,7 +7,7 @@ import { GeometryBox } from './interfaces/GeometryBox'
 import { PerspectiveParams } from './interfaces/PerspectiveParams'
 import { Scene } from './interfaces/Scene'
 import { SceneObject } from './interfaces/SceneObject'
-import { renderScene, createSprite, createScene } from './scene'
+import { renderScene, createScene } from './scene'
 import { initialiseVideoSystem } from './system/initialiseVideoSystem'
 
 export {
@@ -23,7 +23,6 @@ export {
     createBufferSet,
     updateBufferSet,
     deleteBufferSet,
-    createSprite,
     createScene,
     renderScene
 }

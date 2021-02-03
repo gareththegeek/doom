@@ -1,7 +1,7 @@
 import PubSub from 'pubsub-js'
 import { G } from '../global'
 import { ON_KEY_DOWN } from '../interfaces/messageTypes'
-import { loadMap } from '../maps/loadMap'
+import { changeLevel } from '../maps/changeLevel'
 
 const cheat = (() => {
     let code = 'AAAAAAAA'
@@ -24,7 +24,7 @@ const cheat = (() => {
                 const e = code[code.length - 2]
                 const m = code[code.length - 1]
                 const mapName = `e${e}m${m}`
-                loadMap(mapName)
+                changeLevel(mapName)
             }
         }
     }

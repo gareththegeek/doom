@@ -2,12 +2,12 @@ import { Sector } from '.'
 import {
     createSingleSectorGeometryData,
     createSingleSectorBufferSetParams,
-    createSingleSectorGeometry
+    updateSingleSectorGeometry
 } from './geometry'
 
 export const rebuildSectorGeometry = (sector: Sector): void => {
     const data = createSingleSectorGeometryData(sector)
     const params = createSingleSectorBufferSetParams(data)
-    createSingleSectorGeometry(sector, params)
+    updateSingleSectorGeometry(sector, params)
     sector.dirty = false
 }

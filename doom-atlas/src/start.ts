@@ -23,7 +23,7 @@ export const readFile = async (filename: string): Promise<Wad | null> =>
             throw new Error('Unable to load doom.wad')
         }
         const atlas = createAtlas(wad, 4096)
-        console.log(atlas)
+        console.info(atlas)
     } catch (e) {
         console.error(e.message)
     }

@@ -1,4 +1,4 @@
-import { createBufferSet } from './buffers'
+import { createBufferSet, deleteBufferSet, updateBufferSet } from './buffers'
 import { BufferSet } from './interfaces/BufferSet'
 import { BufferSetParams } from './interfaces/BufferSetParams'
 import { Camera } from './interfaces/Camera'
@@ -21,6 +21,8 @@ export {
     SceneObject,
     initialiseVideoSystem,
     createBufferSet,
+    updateBufferSet,
+    deleteBufferSet,
     createSprite,
     createScene,
     renderScene

@@ -1,6 +1,6 @@
 import { Sector } from 'doom-map'
 import { G } from '../../global'
-import { loadMap } from '../../maps/loadMap'
+import { changeLevel } from '../../maps/changeLevel'
 import { parseLevel } from './parseLevel'
 
 export const exit_level = (_: Sector) => {
@@ -24,7 +24,6 @@ export const exit_level = (_: Sector) => {
         return
     }
 
-    loadMap(`e${e}m${m}`)
-
+    changeLevel(`e${e}m${m}`)
     G.previousMap = undefined
 }

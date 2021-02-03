@@ -1,6 +1,6 @@
 import { Line, Sector } from 'doom-map'
-import { G } from '../../global'
 import { ActivationType } from '../ActivateLookup'
+import { getTaggedSectors } from './getTaggedSectors'
 
 export const w = (type: ActivationType, line: Line, once: boolean): Sector[] => {
     if (type !== ActivationType.Walk) {
@@ -10,14 +10,5 @@ export const w = (type: ActivationType, line: Line, once: boolean): Sector[] => 
         line.special = 0
     }
 
-    const {
-        map: { sectors }
-    } = G
-
-    const tagged = sectors.filter((s) => s.tag === line.sectorTag)
-    if (tagged.length === 0) {
-        console.warn(`Unable to find sector with tag ${line.sectorTag}`)
-    }
-
-    return tagged
+    return getTaggedSectors(line.sectorTag)
 }

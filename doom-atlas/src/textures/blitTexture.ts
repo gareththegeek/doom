@@ -1,6 +1,7 @@
 import { Wad } from 'doom-wad/dist/interfaces/Wad'
 import { WadPictureLump, IndexedPixel } from 'doom-wad/dist/interfaces/WadPictureLump'
 import { WadMapTexture } from 'doom-wad/dist/interfaces/WadTextureLump'
+import { pathToFileURL } from 'url'
 
 const insideTexture = (x: number, y: number, constraints?: TextureConstraints): boolean =>
     !constraints || (x >= constraints.left && y >= constraints.top && x < constraints.right && y < constraints.bottom)
@@ -22,6 +23,10 @@ export const blitPatch = (
                 continue
             }
             const index = (fx * size + fy) * 2
+            const transparent = patch.pixels[x][y][1] < 255
+            if (transparent && image[index + 0] !== 0) {
+                continue
+            }
             image[index + 0] = patch.pixels[x][y][0]
             image[index + 1] = patch.pixels[x][y][1]
         }

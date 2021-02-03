@@ -6,9 +6,9 @@ const isDefined = (geometry: Geometry | undefined): geometry is Geometry => geom
 
 export const changeLevel = (mapName: string) => {
     const {
-        map: { sectors, things }
+        map: { sectors }
     } = G
-    ;[...sectors.map((sector) => sector.geometry), ...things.map((thing) => thing.geometry)]
+    ;[...sectors.map((sector) => sector.geometry)]
         .filter(isDefined)
         .forEach((geometry) => deleteBufferSet(geometry.buffers))
 

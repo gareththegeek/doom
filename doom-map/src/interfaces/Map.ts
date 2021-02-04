@@ -1,14 +1,14 @@
 import { WadVertex } from 'doom-wad/dist/interfaces/WadVertexLump'
-import { BlockMap } from './BlockMap'
-import { Line } from './Line'
-import { Sector } from './Sector'
+import { MapBlockMap } from './MapBlockMap'
+import { MapLine } from './MapLine'
+import { MapSector } from './MapSector'
 import { Thing } from './Thing'
 
 export interface Map {
     name: string,
-    sectors: Sector[]
-    blockmap: BlockMap
-    lines: Line[]
+    sectors: MapSector[]
+    blockmap: MapBlockMap
+    lines: MapLine[]
     things: Thing[]
     vertices: WadVertex[]
 }

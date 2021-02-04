@@ -1,4 +1,4 @@
-import { Sector } from 'doom-map'
+import { Sector } from '../../interfaces/Sector'
 import { lowest_floor } from '../amounts'
 import { next_lowest_floor } from '../amounts/next_lowest_floor'
 import { lowerFloor } from '../mutations/lowerFloor'

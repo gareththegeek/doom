@@ -1,7 +1,7 @@
-import { ObjectFlags, ObjectInfo } from '../interfaces/ObjectInfo'
-import { ObjectInfoType } from '../interfaces/ObjectInfoType'
-import { SoundEffectType } from '../interfaces/SoundEffectType'
-import { StateType } from '../interfaces/StateType'
+import { ObjectFlags, ObjectInfo } from './ObjectInfo'
+import { ObjectInfoType } from './ObjectInfoType'
+import { SoundEffectType } from './SoundEffectType'
+import { StateType } from './StateType'
 
 export type ObjectInfoLookupType = { [type in ObjectInfoType]: ObjectInfo }
 
@@ -105,7 +105,7 @@ export const ObjectInfoLookup: ObjectInfoLookupType = {
 
     [ObjectInfoType.MT_PLAYER]: {
         // MT_PLAYER
-        doomednum: -1,
+        doomednum: 1,
         spawnstate: StateType.S_PLAY,
         spawnhealth: 100,
         seestate: StateType.S_PLAY_RUN1,

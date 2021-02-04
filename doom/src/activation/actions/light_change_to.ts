@@ -1,12 +1,10 @@
-import { Sector, Thing } from 'doom-map'
-import { Geometry } from 'doom-video'
-
-const isDefined = (geometry: Geometry | undefined): geometry is Geometry => geometry !== undefined
+import { Sector } from '../../interfaces/Sector'
+import { isStatefulObject } from '../../global'
 
 export const light_change_to = (sector: Sector, amount: number) => {
     sector.lightLevel = amount
-    sector.things
+    sector.statefuls
+        .filter(isStatefulObject)
         .map((thing) => thing.geometry)
-        .filter(isDefined)
         .forEach((geometry) => (geometry.light = amount))
 }

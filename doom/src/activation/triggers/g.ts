@@ -1,4 +1,4 @@
-import { Line, Sector } from 'doom-map'
+import { Line, Sector } from '../../interfaces/Sector'
 import { G } from '../../global'
 import { ActivationType } from '../ActivateLookup'
 
@@ -10,9 +10,7 @@ export const g = (type: ActivationType, line: Line, once: boolean): Sector[] => 
         line.special = 0
     }
 
-    const {
-        map: { sectors }
-    } = G
+    const { sectors } = G
 
     const sector = sectors.find((s) => s.tag === line.sectorTag)
     if (sector === undefined) {

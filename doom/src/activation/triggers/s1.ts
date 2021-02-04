@@ -1,4 +1,4 @@
-import { Line, Sector } from 'doom-map'
+import { Line, Sector } from '../../interfaces/Sector'
 import { ActivationType } from '../ActivateLookup'
 import { s } from './s'
 

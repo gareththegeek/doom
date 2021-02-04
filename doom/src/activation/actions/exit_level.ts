@@ -1,19 +1,16 @@
-import { Sector } from 'doom-map'
+import { Sector } from '../../interfaces/Sector'
 import { G } from '../../global'
 import { changeLevel } from '../../maps/changeLevel'
 import { parseLevel } from './parseLevel'
 
 export const exit_level = (_: Sector) => {
-    let {
-        previousMap,
-        map: { name }
-    } = G
+    let { previousMapName, mapName } = G
 
-    if (previousMap !== undefined) {
-        name = previousMap
+    if (previousMapName !== undefined) {
+        mapName = previousMapName
     }
 
-    let { e, m } = parseLevel(name) ?? { e: 1, m: 0 }
+    let { e, m } = parseLevel(mapName) ?? { e: 1, m: 0 }
     m = m + 1
     if (m > 8) {
         e += 1
@@ -25,5 +22,5 @@ export const exit_level = (_: Sector) => {
     }
 
     changeLevel(`e${e}m${m}`)
-    G.previousMap = undefined
+    G.previousMapName = undefined
 }

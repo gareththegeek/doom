@@ -1,4 +1,4 @@
-import { Sector } from 'doom-map'
+import { Sector } from '../../interfaces/Sector'
 import { closeDoor } from '../mutations/closeDoor'
 import { openDoor } from '../mutations/openDoor'
 import { wait } from '../mutations/wait'

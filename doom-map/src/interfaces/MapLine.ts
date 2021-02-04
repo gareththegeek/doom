@@ -1,11 +1,11 @@
 import { WadLineDefFlags } from 'doom-wad/dist/interfaces/WadLineDefsLump'
 import { vec2 } from 'gl-matrix'
-import { Side } from './Side'
+import { MapSide } from './MapSide'
 
-export interface Line {
+export interface MapLine {
     index: number
-    front: Side
-    back: Side | undefined
+    front: MapSide
+    back: MapSide | undefined
     startIndex: number
     endIndex: number
     start: vec2

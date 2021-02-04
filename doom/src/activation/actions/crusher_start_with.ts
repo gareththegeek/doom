@@ -1,4 +1,4 @@
-import { Sector } from 'doom-map'
+import { Sector } from '../../interfaces/Sector'
 import { lowerCeiling } from '../mutations/lowerCeiling'
 import { raiseCeiling } from '../mutations/raiseCeiling'
 

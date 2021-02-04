@@ -2,7 +2,7 @@ import PubSub from 'pubsub-js'
 import { rebuildSectorGeometry } from 'doom-map'
 import { setSpriteFrame } from 'doom-sprite'
 import { renderScene } from 'doom-video'
-import { G } from '../global'
+import { G, isStatefulObject } from '../global'
 import { ON_KEY_DOWN } from '../interfaces/messageTypes'
 
 export const render = (() => {
@@ -18,15 +18,13 @@ export const render = (() => {
     return (now: number) => {
         now *= 0.001
 
-        const {
-            map: { things, sectors }
-        } = G
+        const { statefuls, sectors } = G
 
         // TODO use doom state and ticks to manage this and ideally move animation logic to doom-video
         if (now - lastAnim > 0.2) {
-            things.forEach((thing) => {
-                if (thing.geometry !== undefined) {
-                    setSpriteFrame(thing.geometry, i, j)
+            statefuls.filter(isStatefulObject).forEach(({ geometry }) => {
+                if (geometry !== undefined) {
+                    setSpriteFrame(geometry, i, j)
                 }
             })
             lastAnim = now

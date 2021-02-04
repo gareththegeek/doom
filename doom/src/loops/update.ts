@@ -1,21 +1,17 @@
-import { Sector, Thing } from 'doom-map'
+import { Thing } from 'doom-map'
 import { vec2 } from 'gl-matrix'
 import { collisionCheck } from '../collisions/collisionCheck'
 import { getAdjacentSectors } from '../getAdjacentSectors'
-import { G } from '../global'
+import { G, isStatefulObject } from '../global'
 import { isPressed } from '../input/isPressed'
+import { StatefulObjectThing } from '../interfaces/State'
 
-const forward = (thing: Thing | undefined, speed: number): void => {
+const forward = (stateful: StatefulObjectThing, speed: number): void => {
     const {
-        map,
         cheats: { noclip }
     } = G
 
-    if (thing == undefined) {
-        return
-    }
-
-    const geometry = thing.geometry!
+    const geometry = stateful.geometry
     const result: vec2 = [0, 0]
     vec2.rotate(result, [0, speed], [0, 0], -geometry.rotation)
 
@@ -23,7 +19,7 @@ const forward = (thing: Thing | undefined, speed: number): void => {
     let t1 = vec2.create()
     vec2.subtract(t1, t0, result)
 
-    const postCollisionPosition = collisionCheck(map.blockmap, thing, t0, t1)
+    const postCollisionPosition = collisionCheck(stateful, t0, t1)
     if (!noclip) {
         t1 = postCollisionPosition
     }
@@ -41,28 +37,24 @@ export const update = (() => {
         const deltaTime = now - then
         then = now
 
-        const {
-            player,
-            map: { sectors }
-        } = G
-        const geometry = player.thing.geometry!
+        const { player, sectors } = G
+        const geometry = player.geometry
 
         sectors
             .filter((sector) => sector.update !== undefined)
             .forEach((sector) => {
                 sector.update!.function(deltaTime)
                 sector.dirty = true
-                sector.things
-                    .map((thing) => thing.geometry)
-                    .filter(isDefined)
+                sector.statefuls
+                    .filter(isStatefulObject)
                     //TODO falling rather than being glued to the floor
-                    .forEach((geometry) => (geometry.position[1] = sector.floorHeight))
+                    .forEach(({ geometry }) => (geometry.position[1] = sector.floorHeight))
                 getAdjacentSectors(sector).forEach((sector) => (sector.dirty = true))
             })
 
-        if (isPressed('ArrowUp')) forward(player.thing, deltaTime * 500)
+        if (isPressed('ArrowUp')) forward(player, deltaTime * 500)
         if (isPressed('ArrowLeft')) geometry.rotation += deltaTime * 3
-        if (isPressed('ArrowDown')) forward(player.thing, -deltaTime * 500)
+        if (isPressed('ArrowDown')) forward(player, -deltaTime * 500)
         if (isPressed('ArrowRight')) geometry.rotation -= deltaTime * 3
         // if (isPressed('q')) geometry.position[1] += deltaTime * 500
         // if (isPressed('a')) geometry.position[1] -= deltaTime * 500

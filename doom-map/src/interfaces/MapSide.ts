@@ -1,9 +1,9 @@
 import { WadLineDefFlags } from 'doom-wad/dist/interfaces/WadLineDefsLump'
 import { vec2 } from 'gl-matrix'
-import { Line } from './Line'
-import { Sector } from './Sector'
+import { MapLine } from './MapLine'
+import { MapSector } from './MapSector'
 
-export interface Side {
+export interface MapSide {
     index: number
     lineIndex: number
     lowerTexture: string
@@ -11,9 +11,9 @@ export interface Side {
     upperTexture: string
     xoffset: number
     yoffset: number
-    line: Line
-    sector: Sector
-    other: Side | undefined
+    line: MapLine
+    sector: MapSector
+    other: MapSide | undefined
     start: vec2
     end: vec2
     flags: WadLineDefFlags

@@ -1,12 +1,12 @@
-import { Thing } from 'doom-map'
-import { Block } from 'doom-map/dist/interfaces/BlockMap'
 import { vec2, vec3 } from 'gl-matrix'
-import { ThingInfoLookup } from '../interfaces/ThingInfoLookup'
+import { isStatefulThingObject } from '../global'
+import { Block } from '../interfaces/BlockMap'
+import { StatefulObject, StatefulObjectThing, StatefulThing } from '../interfaces/State'
 import { circleCircleIntersection } from '../maths/circleCircleIntersection'
 
 export interface ThingCollisionCheckResult {
     allow: boolean
-    things: Thing[]
+    statefuls: StatefulObjectThing[]
 }
 
 const vec3tovec2 = (vec3: vec3): vec2 => [vec3[0], vec3[2]]
@@ -18,33 +18,32 @@ export const thingCollisionCheck = (
     p0: vec2,
     p1: vec2
 ): ThingCollisionCheckResult => {
-    const potentialThings = blocks
-        .flatMap((block) => block.things)
-        .filter((thing) => !!thing.geometry?.visible)
-        .filter((thing) => thing.index !== index)
-        .filter((thing) => thing.geometry !== undefined)
-        .filter((thing) => {
-            const info = ThingInfoLookup[thing.type]
-            return circleCircleIntersection(vec3tovec2(thing.geometry!.position), info.radius, p1, radius)
+    const potentialStatefuls = blocks
+        .flatMap((block) => block.statefuls)
+        .filter(isStatefulThingObject)
+        .filter((stateful) => stateful.geometry.visible)
+        .filter((stateful) => stateful.thing.index !== index)
+        .filter((stateful) => {
+            return circleCircleIntersection(vec3tovec2(stateful.geometry!.position), stateful.info.radius, p1, radius)
         })
         .sort(
             (a, b) =>
                 vec2.sqrDist(vec3tovec2(a.geometry!.position), p0) - vec2.sqrDist(vec3tovec2(b.geometry!.position), p0)
         )
 
-    const things: Thing[] = []
-    for (const thing of potentialThings) {
-        things.push(thing)
-        if (ThingInfoLookup[thing.type].obstacle) {
+    const statefuls: StatefulObjectThing[] = []
+    for (const stateful of potentialStatefuls) {
+        statefuls.push(stateful)
+        if (stateful.info.flags.solid) {
             return {
                 allow: false,
-                things
+                statefuls
             }
         }
     }
 
     return {
         allow: true,
-        things
+        statefuls
     }
 }

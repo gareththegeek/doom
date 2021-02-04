@@ -1,4 +1,4 @@
-import { Sector } from 'doom-map'
+import { Sector } from './interfaces/Sector'
 
 const sectorDefined = (sector: Sector | undefined): sector is Sector => sector !== undefined
 

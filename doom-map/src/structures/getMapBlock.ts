@@ -1,7 +1,7 @@
 import { vec2 } from 'gl-matrix'
-import { Block, BlockMap, BLOCK_SIZE } from '../interfaces/BlockMap'
+import { MapBlock, MapBlockMap, BLOCK_SIZE } from 'doom-map/src/interfaces/MapBlockMap'
 
-export const getBlock = (blockmap: BlockMap, point: vec2): Block | undefined => {
+export const getMapBlock = (blockmap: MapBlockMap, point: vec2): MapBlock | undefined => {
     const x = Math.floor((point[0] - blockmap.origin[0]) / BLOCK_SIZE)
     // Because I inverted y coordinates for opengl this is now backwards :/
     // Should have left them as is and reversed the coordinates in the shader

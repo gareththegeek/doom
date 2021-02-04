@@ -1,8 +1,8 @@
 import PubSub from 'pubsub-js'
-import { Line } from 'doom-map'
 import { use } from '../collisions/use'
 import { G } from '../global'
 import { ON_KEY_DOWN, SWITCH_LINE, WALK_LINE } from '../interfaces/messageTypes'
+import { Line } from '../interfaces/Sector'
 import { ActivateLookup, ActivationType } from './ActivateLookup'
 
 PubSub.subscribe(ON_KEY_DOWN, (_: string, { key }: { key: string }) => {
@@ -10,11 +10,8 @@ PubSub.subscribe(ON_KEY_DOWN, (_: string, { key }: { key: string }) => {
         return
     }
 
-    const {
-        player: { thing },
-        map: { blockmap }
-    } = G
-    use(blockmap, thing)
+    const { player } = G
+    use(player)
 })
 
 const getActivationType = (type: string): ActivationType => {

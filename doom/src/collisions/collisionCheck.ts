@@ -7,22 +7,24 @@ import { sectorCheck } from './sectorCheck'
 import { thingCollisionCheck, ThingCollisionCheckResult } from './thingCollisionCheck'
 import { thingCollisionResponse } from './thingCollisionResponse'
 import { pickups } from '../items/pickups'
-import { BlockMap, Thing } from 'doom-map'
-import { ThingInfoLookup } from '../interfaces/ThingInfoLookup'
+import { StatefulThing } from '../interfaces/State'
 
-export const collisionCheck = (blockmap: BlockMap, thing: Thing, p0: vec2, p1: vec2): vec2 => {
-    const blocks = getBlocks(blockmap, thing, p0, p1)
-    const { radius } = ThingInfoLookup[thing.type]
+const last = <T>(array: T[]): T => array[array.length - 1]
 
-    let thingCollisions: ThingCollisionCheckResult = { allow: false, things: [] }
+export const collisionCheck = (stateful: StatefulThing, p0: vec2, p1: vec2): vec2 => {
+    const blocks = getBlocks(stateful, p0, p1)
+    const { radius } = stateful.info
+    const { index } = stateful.thing
+
+    let thingCollisions: ThingCollisionCheckResult = { allow: false, statefuls: [] }
     let lineCollisions: LineCollisionCheckResult = { allow: false, lines: [] }
 
     let infiniteLoopProtection = 0
     while (!(thingCollisions.allow && lineCollisions.allow)) {
         // TODO maybe we can merge collision response and check logic for things and lines?
-        thingCollisions = thingCollisionCheck(blocks, thing.index, radius, p0, p1)
+        thingCollisions = thingCollisionCheck(blocks, index, radius, p0, p1)
         if (!thingCollisions.allow) {
-            p1 = thingCollisionResponse(thingCollisions.things[thingCollisions.things.length - 1], radius, p0, p1)
+            p1 = thingCollisionResponse(last(thingCollisions.statefuls), radius, p0, p1)
         }
 
         lineCollisions = lineCollisionCheck(blocks, radius, p0, p1)
@@ -38,10 +40,10 @@ export const collisionCheck = (blockmap: BlockMap, thing: Thing, p0: vec2, p1: v
         }
     }
 
-    pickups(thingCollisions.things)
+    pickups(thingCollisions.statefuls)
 
-    blockCheck(blockmap, thing, p0, p1)
-    sectorCheck(lineCollisions.lines, thing, p0, p1)
+    blockCheck(stateful, p0, p1)
+    sectorCheck(lineCollisions.lines, stateful, p0, p1)
 
     return p1
 }

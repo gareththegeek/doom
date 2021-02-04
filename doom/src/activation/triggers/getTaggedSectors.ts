@@ -1,10 +1,8 @@
-import { Sector } from 'doom-map'
+import { Sector } from '../../interfaces/Sector'
 import { G } from '../../global'
 
 export const getTaggedSectors = (tag: number): Sector[] => {
-    const {
-        map: { sectors }
-    } = G
+    const { sectors } = G
 
     if (tag === 0) {
         //HACK some triggers like exit switch don't refer to a sector so return first sector

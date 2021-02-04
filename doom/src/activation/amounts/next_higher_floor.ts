@@ -1,4 +1,4 @@
-import { Sector } from 'doom-map'
+import { Sector } from '../../interfaces/Sector'
 import { getAdjacentSectors } from '../../getAdjacentSectors'
 import { highest_floor } from './highest_floor'
 

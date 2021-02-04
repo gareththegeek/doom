@@ -1,11 +1,13 @@
-import { Line, Sector } from 'doom-map'
 import { G } from '../../global'
+import { Line, Sector } from '../../interfaces/Sector'
 import { ActivationType } from '../ActivateLookup'
 import { d } from './d'
 
 export const d1_blue = (type: ActivationType, line: Line): Sector[] => {
     const {
-        player: { keys }
+        player: {
+            playerState: { keys }
+        }
     } = G
     if (!keys.blue) {
         console.info('You need the blue key to open this door')

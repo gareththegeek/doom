@@ -1,5 +1,5 @@
-import { Line } from 'doom-map'
 import { vec2 } from 'gl-matrix'
+import { Line } from '../interfaces/Sector'
 import { projectPositionOntoLine } from './projectVectorOntoVector'
 
 export const lineCircleIntersection = ({ start, end }: Line, centre: vec2, radius: number): number | undefined => {

@@ -1,4 +1,4 @@
-import { Sector } from 'doom-map'
+import { Sector } from '../../interfaces/Sector'
 import { moveCeiling } from './moveCeiling'
 
 export const lowerCeiling = async (sector: Sector, targetHeight: number): Promise<boolean> =>

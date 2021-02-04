@@ -1,4 +1,4 @@
-import { Line, Sector } from 'doom-map'
+import { Line, Sector } from '../interfaces/Sector'
 import {
     ceiling_raise_to,
     crusher_start_with,

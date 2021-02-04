@@ -1,15 +1,15 @@
 import { WadMapLump } from 'doom-wad/dist/interfaces/WadMapLump'
 import { WadThing } from 'doom-wad/dist/interfaces/WadThingsLump'
-import { Sector } from '../interfaces/Sector'
+import { MapSector } from '../interfaces/MapSector'
 import { Thing } from '../interfaces/Thing'
-import { Block, BlockMap } from '../interfaces/BlockMap'
-import { getBlock } from './getBlock'
+import { MapBlock, MapBlockMap } from '../interfaces/MapBlockMap'
+import { getMapBlock } from './getMapBlock'
 import { MapFlags, SkillType } from '../interfaces/MapFlags'
 import { SectorGeometryData } from '../interfaces/SectorGeometryData'
 import { thingInSector } from './thingInSector'
 import { vec3 } from 'gl-matrix'
 
-const newThing = (index: number, { thingType, x, y, angle }: WadThing, sector: Sector, block: Block): Thing => {
+const newThing = (index: number, { thingType, x, y, angle }: WadThing, sector: MapSector, block: MapBlock): Thing => {
     const thing = {
         index,
         type: thingType,
@@ -19,15 +19,12 @@ const newThing = (index: number, { thingType, x, y, angle }: WadThing, sector: S
         spawnAngle: ((angle - 90) * Math.PI) / 180.0
     }
 
-    sector.things.push(thing)
-    block.things.push(thing)
-
     return thing
 }
 
 const createThing = (
-    blockmap: BlockMap,
-    sectors: Sector[],
+    blockmap: MapBlockMap,
+    sectors: MapSector[],
     data: SectorGeometryData[],
     wadThing: WadThing,
     index: number
@@ -39,7 +36,7 @@ const createThing = (
         return undefined
     }
 
-    const block = getBlock(blockmap, [wadThing.x, -wadThing.y])
+    const block = getMapBlock(blockmap, [wadThing.x, -wadThing.y])
     if (block === undefined) {
         console.warn(`Unable to find block for thing ${index}`)
         return undefined
@@ -52,9 +49,9 @@ const isDefined = (thing: Thing | undefined): thing is Thing => thing !== undefi
 
 export const createThings = (
     { things }: WadMapLump,
-    sectors: Sector[],
+    sectors: MapSector[],
     data: SectorGeometryData[],
-    blockmap: BlockMap,
+    blockmap: MapBlockMap,
     flags: MapFlags
 ): Thing[] =>
     things

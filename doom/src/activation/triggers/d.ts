@@ -1,4 +1,4 @@
-import { Line, Sector } from 'doom-map'
+import { Line, Sector } from '../../interfaces/Sector'
 import { ActivationType } from '../ActivateLookup'
 
 export const d = (type: ActivationType, line: Line, once: boolean): Sector[] => {

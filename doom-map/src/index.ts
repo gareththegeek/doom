@@ -1,25 +1,26 @@
 import { createMap } from './createMap'
 import { initialiseMapSystem } from './initialiseMapSystem'
-import { BlockMap } from './interfaces/BlockMap'
-import { Line } from './interfaces/Line'
+import { MapBlock, MapBlockMap } from './interfaces/MapBlockMap'
+import { MapLine } from './interfaces/MapLine'
 import { Map } from './interfaces/Map'
 import { MapFlags } from './interfaces/MapFlags'
-import { Sector } from './interfaces/Sector'
-import { Side } from './interfaces/Side'
+import { MapSector } from './interfaces/MapSector'
+import { MapSide } from './interfaces/MapSide'
 import { Thing } from './interfaces/Thing'
 import { rebuildSectorGeometry } from './rebuildSectorGeometry'
-import { getBlock } from './structures/getBlock'
+import { getMapBlock } from './structures/getMapBlock'
 
 export {
     initialiseMapSystem,
     createMap,
     rebuildSectorGeometry,
-    getBlock,
-    BlockMap,
-    Line,
+    getMapBlock,
+    MapBlock,
+    MapBlockMap,
+    MapLine,
     Map,
     MapFlags,
-    Sector,
-    Side,
+    MapSector,
+    MapSide,
     Thing
 }

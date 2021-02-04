@@ -1,4 +1,4 @@
-import { Sector } from 'doom-map/dist/interfaces/Sector'
+import { Sector } from '../../interfaces/Sector'
 
 export type SectorUpdateResolve = (value: boolean | Promise<boolean>) => void
 export type AsyncSectorUpdateFunction = (resolve: SectorUpdateResolve, deltaTime: number) => void

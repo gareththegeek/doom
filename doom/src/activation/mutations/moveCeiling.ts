@@ -1,4 +1,4 @@
-import { Sector } from 'doom-map'
+import { Sector } from '../../interfaces/Sector'
 import { mutationPromise, SectorUpdateResolve } from './mutationPromise'
 
 export const moveCeiling = async (sector: Sector, targetHeight: number, moveSpeed: number): Promise<boolean> =>

@@ -8,7 +8,12 @@ const cheat = (() => {
 
     return (_: string, { key }: { key: string }): void => {
         const letter = key
-        const { cheats, player } = G
+        const {
+            cheats,
+            player: {
+                playerState
+            }
+        } = G
 
         if (/^[a-z0-9]{1}$/.test(letter)) {
             code = code.substr(1) + letter
@@ -17,7 +22,7 @@ const cheat = (() => {
                 console.info(`noclip ${cheats.noclip}`)
             }
             if (code.endsWith('idkfa')) {
-                player.keys = { blue: true, red: true, yellow: true }
+                playerState.keys = { blue: true, red: true, yellow: true }
                 console.info('I can only give keys for now :P')
             }
             if (/idclev[1-4]{1}[1-9]{1}$/.test(code)) {

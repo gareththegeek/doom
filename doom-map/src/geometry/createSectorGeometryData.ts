@@ -1,9 +1,9 @@
-import { Sector } from '../interfaces/Sector'
+import { MapSector } from '../interfaces/MapSector'
 import { SectorGeometryData } from '../interfaces/SectorGeometryData'
 import { addFlats } from './flats/addFlats'
 import { addWalls } from './walls/addWalls'
 
-export const createSingleSectorGeometryData = (sector: Sector) => {
+export const createSingleSectorGeometryData = (sector: MapSector) => {
     try {
         const result = { adjacency: [], faces: [] }
         if (sector.sides.length <= 1) {
@@ -19,5 +19,5 @@ export const createSingleSectorGeometryData = (sector: Sector) => {
     }
 }
 
-export const createSectorGeometryData = (sectors: Sector[]): SectorGeometryData[] =>
+export const createSectorGeometryData = (sectors: MapSector[]): SectorGeometryData[] =>
     sectors.map((sector) => createSingleSectorGeometryData(sector))

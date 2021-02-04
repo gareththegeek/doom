@@ -1,4 +1,4 @@
-import { Sector } from 'doom-map'
+import { Sector } from '../../interfaces/Sector'
 import { lowerCeiling } from '../mutations/lowerCeiling'
 
 export const ceiling_lower_to = async (sector: Sector, amount: number): Promise<void> => {

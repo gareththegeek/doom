@@ -1,4 +1,4 @@
-import { Sector } from 'doom-map'
+import { Sector } from '../../interfaces/Sector'
 import { mutationPromise, SectorUpdateResolve } from './mutationPromise'
 
 export const wait = async (sector: Sector, time: number): Promise<boolean> =>

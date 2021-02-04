@@ -2,9 +2,9 @@ import { TextureAtlasEntry } from 'doom-atlas/dist/interfaces/TextureAtlas'
 import { WadLineDefFlags } from 'doom-wad/dist/interfaces/WadLineDefsLump'
 import { vec2 } from 'gl-matrix'
 import { M } from '../../global'
-import { Sector } from '../../interfaces/Sector'
+import { MapSector } from '../../interfaces/MapSector'
 import { FaceData, SectorGeometryData } from '../../interfaces/SectorGeometryData'
-import { Side } from '../../interfaces/Side'
+import { MapSide } from '../../interfaces/MapSide'
 
 const buildFace = (
     start: vec2,
@@ -64,12 +64,12 @@ const buildFace = (
     }
 }
 
-const hasMiddle = (side: Side): boolean => side.middleTexture !== '-'
+const hasMiddle = (side: MapSide): boolean => side.middleTexture !== '-'
 
-const hasUpper = (side: Side, front: Sector, back?: Sector): boolean =>
+const hasUpper = (side: MapSide, front: MapSector, back?: MapSector): boolean =>
     !!back && front.ceilingHeight > back.ceilingHeight && side.upperTexture !== '-'
 
-const hasLower = (side: Side, front: Sector, back?: Sector): boolean =>
+const hasLower = (side: MapSide, front: MapSector, back?: MapSector): boolean =>
     !!back && front.floorHeight < back.floorHeight && side.lowerTexture !== '-'
 
 enum TextureOriginType {
@@ -80,12 +80,12 @@ enum TextureOriginType {
 
 const processSidedef = (
     faces: FaceData[],
-    side: Side,
+    side: MapSide,
     start: vec2,
     end: vec2,
     flags: WadLineDefFlags,
-    frontSector: Sector,
-    backSector: Sector | undefined
+    frontSector: MapSector,
+    backSector: MapSector | undefined
 ): void => {
     const { atlas } = M
     if (hasMiddle(side)) {
@@ -135,7 +135,7 @@ const processSidedef = (
     }
 }
 
-export const addWalls = ({ adjacency, faces }: SectorGeometryData, sector: Sector): void => {
+export const addWalls = ({ adjacency, faces }: SectorGeometryData, sector: MapSector): void => {
     sector.sides.forEach((side) => {
         const isFront = side.line.front === side
 

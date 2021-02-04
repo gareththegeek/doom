@@ -1,16 +1,18 @@
-import { BlockMap, getBlock, Thing } from 'doom-map'
+import { Thing } from 'doom-map'
 import { vec2 } from 'gl-matrix'
+import { Stateful } from '../interfaces/State'
+import { getBlock } from './getBlock'
 
-export const blockCheck = (blockmap: BlockMap, thing: Thing, p0: vec2, p1: vec2): void => {
-    const oldBlock = getBlock(blockmap, p0)
-    const newBlock = getBlock(blockmap, p1)
+export const blockCheck = (stateful: Stateful, p0: vec2, p1: vec2): void => {
+    const oldBlock = getBlock(p0)
+    const newBlock = getBlock(p1)
     if (newBlock !== oldBlock) {
         if (oldBlock !== undefined) {
-            oldBlock.things.splice(oldBlock.things.indexOf(thing))
+            oldBlock.statefuls.splice(oldBlock.statefuls.indexOf(stateful))
         }
         if (newBlock !== undefined) {
-            newBlock.things.push(thing)
-            thing.block = newBlock
+            newBlock.statefuls.push(stateful)
+            stateful.block = newBlock
         }
     }
 }

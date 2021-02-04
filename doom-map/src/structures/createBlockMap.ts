@@ -1,14 +1,13 @@
 import { WadBlockMapLump } from 'doom-wad/dist/interfaces/WadBlockmapLump'
-import { BlockMap, BLOCK_SIZE } from '../interfaces/BlockMap'
-import { Line } from '../interfaces/Line'
+import { MapBlockMap, BLOCK_SIZE } from '../interfaces/MapBlockMap'
+import { MapLine } from '../interfaces/MapLine'
 
-export const createBlockMap = (wadBlockMap: WadBlockMapLump, lines: Line[]): BlockMap => ({
+export const createBlockMap = (wadBlockMap: WadBlockMapLump, lines: MapLine[]): MapBlockMap => ({
     origin: [wadBlockMap.xorigin, -wadBlockMap.yorigin],
     blocks: wadBlockMap.blocks.map((row, x) =>
         row.map(({ linedefs }, y) => ({
             origin: [wadBlockMap.xorigin + x * BLOCK_SIZE, -(wadBlockMap.yorigin + y * BLOCK_SIZE)],
-            lines: linedefs.map((linedef) => lines[linedef]),
-            things: []
+            lines: linedefs.map((linedef) => lines[linedef])
         }))
     )
 })

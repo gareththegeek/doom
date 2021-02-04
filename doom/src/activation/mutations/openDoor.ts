@@ -1,4 +1,4 @@
-import { Sector } from 'doom-map'
+import { Sector } from '../../interfaces/Sector'
 import { lowest_ceiling } from '../amounts'
 import { moveCeiling } from './moveCeiling'
 

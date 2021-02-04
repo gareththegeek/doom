@@ -1,13 +1,8 @@
-import { Line } from 'doom-map'
-import { Block } from 'doom-map/dist/interfaces/BlockMap'
 import { vec2 } from 'gl-matrix'
+import { Block } from '../interfaces/BlockMap'
+import { Line } from '../interfaces/Sector'
 import { findLineSideForPoint } from '../maths/findLineSideForPoint'
 import { lineCircleSweep } from '../maths/lineCircleSweep'
-
-// export interface LineIntersection {
-//     line: Line
-//     point: vec2
-// }
 
 export interface LineCollisionCheckResult {
     allow: boolean

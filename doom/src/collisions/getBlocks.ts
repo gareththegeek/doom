@@ -1,7 +1,7 @@
-import { BlockMap, getBlock, Thing } from 'doom-map'
-import { Block } from 'doom-map/dist/interfaces/BlockMap'
 import { vec2 } from 'gl-matrix'
-import { ThingInfoLookup } from '../interfaces/ThingInfoLookup'
+import { Block } from '../interfaces/BlockMap'
+import { StatefulThing } from '../interfaces/State'
+import { getBlock } from './getBlock'
 
 const getBoxCorners = (centre: vec2, radius: number): vec2[] => {
     const hradius = radius / 2
@@ -15,10 +15,9 @@ const getBoxCorners = (centre: vec2, radius: number): vec2[] => {
 
 const isDefined = (block: Block | undefined): block is Block => block !== undefined
 
-export const getBlocks = (blockmap: BlockMap, thing: Thing, p0: vec2, p1: vec2): Block[] => {
+export const getBlocks = ({ info: { radius } }: StatefulThing, p0: vec2, p1: vec2): Block[] => {
     // Based upon thing radius, find all intersected blocks from the blockmap
-    const info = ThingInfoLookup[thing.type]
-    const corners = [...getBoxCorners(p0, info.radius), ...getBoxCorners(p1, info.radius)]
-    const blocks = corners.map((corner) => getBlock(blockmap, corner)).filter(isDefined)
+    const corners = [...getBoxCorners(p0, radius), ...getBoxCorners(p1, radius)]
+    const blocks = corners.map((corner) => getBlock(corner)).filter(isDefined)
     return [...new Set(blocks)]
 }

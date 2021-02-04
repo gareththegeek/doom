@@ -1,5 +1,5 @@
-import { Side, Line } from 'doom-map'
 import { vec2 } from 'gl-matrix'
+import { Side, Line } from '../interfaces/Sector'
 
 export interface LineSideResult {
     side: Side | undefined

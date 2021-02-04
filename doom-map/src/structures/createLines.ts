@@ -2,21 +2,21 @@ import { WadLineDef } from 'doom-wad/dist/interfaces/WadLineDefsLump'
 import { WadMapLump } from 'doom-wad/dist/interfaces/WadMapLump'
 import { WadSideDef } from 'doom-wad/dist/interfaces/WadSideDefsLump'
 import { vec2 } from 'gl-matrix'
-import { Line } from '../interfaces/Line'
-import { Sector } from '../interfaces/Sector'
-import { Side } from '../interfaces/Side'
+import { MapLine } from '../interfaces/MapLine'
+import { MapSector } from '../interfaces/MapSector'
+import { MapSide } from '../interfaces/MapSide'
 
 const linkSideToSector = (
-    sectors: Sector[],
+    sectors: MapSector[],
     linedef: WadLineDef,
     lineIndex: number,
     start: vec2,
     end: vec2,
     wadSide: WadSideDef,
     wadOtherSide: WadSideDef | undefined
-): { front: Side; back: Side | undefined } => {
+): { front: MapSide; back: MapSide | undefined } => {
     const sector = sectors[wadSide.sector]
-    const side: Side = {
+    const side: MapSide = {
         index: linedef.front,
         lineIndex,
         lowerTexture: wadSide.lowerTexture,
@@ -29,10 +29,10 @@ const linkSideToSector = (
         sector,
         flags: linedef.flags,
         other: undefined
-    } as Side
+    } as MapSide
 
     sector.sides.push(side)
-    let other: Side | undefined = undefined
+    let other: MapSide | undefined = undefined
     if (wadOtherSide) {
         const otherSector = sectors[wadOtherSide.sector]
         other = {
@@ -48,14 +48,14 @@ const linkSideToSector = (
             sector: otherSector,
             flags: linedef.flags,
             other: side
-        } as Side
+        } as MapSide
         side.other = other
         otherSector.sides.push(other)
     }
     return { front: side, back: other }
 }
 
-export const createLines = (wadMap: WadMapLump, sectors: Sector[]): Line[] =>
+export const createLines = (wadMap: WadMapLump, sectors: MapSector[]): MapLine[] =>
     wadMap.linedefs.map((linedef, index) => {
         const wfront = wadMap.sidedefs[linedef.front]
         const wback = linedef.back > -1 ? wadMap.sidedefs[linedef.back] : undefined

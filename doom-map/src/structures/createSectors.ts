@@ -1,8 +1,8 @@
 import { WadMapLump } from 'doom-wad/dist/interfaces/WadMapLump'
 import { WadSector } from 'doom-wad/dist/interfaces/WadSectorsLump'
-import { Sector } from '../interfaces/Sector'
+import { MapSector } from '../interfaces/MapSector'
 
-const createSector = (wadSector: WadSector, index: number): Sector => ({
+const createSector = (wadSector: WadSector, index: number): MapSector => ({
     index,
     floorHeight: wadSector.floorHeight,
     ceilingHeight: wadSector.ceilingHeight,
@@ -11,10 +11,9 @@ const createSector = (wadSector: WadSector, index: number): Sector => ({
     lightLevel: wadSector.lightLevel,
     geometry: undefined,
     dirty: true,
-    things: [],
     sides: [],
     tag: wadSector.tag
 })
 
-export const createSectors = (wadMap: WadMapLump): Sector[] =>
+export const createSectors = (wadMap: WadMapLump): MapSector[] =>
     wadMap.sectors.map((wadSector, index) => createSector(wadSector, index))

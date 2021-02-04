@@ -44,7 +44,7 @@ export const loadMap = (mapName: string): void => {
             sector,
             block,
             info,
-            state: StateLookup[info.spawnstate]
+            state: {...StateLookup[info.spawnstate]}
         }
         sector.statefuls.push(result)
         block.statefuls.push(result)

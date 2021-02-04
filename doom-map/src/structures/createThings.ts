@@ -16,7 +16,7 @@ const newThing = (index: number, { thingType, x, y, angle }: WadThing, sector: M
         sector,
         block,
         spawnPosition: [x, sector.floorHeight, -y] as vec3,
-        spawnAngle: ((angle - 90) * Math.PI) / 180.0
+        spawnAngle: (angle * Math.PI) / 180 //((angle - 90) * Math.PI) / 180.0
     }
 
     return thing

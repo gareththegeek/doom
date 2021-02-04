@@ -17,6 +17,8 @@ const createPlayerState = (): PlayerState => ({
 
 export const loadMap = (mapName: string): void => {
     console.info(`Loading map ${mapName}`)
+    
+    G.mapName = mapName
     const map = createMap(mapName, { multiplayer: false, skill: SkillType.skill45 })
 
     G.sectors = map.sectors as Sector[]

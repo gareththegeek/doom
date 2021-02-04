@@ -5,6 +5,8 @@ import { getAdjacentSectors } from '../getAdjacentSectors'
 import { G, isStatefulObject } from '../global'
 import { isPressed } from '../input/isPressed'
 import { StatefulObjectThing } from '../interfaces/State'
+import { StateType } from '../interfaces/StateType'
+import { StateLookup } from '../state/StateLookup'
 
 const forward = (stateful: StatefulObjectThing, speed: number): void => {
     const {
@@ -28,17 +30,35 @@ const forward = (stateful: StatefulObjectThing, speed: number): void => {
     geometry.position[2] = t1[1]
 }
 
-const isDefined = <T>(object: T | undefined): object is T => object !== undefined
-
 export const update = (() => {
     let then = 0
+    let lastTic = 0
     return (now: number) => {
         now *= 0.001
         const deltaTime = now - then
         then = now
 
-        const { player, sectors } = G
+        const { player, sectors, statefuls } = G
         const geometry = player.geometry
+
+        const tic = now - lastTic > 1 / 35
+        if (tic) {
+            lastTic = now
+        }
+
+        statefuls.forEach((stateful) => {
+            if (!tic) {
+                return
+            }
+            stateful.state.tics -= 1
+            if (stateful.state.tics > 0) {
+                return
+            }
+            if (stateful.state.nextState === StateType.S_NULL) {
+                return
+            }
+            stateful.state = { ...StateLookup[stateful.state.nextState] }
+        })
 
         sectors
             .filter((sector) => sector.update !== undefined)

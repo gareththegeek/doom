@@ -8,7 +8,6 @@ import { Sector } from './interfaces/Sector'
 import { Side } from './interfaces/Side'
 import { Thing } from './interfaces/Thing'
 import { rebuildSectorGeometry } from './rebuildSectorGeometry'
-import { ThingInfoLookup } from './structures'
 import { getBlock } from './structures/getBlock'
 
 export {
@@ -16,7 +15,6 @@ export {
     createMap,
     rebuildSectorGeometry,
     getBlock,
-    ThingInfoLookup,
     BlockMap,
     Line,
     Map,

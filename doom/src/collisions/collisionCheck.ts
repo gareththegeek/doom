@@ -7,7 +7,8 @@ import { sectorCheck } from './sectorCheck'
 import { thingCollisionCheck, ThingCollisionCheckResult } from './thingCollisionCheck'
 import { thingCollisionResponse } from './thingCollisionResponse'
 import { pickups } from '../items/pickups'
-import { BlockMap, Thing, ThingInfoLookup } from 'doom-map'
+import { BlockMap, Thing } from 'doom-map'
+import { ThingInfoLookup } from '../interfaces/ThingInfoLookup'
 
 export const collisionCheck = (blockmap: BlockMap, thing: Thing, p0: vec2, p1: vec2): vec2 => {
     const blocks = getBlocks(blockmap, thing, p0, p1)

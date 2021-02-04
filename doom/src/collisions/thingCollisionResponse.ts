@@ -1,5 +1,6 @@
-import { Thing, ThingInfoLookup } from 'doom-map'
+import { Thing } from 'doom-map'
 import { vec2, vec3 } from 'gl-matrix'
+import { ThingInfoLookup } from '../interfaces/ThingInfoLookup'
 import { lineCollisionResponse } from './lineCollisionResponse'
 
 const vec3tovec2 = (vec3: vec3): vec2 => [vec3[0], vec3[2]]

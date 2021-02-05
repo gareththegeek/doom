@@ -15,7 +15,8 @@ const buildFace = (
     texture: TextureAtlasEntry,
     textureOrigin: TextureOriginType,
     xoffset: number,
-    yoffset: number
+    yoffset: number,
+    isSky = false
 ): FaceData => {
     const width = vec2.length([end[0] - start[0], end[1] - start[1]])
     const height = top - bottom
@@ -60,7 +61,7 @@ const buildFace = (
                 [x1, y1]
             ],
             atlas: [[...bounds], [...bounds], [...bounds], [...bounds]],
-            sky: [0, 0, 0, 0]
+            sky: isSky ? [1, 1, 1, 1] : [0, 0, 0, 0]
         }
     }
 }
@@ -69,6 +70,8 @@ const hasMiddle = (side: MapSide): boolean => side.middleTexture !== '-'
 
 const hasUpper = (side: MapSide, front: MapSector, back?: MapSector): boolean =>
     !!back && front.ceilingHeight > back.ceilingHeight && side.upperTexture !== '-'
+
+const isSky = (back: MapSector) => back.ceilingTexture === 'f_f_sky1'
 
 const hasLower = (side: MapSide, front: MapSector, back?: MapSector): boolean =>
     !!back && front.floorHeight < back.floorHeight && side.lowerTexture !== '-'
@@ -105,6 +108,10 @@ const processSidedef = (
         )
     }
     if (hasUpper(side, frontSector, backSector)) {
+        const sky = isSky(backSector!)
+        const texture = sky
+            ? atlas.lookup['sky1'] //TODO how do we know what sky we're using? is it by episode?
+            : atlas.lookup[side.upperTexture]
         faces.push(
             buildFace(
                 start,
@@ -112,10 +119,11 @@ const processSidedef = (
                 backSector!.ceilingHeight,
                 frontSector.ceilingHeight,
                 0,
-                atlas.lookup[side.upperTexture],
+                texture,
                 flags.upperUnpegged ? TextureOriginType.Top : TextureOriginType.Bottom,
                 side.xoffset,
-                side.yoffset
+                side.yoffset,
+                isSky(backSector!)
             )
         )
     }

@@ -41,12 +41,15 @@ export const createShaderPrograms = (): ShaderProgram[] =>
             attribLocations: {
                 vertexPosition: gl.getAttribLocation(program, 'aVertexPosition'),
                 textureCoord: gl.getAttribLocation(program, 'aTextureCoord'),
-                atlasCoord: gl.getAttribLocation(program, 'aAtlasCoord')
+                atlasCoord: gl.getAttribLocation(program, 'aAtlasCoord'),
+                sky: gl.getAttribLocation(program, 'aSky')
             },
             uniformLocations: {
                 projectionMatrix: getUniformLocation(program, 'uProjectionMatrix'),
                 modelViewMatrix: getUniformLocation(program, 'uModelViewMatrix'),
                 lightLevel: getUniformLocation(program, 'uLightLevel'),
+                skyRotation: getUniformLocation(program, 'uSkyRotation'),
+                resolution: getUniformLocation(program, 'uResolution'),
                 uSamplerAtlas: getUniformLocation(program, 'uSamplerAtlas'),
                 uSamplerPalette: getUniformLocation(program, 'uSamplerPalette'),
                 uSamplerColourMap: getUniformLocation(program, 'uSamplerColourMap')

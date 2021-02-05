@@ -8,12 +8,12 @@ import { processLoops } from './processLoops'
 
 const FLAT_SIZE = 64
 
-const buildFlat = (vertices: WadVertex[], y: number, texture: TextureAtlasEntry): LineLoop => {
+const buildFlat = (vertices: WadVertex[], y: number, texture: TextureAtlasEntry, isSky = false): LineLoop => {
     return {
         position: vertices.map((vertex) => [vertex.x, y, -vertex.y]),
         texture: vertices.map((vertex) => [1 - vertex.y / FLAT_SIZE, vertex.x / FLAT_SIZE]),
         atlas: vertices.map(() => [texture.left, texture.top, texture.right, texture.bottom]),
-        sky: vertices.map(() => 0)
+        sky: vertices.map(() => (isSky ? 1 : 0))
     }
 }
 
@@ -30,7 +30,10 @@ export const addFlats = ({ adjacency, faces }: SectorGeometryData, sector: MapSe
 
     loops.map((loop) => {
         const floorTexture = atlas.lookup[sector.floorTexture]
-        const ceilingTexture = atlas.lookup[sector.ceilingTexture]
+        const isSky = sector.ceilingTexture === 'f_f_sky1'
+        const ceilingTexture = isSky
+            ? atlas.lookup['sky1'] //TODO how do we know what sky we're using? is it by episode?
+            : atlas.lookup[sector.ceilingTexture]
         faces.push({
             isFlat: true,
             isCeiling: false,
@@ -40,8 +43,8 @@ export const addFlats = ({ adjacency, faces }: SectorGeometryData, sector: MapSe
         faces.push({
             isFlat: true,
             isCeiling: true,
-            contour: buildFlat(loop.contour, sector.ceilingHeight, ceilingTexture),
-            holes: loop.holes.map((hole) => buildFlat(hole, sector.ceilingHeight, ceilingTexture))
+            contour: buildFlat(loop.contour, sector.ceilingHeight, ceilingTexture, isSky),
+            holes: loop.holes.map((hole) => buildFlat(hole, sector.ceilingHeight, ceilingTexture, isSky))
         })
     })
 }

@@ -16,8 +16,8 @@ uniform sampler2D uSamplerAtlas;
 uniform sampler2D uSamplerPalette;
 uniform sampler2D uSamplerColourMap;
 
-const float MIN_LIGHT = 32.0 / 34.0;
-const float ONE_LIGHT_LEVEL = 1.0 / 34.0;
+const float MIN_LIGHT = 31.0 / 33.0;
+const float ONE_LIGHT_LEVEL = 1.0 / 33.0;
 const float HALF_LIGHT_LEVEL = ONE_LIGHT_LEVEL / 2.0;
 const float MAX_DIMINISH = 12.0 * ONE_LIGHT_LEVEL;
 
@@ -43,7 +43,7 @@ void main(void) {
       discard;
    
    // Apply lighting using colourmap and diminishing lighting
-   float diminish = clamp((floor(vDepth / 20.0) - 16.0) * ONE_LIGHT_LEVEL, -MAX_DIMINISH, MAX_DIMINISH);
+   float diminish = clamp(floor(vDepth / 100.0) * ONE_LIGHT_LEVEL, 0.0, 8.0);
    float light = (uLightLevel + diminish) * (1.0 - vSky);
    float final_light = clamp(light, 0.0, MIN_LIGHT);
 

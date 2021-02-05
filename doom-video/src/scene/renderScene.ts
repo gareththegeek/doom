@@ -20,8 +20,10 @@ const applyCamera = (camera: Camera): void => {
         resources: { programs }
     } = V
     const program = programs[WORLD_SPACE_PROGRAM]
+    const canvas = gl.canvas as HTMLCanvasElement
+    gl.uniform2fv(program.uniformLocations.resolution, [canvas.clientWidth, canvas.clientHeight])
     gl.uniformMatrix4fv(program.uniformLocations.projectionMatrix, false, camera.projection)
-    gl.uniform1f(program.uniformLocations.skyRotation, -camera.target!.rotation)
+    gl.uniform1f(program.uniformLocations.skyRotation, -camera.target!.rotation / (Math.PI * 2))
 }
 
 const renderGeometry = (camera: Camera, geometry: Geometry): void => {
@@ -66,17 +68,11 @@ const bindTextures = (): void => {
 
 export const renderScene = (): void => {
     const {
-        gl,
-        scene: { camera, objects },
-        resources: { programs }
+        scene: { camera, objects }
     } = V
-    const program = programs[WORLD_SPACE_PROGRAM]
     clearScene()
     bindTextures()
     applyCamera(camera)
-
-    const canvas = gl.canvas as HTMLCanvasElement
-    gl.uniform2fv(program.uniformLocations.resolution, [canvas.clientWidth, canvas.clientHeight])
 
     objects
         .filter((object) => object.geometry !== undefined)

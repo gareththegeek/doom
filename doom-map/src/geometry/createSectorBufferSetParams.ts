@@ -26,7 +26,7 @@ const triangulate = (face: FaceData, base: number): number[] =>
 const MAX_TRIANGULATION_RETRIES = 5
 
 export const createSingleSectorBufferSetParams = (sector: SectorGeometryData, i = 0): BufferSetParams => {
-    const params: BufferSetParams = { positions: [], indices: [], textures: [], atlas: [] }
+    const params: BufferSetParams = { positions: [], indices: [], textures: [], atlas: [], sky: [] }
     let base = 0
     sector.faces.forEach((face) => {
         try {
@@ -34,6 +34,7 @@ export const createSingleSectorBufferSetParams = (sector: SectorGeometryData, i 
             const newPositions = all.flatMap((loop) => loop.position)
             const newTextures = all.flatMap((loop) => loop.texture)
             const newAtlas = all.flatMap((loop) => loop.atlas)
+            const newSky = all.flatMap((loop) => loop.sky)
             let newIndices: number[] = []
             let i = 0
             while (i++ < MAX_TRIANGULATION_RETRIES && newIndices.length === 0) {
@@ -47,6 +48,7 @@ export const createSingleSectorBufferSetParams = (sector: SectorGeometryData, i 
             params.positions = params.positions.concat(newPositions)
             params.textures = params.textures.concat(newTextures)
             params.atlas = params.atlas.concat(newAtlas)
+            params.sky = params.sky.concat(newSky)
             params.indices = params.indices.concat(face.isCeiling ? newIndices.reverse() : newIndices)
 
             base += newPositions.length

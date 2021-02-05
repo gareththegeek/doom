@@ -12,7 +12,8 @@ const buildFlat = (vertices: WadVertex[], y: number, texture: TextureAtlasEntry)
     return {
         position: vertices.map((vertex) => [vertex.x, y, -vertex.y]),
         texture: vertices.map((vertex) => [1 - vertex.y / FLAT_SIZE, vertex.x / FLAT_SIZE]),
-        atlas: vertices.map(() => [texture.left, texture.top, texture.right, texture.bottom])
+        atlas: vertices.map(() => [texture.left, texture.top, texture.right, texture.bottom]),
+        sky: vertices.map(() => 0)
     }
 }
 

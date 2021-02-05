@@ -59,7 +59,8 @@ const buildFace = (
                 [x1, y0],
                 [x1, y1]
             ],
-            atlas: [[...bounds], [...bounds], [...bounds], [...bounds]]
+            atlas: [[...bounds], [...bounds], [...bounds], [...bounds]],
+            sky: [0, 0, 0, 0]
         }
     }
 }

@@ -4,6 +4,7 @@ export interface LineLoop {
     position: vec3[]
     texture: vec2[]
     atlas: vec4[]
+    sky: number[]
 }
 
 export interface FaceData {

@@ -1,3 +1,3 @@
-import { createShaderProgram } from './createProgram'
+import { createShaderPrograms } from './createShaderPrograms'
 
-export { createShaderProgram }
+export { createShaderPrograms }

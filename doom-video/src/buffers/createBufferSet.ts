@@ -20,12 +20,13 @@ const buildBuffer = (target: number, data: ArrayBuffer): WebGLBuffer => {
     return buffer
 }
 
-export const createBufferSet = ({ positions, indices, textures, atlas }: BufferSetParams): BufferSet => ({
+export const createBufferSet = ({ positions, indices, textures, atlas, sky }: BufferSetParams): BufferSet => ({
     vertexCount: indices.length,
     position: buildBuffer(V.gl.ARRAY_BUFFER, new Float32Array(positions.map((vec) => Array.from(vec)).flat())),
     index: buildBuffer(V.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices)),
     texture: buildBuffer(V.gl.ARRAY_BUFFER, new Float32Array(textures.map((vec) => Array.from(vec)).flat())),
-    atlas: buildBuffer(V.gl.ARRAY_BUFFER, new Float32Array(atlas.map((vec) => Array.from(vec)).flat()))
+    atlas: buildBuffer(V.gl.ARRAY_BUFFER, new Float32Array(atlas.map((vec) => Array.from(vec)).flat())),
+    sky: buildBuffer(V.gl.ARRAY_BUFFER, new Float32Array(sky))
 })
 
 export const updateBufferSet = (

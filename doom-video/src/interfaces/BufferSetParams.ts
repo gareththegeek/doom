@@ -5,4 +5,5 @@ export interface BufferSetParams {
     indices: number[]
     textures: vec2[]
     atlas: vec4[]
+    sky: number[]
 }

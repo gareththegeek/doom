@@ -7,6 +7,7 @@ import { Scene } from '../interfaces/Scene'
 import { VideoResources } from '../interfaces/VideoResources'
 import { Camera } from '..'
 import { V } from '../system/global'
+import { WORLD_SPACE_PROGRAM } from '../shaders/createShaderPrograms'
 
 const clearScene = () => {
     const { gl } = V
@@ -16,16 +17,18 @@ const clearScene = () => {
 const applyCamera = (camera: Camera): void => {
     const {
         gl,
-        resources: { program }
+        resources: { programs }
     } = V
+    const program = programs[WORLD_SPACE_PROGRAM]
     gl.uniformMatrix4fv(program.uniformLocations.projectionMatrix, false, camera.projection)
 }
 
 const renderGeometry = (camera: Camera, geometry: Geometry): void => {
     const {
         gl,
-        resources: { program }
+        resources: { programs }
     } = V
+    const program = programs[WORLD_SPACE_PROGRAM]
 
     if (!geometry.visible) {
         return

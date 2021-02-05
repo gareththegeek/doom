@@ -1,8 +1,8 @@
-import { ShaderProgram } from "../shaders/ShaderProgram";
+import { ShaderProgram } from '../shaders/ShaderProgram'
 
 export interface VideoResources {
     texture: WebGLTexture
     palette: WebGLTexture
     colourmaps: WebGLTexture
-    program: ShaderProgram
+    programs: { [name: string]: ShaderProgram }
 }

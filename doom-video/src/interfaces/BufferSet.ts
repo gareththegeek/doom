@@ -4,4 +4,5 @@ export interface BufferSet {
     index: WebGLBuffer
     texture: WebGLBuffer
     atlas: WebGLBuffer
+    sky: WebGLBuffer
 }

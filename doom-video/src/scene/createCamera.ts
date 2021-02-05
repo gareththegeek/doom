@@ -9,14 +9,17 @@ export const createCamera = (
     offset: vec3
 ): Camera => {
     const { gl } = V
-    const fieldOfViewRadians = (fieldOfView * Math.PI) / 180
     const { clientWidth, clientHeight } = gl.canvas as HTMLCanvasElement
+    const vFieldOfViewRadians = fieldOfView * (Math.PI / 180)
+    const hFieldOfViewRadians = vFieldOfViewRadians * (clientWidth / clientHeight)
     const aspect = clientWidth / clientHeight
     const projection = mat4.create()
-    mat4.perspective(projection, fieldOfViewRadians, aspect, zNear, zFar)
-
+    mat4.perspective(projection, vFieldOfViewRadians, aspect, zNear, zFar)
+    
     return {
         projection,
+        fov: [hFieldOfViewRadians, vFieldOfViewRadians],
+        resolution: [clientWidth, clientHeight],
         position: offset,
         rotation: 0,
         target

@@ -1,10 +1,7 @@
 import { mat4 } from 'gl-matrix'
 import { getModelView } from '.'
 import { bindBufferSet, renderBufferSet } from '../buffers'
-import { ShaderProgram } from '../shaders/ShaderProgram'
 import { Geometry } from '../interfaces/Geometry'
-import { Scene } from '../interfaces/Scene'
-import { VideoResources } from '../interfaces/VideoResources'
 import { Camera } from '..'
 import { V } from '../system/global'
 import { WORLD_SPACE_PROGRAM } from '../shaders/createShaderPrograms'
@@ -20,9 +17,10 @@ const applyCamera = (camera: Camera): void => {
         resources: { programs }
     } = V
     const program = programs[WORLD_SPACE_PROGRAM]
-    const canvas = gl.canvas as HTMLCanvasElement
-    gl.uniform2fv(program.uniformLocations.resolution, [canvas.clientWidth, canvas.clientHeight])
+
+    gl.uniform2fv(program.uniformLocations.resolution, camera.resolution)
     gl.uniformMatrix4fv(program.uniformLocations.projectionMatrix, false, camera.projection)
+    gl.uniform2fv(program.uniformLocations.fov, camera.fov)
     gl.uniform1f(program.uniformLocations.skyRotation, -camera.target!.rotation / (Math.PI * 2))
 }
 

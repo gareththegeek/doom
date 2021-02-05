@@ -46,6 +46,7 @@ export const createShaderPrograms = (): ShaderProgram[] =>
             },
             uniformLocations: {
                 projectionMatrix: getUniformLocation(program, 'uProjectionMatrix'),
+                fov: getUniformLocation(program, 'uFov'),
                 modelViewMatrix: getUniformLocation(program, 'uModelViewMatrix'),
                 lightLevel: getUniformLocation(program, 'uLightLevel'),
                 skyRotation: getUniformLocation(program, 'uSkyRotation'),

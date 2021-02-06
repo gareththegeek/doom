@@ -18,7 +18,7 @@ export interface State {
 export interface Stateful {
     state: State
     sector: Sector
-    block: Block
+    block: Block | undefined
 }
 
 export interface StatefulObject extends Stateful {

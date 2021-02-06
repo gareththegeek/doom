@@ -3,7 +3,16 @@ import { Camera, SceneObject } from '..'
 import { PerspectiveParams } from '../interfaces/PerspectiveParams'
 import { V } from '../system/global'
 
-export const createCamera = (
+export const createOrthographicCamera = (): Camera => ({
+    projection: mat4.ortho(mat4.create(), 0, 320, 0, 240, -1, 1),
+    fov: [0, 0],
+    resolution: [1, 1],
+    target: undefined,
+    position: [0, 0, 0],
+    rotation: 0
+})
+
+export const createPerspectiveCamera = (
     { fieldOfView, zNear, zFar }: PerspectiveParams,
     target: SceneObject,
     offset: vec3
@@ -15,7 +24,7 @@ export const createCamera = (
     const aspect = clientWidth / clientHeight
     const projection = mat4.create()
     mat4.perspective(projection, vFieldOfViewRadians, aspect, zNear, zFar)
-    
+
     return {
         projection,
         fov: [hFieldOfViewRadians, vFieldOfViewRadians],

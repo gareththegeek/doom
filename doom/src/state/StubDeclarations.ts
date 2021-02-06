@@ -10,7 +10,6 @@ export const A_Lower = (stateful: Stateful): void => {}
 export const A_Raise = (stateful: Stateful): void => {}
 export const A_Punch = (stateful: Stateful): void => {}
 export const A_ReFire = (stateful: Stateful): void => {}
-export const A_FirePistol = (stateful: Stateful): void => {}
 export const A_Light1 = (stateful: Stateful): void => {}
 export const A_FireShotgun = (stateful: Stateful): void => {}
 export const A_Light2 = (stateful: Stateful): void => {}

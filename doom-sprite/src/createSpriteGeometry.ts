@@ -9,6 +9,7 @@ export const createSpriteGeometry = (name: string): Geometry => {
         spriteName: name,
         buffers: lookup[name].buffers,
         flat: true,
+        screenspace: false,
         light: 0,
         position: [0, 0, 0] as vec3,
         rotation: 0,

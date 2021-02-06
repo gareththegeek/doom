@@ -2,7 +2,7 @@ import { mat4 } from 'gl-matrix'
 import { getModelView } from '.'
 import { bindBufferSet, renderBufferSet } from '../buffers'
 import { Geometry } from '../interfaces/Geometry'
-import { Camera } from '..'
+import { Camera, GeometryBox, Scene } from '..'
 import { V } from '../system/global'
 import { WORLD_SPACE_PROGRAM } from '../shaders/createShaderPrograms'
 
@@ -21,7 +21,8 @@ const applyCamera = (camera: Camera): void => {
     gl.uniform2fv(program.uniformLocations.resolution, camera.resolution)
     gl.uniformMatrix4fv(program.uniformLocations.projectionMatrix, false, camera.projection)
     gl.uniform2fv(program.uniformLocations.fov, camera.fov)
-    gl.uniform1f(program.uniformLocations.skyRotation, -camera.target!.rotation / (Math.PI * 2))
+    const rotation = (camera.target ?? camera).rotation
+    gl.uniform1f(program.uniformLocations.skyRotation, -rotation / (Math.PI * 2))
 }
 
 const renderGeometry = (camera: Camera, geometry: Geometry): void => {
@@ -45,8 +46,8 @@ const renderGeometry = (camera: Camera, geometry: Geometry): void => {
         modelView[10] = 1.0
     }
     gl.uniformMatrix4fv(program.uniformLocations.modelViewMatrix, false, modelView)
-    gl.uniform1f(program.uniformLocations.lightLevel, ((1 - geometry.light / 255) * 32) / 34)
-
+    gl.uniform1f(program.uniformLocations.lightLevel, ((1 - geometry.light / 255) * 31) / 33)
+    
     bindBufferSet(geometry.buffers)
     renderBufferSet(geometry)
 }
@@ -64,15 +65,24 @@ const bindTextures = (): void => {
     gl.bindTexture(gl.TEXTURE_2D, colourmaps)
 }
 
+const renderCamera = (camera: Camera, objects: GeometryBox[]): void => {
+    applyCamera(camera)
+    objects.forEach((object) => renderGeometry(camera, object.geometry!))
+}
+
 export const renderScene = (): void => {
-    const {
-        scene: { camera, objects }
-    } = V
+    const { gl, scene } = V
     clearScene()
     bindTextures()
-    applyCamera(camera)
 
-    objects
-        .filter((object) => object.geometry !== undefined)
-        .forEach((object) => renderGeometry(camera, object.geometry!))
+    gl.enable(gl.DEPTH_TEST)
+    renderCamera(
+        scene.camera,
+        scene.objects.filter((object) => object.geometry !== undefined && !object.geometry.screenspace)
+    )
+    gl.disable(gl.DEPTH_TEST)
+    renderCamera(
+        scene.ortho,
+        scene.objects.filter((object) => object.geometry !== undefined && object.geometry.screenspace)
+    )
 }

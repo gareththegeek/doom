@@ -4,7 +4,7 @@ import { vec4 } from 'gl-matrix'
 import { FrameNameLookup } from './interfaces/FrameNameLookup'
 import { SpriteFrame } from './interfaces/SpriteFrame'
 import { SpriteSheet } from './interfaces/SpriteSheet'
-
+const EPSILON = 0.002
 const createFrameParams = (entry: TextureAtlasEntry, base: number, mirror: boolean): BufferSetParams => {
     const atlasCoord: vec4 = [entry.left, entry.bottom, entry.right, entry.top]
     const hx = entry.pixelWidth / 2
@@ -19,18 +19,19 @@ const createFrameParams = (entry: TextureAtlasEntry, base: number, mirror: boole
         indices: [base + 0, base + 1, base + 2, base + 0, base + 2, base + 3],
         textures: mirror
             ? [
-                  [1, 0],
-                  [1, 1],
-                  [0, 1],
-                  [0, 0]
+                  [1 - EPSILON, 0 + EPSILON],
+                  [1 - EPSILON, 1 - EPSILON],
+                  [0 + EPSILON, 1 - EPSILON],
+                  [0 + EPSILON, 0 + EPSILON]
               ]
             : [
-                  [0, 0],
-                  [0, 1],
-                  [1, 1],
-                  [1, 0]
+                  [0 + EPSILON, 0 + EPSILON],
+                  [0 + EPSILON, 1 - EPSILON],
+                  [1 - EPSILON, 1 - EPSILON],
+                  [1 - EPSILON, 0 + EPSILON]
               ],
-        atlas: [atlasCoord, atlasCoord, atlasCoord, atlasCoord]
+        atlas: [atlasCoord, atlasCoord, atlasCoord, atlasCoord],
+        sky: [0, 0, 0, 0]
     }
 }
 
@@ -55,7 +56,8 @@ export const createSpriteSheet = (atlas: TextureAtlas, baseName: string): Sprite
         positions: [],
         indices: [],
         textures: [],
-        atlas: []
+        atlas: [],
+        sky: []
     }
     let base = 0
     let frameIndex = 0

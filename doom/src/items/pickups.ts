@@ -7,6 +7,9 @@ export const pickups = (stateful: StatefulObjectThing[]): void => {
     )
     pickupable.forEach((stateful) => {
         const { block, sector, geometry, state, thing } = stateful
+        if (block === undefined) {
+            return
+        }
         block.statefuls.splice(block.statefuls.indexOf(stateful), 1)
         sector.statefuls.splice(sector.statefuls.indexOf(stateful), 1)
         geometry.visible = false

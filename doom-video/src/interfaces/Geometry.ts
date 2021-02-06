@@ -6,6 +6,7 @@ export interface Geometry extends SceneObject {
     buffers: BufferSet
     light: number
     flat: boolean
+    screenspace: boolean
     visible: boolean
     startIndex?: number
     indexCount?: number

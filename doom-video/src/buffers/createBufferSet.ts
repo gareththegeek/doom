@@ -31,11 +31,12 @@ export const createBufferSet = ({ positions, indices, textures, atlas, sky }: Bu
 
 export const updateBufferSet = (
     existing: BufferSet,
-    { positions, indices, textures, atlas }: BufferSetParams
+    { positions, indices, textures, atlas, sky }: BufferSetParams
 ): void => {
     existing.vertexCount = indices.length
     updateBuffer(existing.position, V.gl.ARRAY_BUFFER, new Float32Array(positions.map((vec) => Array.from(vec)).flat()))
     updateBuffer(existing.index, V.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices))
     updateBuffer(existing.texture, V.gl.ARRAY_BUFFER, new Float32Array(textures.map((vec) => Array.from(vec)).flat()))
     updateBuffer(existing.atlas, V.gl.ARRAY_BUFFER, new Float32Array(atlas.map((vec) => Array.from(vec)).flat()))
+    updateBuffer(existing.sky, V.gl.ARRAY_BUFFER, new Float32Array(sky))
 }

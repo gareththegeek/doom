@@ -39,7 +39,6 @@ export const collisionCheck = (stateful: StatefulThing, p0: vec2, p1: vec2): vec
             break
         }
     }
-
     pickups(thingCollisions.statefuls)
 
     blockCheck(stateful, p0, p1)

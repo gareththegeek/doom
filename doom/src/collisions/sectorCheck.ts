@@ -19,9 +19,7 @@ export const sectorCheck = (lines: Line[], stateful: Stateful, p0: vec2, p1: vec
                 continue
             }
             changeSector(stateful, side.sector)
-            if (side !== side.line.front) {
-                PubSub.publish(WALK_LINE, { line })
-            }
+            PubSub.publish(WALK_LINE, { line })
         }
     }
 }

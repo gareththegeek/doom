@@ -97,8 +97,8 @@ const processSidedef = (
             buildFace(
                 start,
                 end,
-                frontSector.floorHeight,
-                frontSector.ceilingHeight,
+                Math.max(frontSector.floorHeight, backSector?.floorHeight ?? -0x7fff),
+                Math.min(frontSector.ceilingHeight, backSector?.ceilingHeight ?? 0x7fff),
                 0,
                 atlas.lookup[side.middleTexture],
                 flags.lowerUnpegged ? TextureOriginType.Bottom : TextureOriginType.Top,

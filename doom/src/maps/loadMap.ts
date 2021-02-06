@@ -17,7 +17,7 @@ const createPlayerState = (): PlayerState => ({
 
 export const loadMap = (mapName: string): void => {
     console.info(`Loading map ${mapName}`)
-    
+
     G.mapName = mapName
     const map = createMap(mapName, { multiplayer: false, skill: SkillType.skill45 })
 
@@ -46,7 +46,7 @@ export const loadMap = (mapName: string): void => {
             sector,
             block,
             info,
-            state: {...StateLookup[info.spawnstate]}
+            state: { ...StateLookup[info.spawnstate] }
         }
         sector.statefuls.push(result)
         block.statefuls.push(result)
@@ -58,7 +58,7 @@ export const loadMap = (mapName: string): void => {
         const geometry = createSpriteGeometry(result.state.spriteName)
         setSpriteFrame(geometry, result.state.frame, 0)
         geometry.position = thing.spawnPosition
-        geometry.rotation = thing.spawnAngle
+        geometry.rotation = thing.spawnAngle - Math.PI / 2
         geometry.light = thing.sector.lightLevel
         ;((result as Stateful) as StatefulObject).geometry = geometry
 

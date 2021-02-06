@@ -69,7 +69,7 @@ const buildFace = (
 const hasMiddle = (side: MapSide): boolean => side.middleTexture !== '-'
 
 const hasUpper = (side: MapSide, front: MapSector, back?: MapSector): boolean =>
-    !!back && front.ceilingHeight > back.ceilingHeight && side.upperTexture !== '-'
+    !!back && front.ceilingHeight > back.ceilingHeight && (side.upperTexture !== '-' || isSky(front))
 
 const isSky = (back: MapSector) => back.ceilingTexture === 'f_f_sky1'
 

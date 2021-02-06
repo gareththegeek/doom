@@ -49,7 +49,7 @@ export enum ActivationType {
 
 export type ActivateTrigger = (type: ActivationType, line: Line) => Sector[]
 export type ActivateHandler = (sector: Sector) => void
-export type ActivateAmountHandler = (sector: Sector, amount: number) => void
+export type ActivateAmountHandler = (sector: Sector, amount: number, flag?: boolean) => void
 
 type ActivateLookupEntry = {
     trigger: ActivateTrigger
@@ -62,8 +62,8 @@ const a = (trigger: ActivateTrigger, handler: ActivateHandler): ActivateLookupEn
 })
 
 // Curry - (abbreviated for sanity in the table below)
-const c = (handler: ActivateAmountHandler, amount: (sector: Sector) => number): ActivateHandler => (sector: Sector) =>
-    handler(sector, amount(sector))
+const c = (handler: ActivateAmountHandler, amount: (sector: Sector) => number, flag?: boolean): ActivateHandler => (sector: Sector) =>
+    handler(sector, amount(sector), flag)
 
 // Curry relative - (abbreviated for sanity in the table below)
 const cr = (
@@ -92,15 +92,15 @@ export const ActivateLookup: { [special: number]: ActivateLookupEntry } = {
     11: a(s1, exit_level),
     12: a(w1, c(light_change_to, brightest_adjacent)),
     13: a(w1, c(light_change_to, v(255))),
-    14: a(s1, c(floor_raise_by, v(32))),
-    15: a(s1, c(floor_raise_by, v(24))),
+    14: a(s1, c(floor_raise_by, v(32), true)),
+    15: a(s1, c(floor_raise_by, v(24), true)),
     16: a(w1, c(door_close_wait_open, v(DOOR_SPEED_SLOW))),
     17: a(w1, light_start_blinking),
     18: a(s1, c(floor_raise_to, next_higher_floor)),
     19: a(w1, c(floor_lower_to, highest_floor)),
-    20: a(s1, c(floor_raise_to, next_higher_floor)),
+    20: a(s1, c(floor_raise_to, next_higher_floor, true)),
     21: a(s1, lift_lower_wait_raise),
-    22: a(w1, c(floor_raise_to, next_higher_floor)),
+    22: a(w1, c(floor_raise_to, next_higher_floor, true)),
     23: a(s1, c(floor_lower_to, lowest_floor)),
     24: a(g1, c(floor_raise_to, lowest_ceiling)),
     25: a(w1, c(crusher_start_with, v(SLOW_DAMAGE))),
@@ -115,7 +115,7 @@ export const ActivateLookup: { [special: number]: ActivateLookupEntry } = {
     34: a(d1_yellow, c(door_open_stay, v(DOOR_SPEED_SLOW))),
     35: a(w1, c(light_change_to, v(35))),
     36: a(w1, cr(floor_lower_to, 8, above_highest_floor)),
-    37: a(w1, c(floor_lower_to, lowest_floor)),
+    37: a(w1, c(floor_lower_to, lowest_floor, true)),
     38: a(w1, c(floor_lower_to, lowest_floor)),
     39: a(w1, teleport),
     40: a(w1, c(ceiling_raise_to, highest_ceiling)),
@@ -125,7 +125,7 @@ export const ActivateLookup: { [special: number]: ActivateLookupEntry } = {
     44: a(w1, cr(ceiling_lower_to, 8, above_floor)),
     45: a(sr, c(floor_lower_to, highest_floor)),
     46: a(gr, c(door_open_stay, v(DOOR_SPEED_SLOW))),
-    47: a(g1, c(floor_raise_to, next_higher_floor)),
+    47: a(g1, c(floor_raise_to, next_higher_floor, true)),
     //TODO 48: Scroll Texture Left
     49: a(s1, cr(ceiling_lower_to, 8, above_floor)),
     50: a(s1, c(door_close_stay, v(DOOR_SPEED_SLOW))),
@@ -137,16 +137,16 @@ export const ActivateLookup: { [special: number]: ActivateLookupEntry } = {
     56: a(w1, cr(floor_raise_to, 8, below_lowest_ceiling)),
     57: a(w1, crusher_stop),
     58: a(w1, c(floor_raise_by, v(24))),
-    59: a(w1, c(floor_raise_by, v(24))),
+    59: a(w1, c(floor_raise_by, v(24), true)),
     60: a(sr, c(floor_lower_to, lowest_floor)),
     61: a(sr, c(door_open_stay, v(DOOR_SPEED_SLOW))),
     62: a(sr, lift_lower_wait_raise),
     63: a(sr, c(door_open_wait_close, v(DOOR_SPEED_SLOW))),
     64: a(sr, c(floor_raise_to, lowest_ceiling)),
     65: a(sr, cr(floor_raise_to, 8, below_lowest_ceiling)),
-    66: a(sr, c(floor_raise_by, v(24))),
-    67: a(sr, c(floor_raise_by, v(32))),
-    68: a(sr, c(floor_raise_to, next_higher_floor)),
+    66: a(sr, c(floor_raise_by, v(24), true)),
+    67: a(sr, c(floor_raise_by, v(32), true)),
+    68: a(sr, c(floor_raise_to, next_higher_floor, true)),
     69: a(sr, c(floor_raise_to, next_higher_floor)),
     70: a(sr, cr(floor_lower_to, 8, above_highest_floor)),
     71: a(s1, cr(floor_lower_to, 8, above_highest_floor)),
@@ -161,7 +161,7 @@ export const ActivateLookup: { [special: number]: ActivateLookupEntry } = {
     81: a(wr, c(light_change_to, v(255))),
     82: a(wr, c(floor_lower_to, lowest_floor)),
     83: a(wr, c(floor_lower_to, highest_floor)),
-    84: a(wr, c(floor_lower_to, lowest_floor)),
+    84: a(wr, c(floor_lower_to, lowest_floor, true)),
     86: a(wr, c(door_open_stay, v(DOOR_SPEED_SLOW))),
     87: a(wr, floor_start_moving_up_and_down),
     88: a(wr, lift_lower_wait_raise),
@@ -169,9 +169,9 @@ export const ActivateLookup: { [special: number]: ActivateLookupEntry } = {
     90: a(wr, c(door_open_wait_close, v(DOOR_SPEED_SLOW))),
     91: a(wr, c(floor_raise_to, lowest_ceiling)),
     92: a(wr, c(floor_raise_by, v(24))),
-    93: a(wr, c(floor_raise_by, v(24))),
+    93: a(wr, c(floor_raise_by, v(24), true)),
     94: a(wr, cr(floor_raise_to, 8, below_lowest_ceiling)),
-    95: a(wr, c(floor_raise_to, next_higher_floor)),
+    95: a(wr, c(floor_raise_to, next_higher_floor, true)),
     96: a(wr, c(floor_raise_by, shortest_lower_texture)),
     97: a(wr, teleport),
     98: a(wr, cr(floor_lower_to, 8, above_highest_floor)),

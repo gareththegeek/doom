@@ -10,7 +10,7 @@ export const addToSector = (sector: Sector, stateful: Stateful): void => {
         return
     }
 
-    sector.statefuls.push(stateful)
+    sector.statefuls.add(stateful)
     stateful.sector = sector
 
     if (isStatefulObject(stateful)) {

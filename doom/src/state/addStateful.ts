@@ -1,10 +1,7 @@
-import { G, isStatefulObject } from '../global'
+import { G } from '../global'
 import { Stateful } from '../interfaces/State'
 
 export const addStateful = (stateful: Stateful) => {
-    const { statefuls, scene } = G
-    statefuls.push(stateful)
-    if (isStatefulObject(stateful)) {
-        scene.objects.push(stateful)
-    }
+    const { statefuls } = G
+    statefuls.add(stateful)
 }

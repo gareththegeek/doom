@@ -3,10 +3,15 @@ import { setSpriteFrame } from 'doom-sprite'
 import { renderScene } from 'doom-video'
 import { G, isStatefulObject } from '../global'
 import { vec3 } from 'gl-matrix'
-import { StatefulObject } from '../interfaces/State'
+import { forEachLinkedList } from 'low-mem'
+import { Stateful } from '../interfaces/State'
 
-const updateSprite = (stateful: StatefulObject): void => {
+const updateSprite = (stateful: Stateful): void => {
     const { player } = G
+
+    if (!isStatefulObject(stateful)) {
+        return
+    }
 
     const TWO_PI = Math.PI * 2
     const direction = vec3.subtract(vec3.create(), stateful.geometry.position, player.geometry.position)
@@ -24,10 +29,8 @@ export const render = (() => {
 
         const { statefuls, sectors } = G
 
-        statefuls.filter(isStatefulObject).forEach((stateful) => {
-            updateSprite(stateful)
-        })
-
+        forEachLinkedList(statefuls, updateSprite)
+        
         sectors.filter((sector) => sector.dirty).forEach((sector) => rebuildSectorGeometry(sector))
 
         renderScene()

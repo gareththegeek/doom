@@ -1,11 +1,21 @@
 import { Sector } from '../../interfaces/Sector'
-import { getAdjacentSectors } from '../../getAdjacentSectors'
-import { highest_floor } from './highest_floor'
+import { forEachAdjacentSector } from '../../forEachAdjacentSector'
+
+let lowest: number
+let thisSector: Sector
+
+const reduceNextLowest = (other: Sector): void => {
+    if (other.floorHeight > lowest && other.floorHeight < thisSector.floorHeight) {
+        lowest = other.floorHeight
+    }
+}
 
 export const next_lowest_floor = (sector: Sector): number => {
-    const adjacent = getAdjacentSectors(sector)
-    if (adjacent.length < 2) {
-        return highest_floor(sector)
+    thisSector = sector
+    lowest = -0x7fff
+    forEachAdjacentSector(thisSector, reduceNextLowest)
+    if ((lowest === -0x7fff)) {
+        lowest = thisSector.floorHeight
     }
-    return adjacent.map((sector) => sector.floorHeight).sort((a, b) => a - b)[1]
+    return lowest
 }

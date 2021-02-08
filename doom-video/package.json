@@ -25,6 +25,7 @@
   "dependencies": {
     "doom-atlas": "1.0.0",
     "doom-wad": "1.0.0",
-    "gl-matrix": "^3.3.0"
+    "gl-matrix": "^3.3.0",
+    "low-mem": "1.0.0"
   }
 }

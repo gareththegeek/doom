@@ -1,8 +1,9 @@
 import { createMap } from 'doom-map'
 import { SkillType } from 'doom-map/dist/interfaces/MapFlags'
 import { createSpriteGeometry, setSpriteFrame } from 'doom-sprite'
-import { createScene } from 'doom-video'
-import { findStatefulObjects, findStatefulThings, G } from '../global'
+import { createScene, GeometryBox } from 'doom-video'
+import { findLinkedList, LinkedList, toLinkedList } from 'low-mem'
+import { G, isStatefulThing } from '../global'
 import { Block, BlockMap } from '../interfaces/BlockMap'
 import { ObjectInfoLookup } from '../interfaces/ObjectInfoLookup'
 import { ObjectInfoType } from '../interfaces/ObjectInfoType'
@@ -44,6 +45,13 @@ const createPlayerState = (player: StatefulObject): PlayerState => {
     }
 }
 
+const isPlayer = (stateful: Stateful): boolean => {
+    if (!isStatefulThing(stateful)) {
+        return false
+    }
+    return stateful.thing.type === 1
+}
+
 export const loadMap = (mapName: string): void => {
     console.info(`Loading map ${mapName}`)
 
@@ -51,57 +59,63 @@ export const loadMap = (mapName: string): void => {
     const map = createMap(mapName, { multiplayer: false, skill: SkillType.skill45 })
 
     G.sectors = map.sectors as Sector[]
-    G.sectors.forEach((sector) => (sector.statefuls = []))
+    G.sectors.forEach((sector) => (sector.statefuls = new LinkedList<Stateful>()))
 
     G.blockmap = map.blockmap as BlockMap
     G.blockmap.blocks.forEach((row) =>
         row.forEach((block) => {
-            block.statefuls = []
+            block.statefuls = new LinkedList()
         })
     )
 
-    G.statefuls = map.things.map((thing) => {
-        let info = Object.values(ObjectInfoLookup).find((info) => info.doomednum === thing.type)
-        if (info === undefined) {
-            //throw new Error(`Unable to find object info for thing type ${thing.type}`)
-            console.warn(`Couldn't find object info for thing type ${thing.type} so just using MT_PLAYER`)
-            info = ObjectInfoLookup[ObjectInfoType.MT_PLAYER]
-        }
+    G.statefuls = toLinkedList(
+        map.things.map((thing) => {
+            let info = Object.values(ObjectInfoLookup).find((info) => info.doomednum === thing.type)
+            if (info === undefined) {
+                //throw new Error(`Unable to find object info for thing type ${thing.type}`)
+                console.warn(`Couldn't find object info for thing type ${thing.type} so just using MT_PLAYER`)
+                info = ObjectInfoLookup[ObjectInfoType.MT_PLAYER]
+            }
 
-        const sector = G.sectors[thing.sector.index]
-        const block = thing.block as Block
-        const result: StatefulThing = {
-            thing,
-            sector,
-            block,
-            info,
-            state: getState(info.spawnstate)
-        }
-        sector.statefuls.push(result)
-        block.statefuls.push(result)
+            const sector = G.sectors[thing.sector.index]
+            const block = thing.block as Block
+            const result: StatefulThing = {
+                thing,
+                sector,
+                block,
+                info,
+                state: getState(info.spawnstate)
+            }
+            sector.statefuls.add(result)
+            block.statefuls.add(result)
 
-        if (result.state.spriteName === '-') {
+            if (result.state.spriteName === '-') {
+                return result
+            }
+
+            const geometry = createSpriteGeometry(result.state.spriteName)
+            setSpriteFrame(geometry, result.state.frame, 0)
+            geometry.position = thing.spawnPosition
+            geometry.rotation = thing.spawnAngle - Math.PI / 2
+            geometry.light = thing.sector.lightLevel
+            ;((result as Stateful) as StatefulObject).geometry = geometry
+
             return result
-        }
-
-        const geometry = createSpriteGeometry(result.state.spriteName)
-        setSpriteFrame(geometry, result.state.frame, 0)
-        geometry.position = thing.spawnPosition
-        geometry.rotation = thing.spawnAngle - Math.PI / 2
-        geometry.light = thing.sector.lightLevel
-        ;((result as Stateful) as StatefulObject).geometry = geometry
-
-        return result
-    })
+        })
+    )
 
     console.info('Configuring player')
-    const playerStateful = findStatefulThings().find((stateful) => stateful.thing.type === 1) as Player | undefined
+    const playerStateful = findLinkedList(G.statefuls, isPlayer) as Player
     if (playerStateful === undefined || playerStateful.geometry === undefined) {
         throw new Error('Unable to find player start in level D:')
     }
 
-    const objects = [...map.sectors.map((sector) => sector), ...findStatefulObjects()]
-    G.scene = createScene(objects, playerStateful.geometry, [0, 48, 0])
+    G.scene = createScene(
+        G.statefuls as LinkedList<GeometryBox>,
+        G.sectors as GeometryBox[],
+        playerStateful.geometry,
+        [0, 48, 0]
+    )
 
     playerStateful.playerState = createPlayerState(playerStateful)
     playerStateful.geometry.visible = false

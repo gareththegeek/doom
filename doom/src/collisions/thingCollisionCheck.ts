@@ -1,49 +1,53 @@
 import { vec2, vec3 } from 'gl-matrix'
-import { isStatefulThingObject } from '../global'
+import { LinkedList, LinkedListEntry } from 'low-mem'
+import { isStatefulObjectThing } from '../global'
 import { Block } from '../interfaces/BlockMap'
-import { StatefulObject, StatefulObjectThing, StatefulThing } from '../interfaces/State'
+import { StatefulObjectThing } from '../interfaces/State'
 import { circleCircleIntersection } from '../maths/circleCircleIntersection'
 
 export interface ThingCollisionCheckResult {
     allow: boolean
-    statefuls: StatefulObjectThing[]
+    statefuls: LinkedList<StatefulObjectThing>
 }
+
+let p0: vec2
 
 const vec3tovec2 = (vec3: vec3): vec2 => [vec3[0], vec3[2]]
 
+const curryDepthSort = () => {
+    return (a: StatefulObjectThing, b: StatefulObjectThing) =>
+        vec2.sqrDist(vec3tovec2(a.geometry!.position), p0) - vec2.sqrDist(vec3tovec2(b.geometry!.position), p0)
+}
+const depthSort = curryDepthSort()
+
 export const thingCollisionCheck = (
+    thingCollisions: ThingCollisionCheckResult,
     blocks: Block[],
     index: number,
     radius: number,
-    p0: vec2,
+    p0in: vec2,
     p1: vec2
-): ThingCollisionCheckResult => {
-    const potentialStatefuls = blocks
-        .flatMap((block) => block.statefuls)
-        .filter(isStatefulThingObject)
-        .filter((stateful) => stateful.geometry.visible)
-        .filter((stateful) => stateful.thing.index !== index)
-        .filter((stateful) => {
-            return circleCircleIntersection(vec3tovec2(stateful.geometry!.position), stateful.info.radius, p1, radius)
-        })
-        .sort(
-            (a, b) =>
-                vec2.sqrDist(vec3tovec2(a.geometry!.position), p0) - vec2.sqrDist(vec3tovec2(b.geometry!.position), p0)
-        )
+): StatefulObjectThing | undefined => {
+    p0 = p0in
 
-    const statefuls: StatefulObjectThing[] = []
-    for (const stateful of potentialStatefuls) {
-        statefuls.push(stateful)
-        if (stateful.info.flags.solid) {
-            return {
-                allow: false,
-                statefuls
+    for (const block of blocks) {
+        let entry = block.statefuls.next()
+        while (entry !== undefined) {
+            if (
+                isStatefulObjectThing(entry.item) &&
+                entry.item.geometry.visible &&
+                entry.item.thing.index !== index &&
+                circleCircleIntersection(vec3tovec2(entry.item.geometry!.position), entry.item.info.radius, p1, radius)
+            ) {
+                thingCollisions.statefuls.sortedAdd(entry.item, depthSort)
+                if (entry.item.info.flags.solid) {
+                    thingCollisions.allow = false
+                    return entry.item
+                }
             }
+            entry = block.statefuls.next(entry)
         }
     }
-
-    return {
-        allow: true,
-        statefuls
-    }
+    thingCollisions.allow = true
+    return undefined
 }

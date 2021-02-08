@@ -1,5 +1,16 @@
 import { Sector } from '../../interfaces/Sector'
-import { getAdjacentSectors } from '../../getAdjacentSectors'
+import { forEachAdjacentSector } from '../../forEachAdjacentSector'
 
-export const lowest_ceiling = (sector: Sector): number =>
-    getAdjacentSectors(sector).reduce((a, c) => Math.min(a, c.ceilingHeight), 0x7fff)
+let lowest: number
+
+const reduceLowest = (other: Sector): void => {
+    if (other.ceilingHeight < lowest) {
+        lowest = other.ceilingHeight
+    }
+}
+
+export const lowest_ceiling = (sector: Sector): number => {
+    lowest = 0x7fff
+    forEachAdjacentSector(sector, reduceLowest)
+    return lowest
+}

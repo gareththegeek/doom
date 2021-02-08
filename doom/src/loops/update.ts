@@ -1,12 +1,21 @@
-import { Thing } from 'doom-map'
 import { vec2 } from 'gl-matrix'
+import { forEachLinkedList } from 'low-mem'
 import { collisionCheck } from '../collisions/collisionCheck'
-import { getAdjacentSectors } from '../getAdjacentSectors'
-import { G, isStatefulObject } from '../global'
+import { forEachAdjacentSector } from '../forEachAdjacentSector'
+import { G } from '../global'
 import { isPressed } from '../input/isPressed'
-import { StatefulObjectThing } from '../interfaces/State'
+import { Sector } from '../interfaces/Sector'
+import { Stateful, StatefulObjectThing } from '../interfaces/State'
 import { StateType } from '../interfaces/StateType'
 import { getState } from '../state/getState'
+import { doGravity } from './gravity'
+
+const origin = vec2.create()
+const velocity = vec2.create()
+const result = vec2.create()
+const t0 = vec2.create()
+const t1 = vec2.create()
+const postCollisionPosition = vec2.create()
 
 const forward = (stateful: StatefulObjectThing, speed: number): void => {
     const {
@@ -14,20 +23,39 @@ const forward = (stateful: StatefulObjectThing, speed: number): void => {
     } = G
 
     const geometry = stateful.geometry
-    const result: vec2 = [0, 0]
-    vec2.rotate(result, [0, speed], [0, 0], -geometry.rotation)
+    velocity[1] = speed
+    vec2.rotate(result, velocity, origin, -geometry.rotation)
 
-    const t0 = [geometry.position[0], geometry.position[2]] as vec2
-    let t1 = vec2.create()
+    t0[0] = geometry.position[0]
+    t0[1] = geometry.position[2]
     vec2.subtract(t1, t0, result)
 
-    const postCollisionPosition = collisionCheck(stateful, t0, t1)
+    collisionCheck(postCollisionPosition, stateful, t0, t1)
     if (!noclip) {
-        t1 = postCollisionPosition
+        t1[0] = postCollisionPosition[0]
+        t1[1] = postCollisionPosition[1]
     }
 
     geometry.position[0] = t1[0]
     geometry.position[2] = t1[1]
+}
+
+const setDirty = (sector: Sector): void => {
+    sector.dirty = true
+}
+
+const updateState = (stateful: Stateful): void => {
+    stateful.state.tics -= 1
+    if (stateful.state.tics > 0) {
+        return
+    }
+    if (stateful.state.action !== undefined) {
+        stateful.state.action(stateful)
+    }
+    if (stateful.state.nextState === StateType.S_NULL) {
+        return
+    }
+    stateful.state = getState(stateful.state.nextState)
 }
 
 export const update = (() => {
@@ -45,33 +73,18 @@ export const update = (() => {
         if (tic) {
             lastTic = now
 
-            statefuls.forEach((stateful) => {
-                stateful.state.tics -= 1
-                if (stateful.state.tics > 0) {
-                    return
-                }
-                if (stateful.state.action !== undefined) {
-                    stateful.state.action(stateful)
-                }
-                if (stateful.state.nextState === StateType.S_NULL) {
-                    //removeStateful(stateful)
-                    return
-                }
-                stateful.state = getState(stateful.state.nextState)
-            })
+            forEachLinkedList(statefuls, updateState)
         }
 
-        sectors
-            .filter((sector) => sector.update !== undefined)
-            .forEach((sector) => {
-                sector.update!.function(deltaTime)
-                sector.dirty = true
-                sector.statefuls
-                    .filter(isStatefulObject)
-                    //TODO falling rather than being glued to the floor
-                    .forEach(({ geometry }) => (geometry.position[1] = sector.floorHeight))
-                getAdjacentSectors(sector).forEach((sector) => (sector.dirty = true))
-            })
+        for (const sector of sectors) {
+            if (sector.update === undefined) {
+                continue
+            }
+            sector.update!.function(deltaTime)
+            sector.dirty = true
+            forEachAdjacentSector(sector, setDirty)
+            doGravity(sector)
+        }
 
         if (isPressed('ArrowUp')) forward(player, deltaTime * 500)
         if (isPressed('ArrowLeft')) geometry.rotation += deltaTime * 3

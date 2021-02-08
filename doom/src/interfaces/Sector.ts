@@ -1,4 +1,5 @@
 import { MapLine, MapSector, MapSide } from 'doom-map'
+import { LinkedList } from 'low-mem'
 import { Stateful } from './State'
 
 export interface Line extends MapLine {
@@ -20,6 +21,6 @@ export type SectorUpdateFunction = (deltaTime: number) => void
 
 export interface Sector extends MapSector {
     update?: SectorUpdate
-    statefuls: Stateful[]
+    statefuls: LinkedList<Stateful>
     sides: Side[]
 }

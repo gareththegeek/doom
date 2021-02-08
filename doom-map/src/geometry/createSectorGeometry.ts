@@ -9,6 +9,7 @@ export const createSingleSectorGeometry = (sector: MapSector, params: BufferSetP
         buffers: createBufferSet(params),
         flat: false,
         visible: true,
+        screenspace: false,
         light: sector.lightLevel
     }
 }

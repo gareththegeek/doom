@@ -1,4 +1,3 @@
-import { getAdjacentSectors } from '../../getAdjacentSectors'
 import { Sector } from '../../interfaces/Sector'
 import { lowerFloor } from '../mutations/lowerFloor'
 import { changeToAdjacentSector } from './changeToAdjacentTexture'

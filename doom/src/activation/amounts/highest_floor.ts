@@ -1,5 +1,14 @@
 import { Sector } from '../../interfaces/Sector'
-import { getAdjacentSectors } from '../../getAdjacentSectors'
+import { forEachAdjacentSector } from '../../forEachAdjacentSector'
 
-export const highest_floor = (sector: Sector): number =>
-    getAdjacentSectors(sector).reduce((a, c) => Math.max(a, c.floorHeight), -0x7fff)
+let highest: number
+
+const reduceHighest = (sector: Sector) => {
+    highest = Math.max(highest, sector.floorHeight)
+}
+
+export const highest_floor = (sector: Sector): number => {
+    highest = -0x7fff
+    forEachAdjacentSector(sector, reduceHighest)
+    return highest
+}

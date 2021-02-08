@@ -5,6 +5,6 @@ export const removeFromBlock = (stateful: Stateful): void => {
         return
     }
 
-    stateful.block.statefuls.splice(stateful.block.statefuls.indexOf(stateful), 1)
+    stateful.block.statefuls.remove(stateful)
     stateful.block = undefined
 }

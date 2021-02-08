@@ -1,5 +1,16 @@
 import { Sector } from '../../interfaces/Sector'
-import { getAdjacentSectors } from '../../getAdjacentSectors'
+import { forEachAdjacentSector } from '../../forEachAdjacentSector'
 
-export const brightest_adjacent = (sector: Sector): number =>
-    getAdjacentSectors(sector).reduce((a, c) => Math.max(a, c.lightLevel), 0)
+let brightest: number
+
+const reduceBrightest = (other: Sector): void => {
+    if (other.lightLevel > brightest) {
+        brightest = other.lightLevel
+    }
+}
+
+export const brightest_adjacent = (sector: Sector): number => {
+    brightest = 0
+    forEachAdjacentSector(sector, reduceBrightest)
+    return brightest
+}

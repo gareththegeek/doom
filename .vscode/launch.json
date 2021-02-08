@@ -95,6 +95,19 @@
                 "<node_internals>/**"
             ],
             "type": "pwa-node"
+        },
+        {
+            "name": "Debug Low Mem Tests",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/low-mem",
+            "runtimeArgs": [
+                "test"
+            ],
+            "runtimeExecutable": "yarn",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
         }
     ]
 }

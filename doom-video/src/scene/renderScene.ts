@@ -2,9 +2,12 @@ import { mat4 } from 'gl-matrix'
 import { getModelView } from '.'
 import { bindBufferSet, renderBufferSet } from '../buffers'
 import { Geometry } from '../interfaces/Geometry'
-import { Camera, GeometryBox, Scene } from '..'
+import { Camera, GeometryBox } from '..'
 import { V } from '../system/global'
 import { WORLD_SPACE_PROGRAM } from '../shaders/createShaderPrograms'
+import { forEachLinkedList } from 'low-mem'
+
+let currentCamera: Camera
 
 const clearScene = () => {
     const { gl } = V
@@ -23,6 +26,8 @@ const applyCamera = (camera: Camera): void => {
     gl.uniform2fv(program.uniformLocations.fov, camera.fov)
     const rotation = (camera.target ?? camera).rotation
     gl.uniform1f(program.uniformLocations.skyRotation, -rotation / (Math.PI * 2))
+
+    currentCamera = camera
 }
 
 const renderGeometry = (camera: Camera, geometry: Geometry): void => {
@@ -65,10 +70,15 @@ const bindTextures = (): void => {
     gl.bindTexture(gl.TEXTURE_2D, colourmaps)
 }
 
-const renderCamera = (camera: Camera, objects: GeometryBox[]): void => {
-    applyCamera(camera)
-    objects.forEach((object) => renderGeometry(camera, object.geometry!))
+const curryRenderGeometry = (screenspace: boolean) => {
+    return (object: GeometryBox): void => {
+        if (object.geometry !== undefined && object.geometry.screenspace === screenspace) {
+            renderGeometry(currentCamera, object.geometry)
+        }
+    }
 }
+const renderScreenspace = curryRenderGeometry(true)
+const renderWorldspace = curryRenderGeometry(false)
 
 export const renderScene = (): void => {
     const { gl, scene } = V
@@ -76,13 +86,11 @@ export const renderScene = (): void => {
     bindTextures()
 
     gl.enable(gl.DEPTH_TEST)
-    renderCamera(
-        scene.camera,
-        scene.objects.filter((object) => object.geometry !== undefined && !object.geometry.screenspace)
-    )
+    applyCamera(scene.camera)
+    V.scene.rooms.forEach(renderWorldspace)
+    forEachLinkedList(V.scene.objects, renderWorldspace)
+
     gl.disable(gl.DEPTH_TEST)
-    renderCamera(
-        scene.ortho,
-        scene.objects.filter((object) => object.geometry !== undefined && object.geometry.screenspace)
-    )
+    applyCamera(scene.ortho)
+    forEachLinkedList(V.scene.objects, renderScreenspace)
 }

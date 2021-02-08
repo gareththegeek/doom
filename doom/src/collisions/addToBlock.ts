@@ -9,6 +9,6 @@ export const addToBlock = (block: Block, stateful: Stateful): void => {
         return
     }
 
-    block.statefuls.push(stateful)
+    block.statefuls.add(stateful)
     stateful.block = block
 }

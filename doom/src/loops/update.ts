@@ -6,7 +6,7 @@ import { G, isStatefulObject } from '../global'
 import { isPressed } from '../input/isPressed'
 import { StatefulObjectThing } from '../interfaces/State'
 import { StateType } from '../interfaces/StateType'
-import { StateLookup } from '../state/StateLookup'
+import { getState } from '../state/getState'
 
 const forward = (stateful: StatefulObjectThing, speed: number): void => {
     const {
@@ -44,21 +44,22 @@ export const update = (() => {
         const tic = now - lastTic > 1 / 35
         if (tic) {
             lastTic = now
-        }
 
-        statefuls.forEach((stateful) => {
-            if (!tic) {
-                return
-            }
-            stateful.state.tics -= 1
-            if (stateful.state.tics > 0) {
-                return
-            }
-            if (stateful.state.nextState === StateType.S_NULL) {
-                return
-            }
-            stateful.state = { ...StateLookup[stateful.state.nextState] }
-        })
+            statefuls.forEach((stateful) => {
+                stateful.state.tics -= 1
+                if (stateful.state.tics > 0) {
+                    return
+                }
+                if (stateful.state.action !== undefined) {
+                    stateful.state.action(stateful)
+                }
+                if (stateful.state.nextState === StateType.S_NULL) {
+                    //removeStateful(stateful)
+                    return
+                }
+                stateful.state = getState(stateful.state.nextState)
+            })
+        }
 
         sectors
             .filter((sector) => sector.update !== undefined)

@@ -1,13 +1,6 @@
+import { isStatefulObject } from '../global'
 import { StatefulObject, StatefulThing } from './State'
-
-export enum WeaponType {
-    Pistol
-}
-
-export interface Weapon extends StatefulObject {
-    ammo: number //TODO some weapons share ammo
-    ready: boolean
-}
+import { WeaponType, Weapon } from './Weapon'
 
 export interface PlayerState {
     weapons: { [type in WeaponType]: Weapon }

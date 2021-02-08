@@ -41,7 +41,7 @@ export const collisionCheck = (stateful: StatefulThing, p0: vec2, p1: vec2): vec
     }
     pickups(thingCollisions.statefuls)
 
-    blockCheck(stateful, p0, p1)
+    blockCheck(stateful, p1)
     sectorCheck(lineCollisions.lines, stateful, p0, p1)
 
     return p1

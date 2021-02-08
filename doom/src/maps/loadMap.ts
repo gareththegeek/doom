@@ -6,20 +6,23 @@ import { findStatefulObjects, findStatefulThings, G } from '../global'
 import { Block, BlockMap } from '../interfaces/BlockMap'
 import { ObjectInfoLookup } from '../interfaces/ObjectInfoLookup'
 import { ObjectInfoType } from '../interfaces/ObjectInfoType'
-import { Player, PlayerState, Weapon, WeaponType } from '../interfaces/Player'
+import { Player, PlayerState } from '../interfaces/Player'
 import { Sector } from '../interfaces/Sector'
 import { Stateful, StatefulObject, StatefulThing } from '../interfaces/State'
-import { StateType } from '../interfaces/StateType'
-import { StateLookup } from '../state/StateLookup'
+import { Weapon, WeaponInfoLookup, WeaponType } from '../interfaces/Weapon'
+import { addStateful } from '../state/addStateful'
+import { getState } from '../state/getState'
 
 const createPistol = (player: StatefulObject): Weapon => {
+    const info = { ...WeaponInfoLookup[WeaponType.Pistol] }
+    const state = getState(info.readystate)
     const result = {
-        ammo: 0,
+        ammo: 50,
         block: undefined,
         sector: player.sector,
-        geometry: createSpriteGeometry('pisg'),
-        ready: false,
-        state: StateLookup[StateType.S_PISTOL]
+        geometry: createSpriteGeometry(state.spriteName),
+        state,
+        info
     }
     //TODO constants for native screen res
     result.geometry.position = [160, 0, 0]
@@ -72,7 +75,7 @@ export const loadMap = (mapName: string): void => {
             sector,
             block,
             info,
-            state: { ...StateLookup[info.spawnstate] }
+            state: getState(info.spawnstate)
         }
         sector.statefuls.push(result)
         block.statefuls.push(result)
@@ -96,12 +99,14 @@ export const loadMap = (mapName: string): void => {
     if (playerStateful === undefined || playerStateful.geometry === undefined) {
         throw new Error('Unable to find player start in level D:')
     }
-    playerStateful.playerState = createPlayerState(playerStateful)
-    playerStateful.geometry.visible = false
-    G.statefuls.push(playerStateful.playerState.currentWeapon)
-    G.player = playerStateful
 
     const objects = [...map.sectors.map((sector) => sector), ...findStatefulObjects()]
-    createScene(objects, playerStateful.geometry, [0, 48, 0])
+    G.scene = createScene(objects, playerStateful.geometry, [0, 48, 0])
+
+    playerStateful.playerState = createPlayerState(playerStateful)
+    playerStateful.geometry.visible = false
+    addStateful(playerStateful.playerState.currentWeapon)
+    G.player = playerStateful
+
     console.info('Prepared scene')
 }

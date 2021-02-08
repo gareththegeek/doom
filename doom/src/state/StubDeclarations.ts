@@ -4,13 +4,10 @@
 
 import { Stateful } from '../interfaces/State'
 
-export const A_Light0 = (stateful: Stateful): void => {}
-export const A_WeaponReady = (stateful: Stateful): void => {}
 export const A_Lower = (stateful: Stateful): void => {}
 export const A_Raise = (stateful: Stateful): void => {}
 export const A_Punch = (stateful: Stateful): void => {}
 export const A_ReFire = (stateful: Stateful): void => {}
-export const A_Light1 = (stateful: Stateful): void => {}
 export const A_FireShotgun = (stateful: Stateful): void => {}
 export const A_Light2 = (stateful: Stateful): void => {}
 export const A_FireShotgun2 = (stateful: Stateful): void => {}

@@ -47,7 +47,7 @@ const renderGeometry = (camera: Camera, geometry: Geometry): void => {
     }
     gl.uniformMatrix4fv(program.uniformLocations.modelViewMatrix, false, modelView)
     gl.uniform1f(program.uniformLocations.lightLevel, ((1 - geometry.light / 255) * 31) / 33)
-    
+
     bindBufferSet(geometry.buffers)
     renderBufferSet(geometry)
 }

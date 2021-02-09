@@ -258,4 +258,36 @@ describe('LinkedList', () => {
         expect(last).toBeUndefined()
         expect(prev).toBeUndefined()
     })
+
+    it('returns last item when only one item exists', () => {
+        const expected = { foo: 8 }
+
+        const list = new LinkedList<TestObject>()
+        list.sortedAdd(expected, sort)
+
+        const last = list.last()
+        expect(last).not.toBeUndefined()
+        expect(last!.item).toBe(expected)
+    })
+
+    it('handles being emptied', () => {
+        const list = new LinkedList<TestObject>()
+
+        const foo0 = { foo: 0 }
+        const foo1 = { foo: 1 }
+        const foo2 = { foo: 2 }
+
+        list.add(foo0)
+
+        list.remove(foo0)
+        list.add(foo0)
+        list.add(foo1)
+        list.add(foo2)
+
+        list.remove(foo2)
+        list.remove(foo1)
+        list.remove(foo0)
+
+        expect(list.next()).toBeUndefined()
+    })
 })

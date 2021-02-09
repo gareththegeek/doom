@@ -82,7 +82,7 @@ export const lineCollisionCheck = (
 
     let current = candidates.next()
     while (current !== undefined) {
-        lineCollisions.lines.add(current.item)
+        lineCollisions.lines.sortedAdd(current.item, depthSort)
 
         if (isSolid(current.item)) {
             lineCollisions.allow = false
@@ -90,8 +90,6 @@ export const lineCollisionCheck = (
         }
         current = candidates.next(current)
     }
-
-    freeLineIntersections(candidates)
 }
 
 const freeIntersection = (intersection: LineIntersection): void => {
@@ -104,6 +102,7 @@ const freeLineIntersections = (intersections: LinkedList<LineIntersection>): voi
 }
 
 export const resetLineResult = (lineCollisions: LineCollisionCheckResult): void => {
-    freeLineIntersections(lineCollisions.lines)
+    freeLineIntersections(candidates)
+    lineCollisions.lines.clear()
     lineCollisions.allow = false
 }

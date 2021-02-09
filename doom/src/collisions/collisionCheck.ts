@@ -25,11 +25,14 @@ export const collisionCheck = (postCollisionPosition: vec2, stateful: StatefulTh
     const { radius } = stateful.info
     const { index } = stateful.thing
 
-    resetThingResult(thingCollisions)
-    resetLineResult(lineCollisions)
+    thingCollisions.allow = false
+    lineCollisions.allow = false
 
     let infiniteLoopProtection = 0
     while (!(thingCollisions.allow && lineCollisions.allow)) {
+        resetThingResult(thingCollisions)
+        resetLineResult(lineCollisions)
+
         // TODO maybe we can merge collision response and check logic for things and lines?
         thingCollisionCheck(thingCollisions, blocks, index, radius, p0, p1)
         if (!thingCollisions.allow) {

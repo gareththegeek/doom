@@ -78,6 +78,7 @@ export class LinkedList<T> {
         this._length += 1
         if (this._first === undefined) {
             this._first = entry
+            this._last = entry
             return
         }
         let current: LinkedListEntry<T> | undefined = this._first
@@ -108,6 +109,9 @@ export class LinkedList<T> {
             if (entry.item === object) {
                 if (entry.prev === undefined) {
                     this._first = entry.next
+                    if (entry.next !== undefined) {
+                        entry.next.prev = undefined
+                    }
                 } else {
                     entry.prev.next = entry.next
                     if (entry.next !== undefined) {

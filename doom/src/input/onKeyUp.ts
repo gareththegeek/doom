@@ -8,7 +8,7 @@ export const onKeyUp = (event: KeyboardEvent): void => {
     } = G
     const { key } = event
     if (isPressed[key]) {
-        PubSub.publish(ON_KEY_UP, { key })
+        PubSub.publish(ON_KEY_UP, key)
     }
     isPressed[key] = false
 }

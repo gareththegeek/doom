@@ -2,7 +2,7 @@ import { ReadonlyVec2, vec2 } from 'gl-matrix'
 import { HomogenousHeap, LinkedList, forEachLinkedList } from 'low-mem'
 import { Block } from '../interfaces/BlockMap'
 import { Line } from '../interfaces/Sector'
-import { findLineSideForPoint } from '../maths/findLineSideForPoint'
+import { findLineSideForPoint, LineSideResult } from '../maths/findLineSideForPoint'
 import { lineCircleSweep } from '../maths/lineCircleSweep'
 
 let p0: ReadonlyVec2
@@ -27,6 +27,8 @@ const lineIntersectionHeap = new HomogenousHeap<LineIntersection>(createLineInte
 
 const depthSort = (a: LineIntersection, b: LineIntersection): number => a.distance - b.distance
 
+const lineSideResult = {} as LineSideResult
+
 const isSolid = ({ line }: LineIntersection): boolean => {
     if (line.back === undefined) {
         return true
@@ -35,7 +37,8 @@ const isSolid = ({ line }: LineIntersection): boolean => {
         return true
     }
 
-    const { side, other } = findLineSideForPoint(line, p0)
+    findLineSideForPoint(lineSideResult, line, p0)
+    const { side, other } = lineSideResult
     if (side === undefined || other === undefined) {
         // I think this can't happen but we'll see
         console.warn(`Missing side in line collision check side:${side} other:${other}`)

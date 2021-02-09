@@ -1,9 +1,8 @@
 import { forEachLinkedList, LinkedList } from 'low-mem'
-import { removeFromBlock } from '../collisions/removeFromBlock'
-import { removeFromSector } from '../collisions/removeFromSector'
 import { G } from '../global'
 import { ObjectFlags } from '../interfaces/ObjectInfo'
 import { StatefulObjectThing } from '../interfaces/State'
+import { removeStateful } from '../state/removeStateful'
 
 const pickupable = (flags: ObjectFlags): boolean => flags.special || flags.countitem || flags.pickup || flags.dropped
 
@@ -16,9 +15,8 @@ const pickup = (stateful: StatefulObjectThing): void => {
     if (block === undefined) {
         return
     }
-    removeFromBlock(stateful)
-    removeFromSector(stateful)
     geometry.visible = false
+    removeStateful(stateful)
 
     console.info(`Picked up ${state.spriteName}`)
     const { type } = thing

@@ -3,6 +3,8 @@ import { SkillType } from 'doom-map/dist/interfaces/MapFlags'
 import { createSpriteGeometry, setSpriteFrame } from 'doom-sprite'
 import { createScene, GeometryBox } from 'doom-video'
 import { findLinkedList, LinkedList, toLinkedList } from 'low-mem'
+import { addToBlock } from '../collisions/addToBlock'
+import { addToSector } from '../collisions/addToSector'
 import { G, isStatefulThing } from '../global'
 import { Block, BlockMap } from '../interfaces/BlockMap'
 import { ObjectInfoLookup } from '../interfaces/ObjectInfoLookup'
@@ -12,19 +14,14 @@ import { Sector } from '../interfaces/Sector'
 import { Stateful, StatefulObject, StatefulThing } from '../interfaces/State'
 import { Weapon, WeaponInfoLookup, WeaponType } from '../interfaces/Weapon'
 import { addStateful } from '../state/addStateful'
-import { getState } from '../state/getState'
+import { allocateSprite, allocateStateful } from '../state/allocateStateful'
 
 const createPistol = (player: StatefulObject): Weapon => {
     const info = { ...WeaponInfoLookup[WeaponType.Pistol] }
-    const state = getState(info.readystate)
-    const result = {
-        ammo: 50,
-        block: undefined,
-        sector: player.sector,
-        geometry: createSpriteGeometry(state.spriteName),
-        state,
-        info
-    }
+    const result = allocateSprite(info.readystate) as Weapon
+    result.ammo = 50
+    result.info = info
+    result.sector = player.sector
     //TODO constants for native screen res
     result.geometry.position = [160, 0, 0]
     result.geometry.screenspace = true
@@ -79,15 +76,12 @@ export const loadMap = (mapName: string): void => {
 
             const sector = G.sectors[thing.sector.index]
             const block = thing.block as Block
-            const result: StatefulThing = {
-                thing,
-                sector,
-                block,
-                info,
-                state: getState(info.spawnstate)
-            }
-            sector.statefuls.add(result)
-            block.statefuls.add(result)
+            const result = allocateStateful(info.spawnstate) as StatefulThing
+            result.thing = thing
+            result.sector = sector
+            result.info = info
+            addToBlock(block, result)
+            addToSector(sector, result)
 
             if (result.state.spriteName === '-') {
                 return result
@@ -110,12 +104,11 @@ export const loadMap = (mapName: string): void => {
         throw new Error('Unable to find player start in level D:')
     }
 
-    G.scene = createScene(
-        G.statefuls as LinkedList<GeometryBox>,
-        G.sectors as GeometryBox[],
-        playerStateful.geometry,
-        [0, 48, 0]
-    )
+    G.scene = createScene(G.statefuls as LinkedList<GeometryBox>, G.sectors as GeometryBox[], playerStateful.geometry, [
+        0,
+        48,
+        0
+    ])
 
     playerStateful.playerState = createPlayerState(playerStateful)
     playerStateful.geometry.visible = false

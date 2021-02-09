@@ -3,6 +3,7 @@ import { Line } from '../interfaces/Sector'
 import { projectPositionOntoLine } from './projectVectorOntoVector'
 
 let closest = vec2.create()
+const distance = vec2.create()
 
 export const lineCircleIntersection = (
     { start, end }: Line,
@@ -32,6 +33,6 @@ export const lineCircleIntersection = (
             closest[1] = bottom[1]
         }
     }
-    const sqrDistance = vec2.sqrLen(vec2.subtract(vec2.create(), closest, centre))
+    const sqrDistance = vec2.sqrLen(vec2.subtract(distance, closest, centre))
     return sqrDistance <= radius * radius ? sqrDistance : undefined
 }

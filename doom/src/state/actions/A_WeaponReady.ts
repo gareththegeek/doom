@@ -21,4 +21,5 @@ export const A_WeaponReady = (stateful: Stateful): void => {
     }
 
     stateful.state = getState(stateful.info.atkstate)
+    stateful.tics = stateful.state.tics
 }

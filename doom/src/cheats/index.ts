@@ -6,13 +6,11 @@ import { changeLevel } from '../maps/changeLevel'
 const cheat = (() => {
     let code = 'AAAAAAAA'
 
-    return (_: string, { key }: { key: string }): void => {
+    return (_: string, key: string): void => {
         const letter = key
         const {
             cheats,
-            player: {
-                playerState
-            }
+            player: { playerState }
         } = G
 
         if (/^[a-z0-9]{1}$/.test(letter)) {
@@ -22,7 +20,9 @@ const cheat = (() => {
                 console.info(`noclip ${cheats.noclip}`)
             }
             if (code.endsWith('idkfa')) {
-                playerState.keys = { blue: true, red: true, yellow: true }
+                playerState.keys.blue = true
+                playerState.keys.red = true
+                playerState.keys.yellow = true
                 console.info('I can only give keys for now :P')
             }
             if (/idclev[1-4]{1}[1-9]{1}$/.test(code)) {

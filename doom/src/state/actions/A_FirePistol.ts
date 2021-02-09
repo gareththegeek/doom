@@ -1,18 +1,12 @@
 import { isWeapon, Weapon } from '../../interfaces/Weapon'
-import { Stateful, StatefulObject } from '../../interfaces/State'
-import { createSpriteGeometry } from 'doom-sprite'
+import { Stateful } from '../../interfaces/State'
 import { addToSector } from '../../collisions/addToSector'
 import { addStateful } from '../addStateful'
-import { getState } from '../getState'
+import { allocateSprite } from '../allocateStateful'
 
 const flash = (weapon: Weapon) => {
-    const state = getState(weapon.info.flashstate)
-    const flash: StatefulObject = {
-        block: undefined,
-        sector: weapon.sector,
-        state,
-        geometry: createSpriteGeometry(state.spriteName)
-    }
+    const flash = allocateSprite(weapon.info.flashstate)
+    flash.sector = weapon.sector
     flash.geometry.position = [160, 64, 0]
     flash.geometry.screenspace = true
     addStateful(flash)
@@ -24,7 +18,7 @@ export const A_FirePistol = (stateful: Stateful): void => {
         console.warn(`Attempted to fire pistol on non-weaopn ${stateful}`)
         return
     }
-    
+
     flash(stateful)
     stateful.ammo -= 1
 

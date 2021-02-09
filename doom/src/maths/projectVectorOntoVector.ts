@@ -4,7 +4,12 @@ let v = vec2.create()
 let u = vec2.create()
 let projuonv = vec2.create()
 
-export const projectPositionOntoLine = (pout: vec2, position: ReadonlyVec2, start: ReadonlyVec2, end: ReadonlyVec2): void => {
+export const projectPositionOntoLine = (
+    pout: vec2,
+    position: ReadonlyVec2,
+    start: ReadonlyVec2,
+    end: ReadonlyVec2
+): void => {
     //v_norm = np.sqrt(sum(v**2))
     //proj_of_u_on_v = (np.dot(u, v)/v_norm**2)*v
 

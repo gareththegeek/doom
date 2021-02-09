@@ -16,6 +16,7 @@ export interface State {
 }
 
 export interface Stateful {
+    tics: number
     state: State
     sector: Sector
     block: Block | undefined

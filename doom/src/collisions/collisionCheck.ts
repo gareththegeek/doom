@@ -10,6 +10,7 @@ import { pickups } from '../items/pickups'
 import { StatefulThing } from '../interfaces/State'
 import { LinkedList } from 'low-mem'
 import { Block } from '../interfaces/BlockMap'
+import { G } from '../global'
 
 let thingCollisions: ThingCollisionCheckResult = {
     allow: false,
@@ -24,6 +25,10 @@ let lineCollisions: LineCollisionCheckResult = {
 const blocks = new LinkedList<Block>()
 
 export const collisionCheck = (stateful: StatefulThing, p0: ReadonlyVec2, p1: vec2): void => {
+    const {
+        cheats: { noclip }
+    } = G
+
     getBlocks(blocks, stateful, p0, p1)
     const { radius } = stateful.info
     const { index } = stateful.thing
@@ -38,13 +43,13 @@ export const collisionCheck = (stateful: StatefulThing, p0: ReadonlyVec2, p1: ve
 
         // TODO maybe we can merge collision response and check logic for things and lines?
         thingCollisionCheck(thingCollisions, blocks, index, radius, p0, p1)
-        if (!thingCollisions.allow) {
+        if (!(thingCollisions.allow || noclip)) {
             const last = thingCollisions.statefuls.last()!.item
             thingCollisionResponse(p1, last, radius, p0, p1)
         }
 
         lineCollisionCheck(lineCollisions, blocks, radius, p0, p1)
-        if (!lineCollisions.allow) {
+        if (!(lineCollisions.allow || noclip)) {
             const last = lineCollisions.lines.last()!.item.line
             lineCollisionResponse(p1, last.start, last.end, radius, p0, p1)
         }
@@ -54,6 +59,9 @@ export const collisionCheck = (stateful: StatefulThing, p0: ReadonlyVec2, p1: ve
             p1[1] = p0[1]
             break
         }
+
+        thingCollisions.allow ||= noclip
+        lineCollisions.allow ||= noclip
     }
     pickups(thingCollisions.statefuls)
 

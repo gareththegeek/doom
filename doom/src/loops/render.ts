@@ -30,8 +30,12 @@ export const render = (() => {
         const { statefuls, sectors } = G
 
         forEachLinkedList(statefuls, updateSprite)
-        
-        sectors.filter((sector) => sector.dirty).forEach((sector) => rebuildSectorGeometry(sector))
+
+        for (const sector of sectors) {
+            if (sector.dirty) {
+                rebuildSectorGeometry(sector)
+            }
+        }
 
         renderScene()
     }

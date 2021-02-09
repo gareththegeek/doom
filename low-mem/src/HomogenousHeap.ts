@@ -22,4 +22,8 @@ export class HomogenousHeap<T> {
     free(object: T): void {
         this._free.add(object)
     }
+
+    clear(): void {
+        this._free = new LinkedList<T>()
+    }
 }

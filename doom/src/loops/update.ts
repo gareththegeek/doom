@@ -36,8 +36,8 @@ const setDirty = (sector: Sector): void => {
 }
 
 const updateState = (stateful: Stateful): void => {
-    stateful.state.tics -= 1
-    if (stateful.state.tics > 0) {
+    stateful.tics -= 1
+    if (stateful.tics > 0) {
         return
     }
     if (stateful.state.action !== undefined) {
@@ -47,6 +47,7 @@ const updateState = (stateful: Stateful): void => {
         return
     }
     stateful.state = getState(stateful.state.nextState)
+    stateful.tics = stateful.state.tics
 }
 
 export const update = (() => {

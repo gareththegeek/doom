@@ -30,6 +30,10 @@ const applyCamera = (camera: Camera): void => {
     currentCamera = camera
 }
 
+let modelView = mat4.create()
+let view = mat4.create()
+let model = mat4.create()
+
 const renderGeometry = (camera: Camera, geometry: Geometry): void => {
     const {
         gl,
@@ -41,7 +45,9 @@ const renderGeometry = (camera: Camera, geometry: Geometry): void => {
         return
     }
 
-    const modelView = mat4.multiply(mat4.create(), getModelView(camera), getModelView(geometry))
+    getModelView(view, camera)
+    getModelView(model, geometry)
+    mat4.multiply(modelView, view, model)
     if (geometry.flat) {
         modelView[0] = 1.0
         modelView[4] = 0.0

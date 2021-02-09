@@ -6,6 +6,8 @@ import { vec3 } from 'gl-matrix'
 import { forEachLinkedList } from 'low-mem'
 import { Stateful } from '../interfaces/State'
 
+const direction = vec3.create()
+
 const updateSprite = (stateful: Stateful): void => {
     const { player } = G
 
@@ -14,7 +16,7 @@ const updateSprite = (stateful: Stateful): void => {
     }
 
     const TWO_PI = Math.PI * 2
-    const direction = vec3.subtract(vec3.create(), stateful.geometry.position, player.geometry.position)
+    vec3.subtract(direction, stateful.geometry.position, player.geometry.position)
     const angleToObject = Math.atan2(-direction[2], direction[0])
     const objectAngle = stateful.geometry.rotation
 

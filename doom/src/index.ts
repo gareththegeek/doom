@@ -10,6 +10,12 @@ import './activation'
 import './input'
 import './cheats'
 
+const onFrame = (now: number) => {
+    update(now)
+    render(now)
+    requestAnimationFrame(onFrame)
+}
+
 const main = async () => {
     try {
         const canvas = document.querySelector('#canvas') as HTMLCanvasElement
@@ -32,11 +38,6 @@ const main = async () => {
 
         loadMap('e1m1')
 
-        const onFrame = (now: number) => {
-            update(now)
-            render(now)
-            requestAnimationFrame(onFrame)
-        }
         requestAnimationFrame(onFrame)
     } catch (e) {
         console.error(e.message)

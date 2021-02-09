@@ -1,4 +1,4 @@
-import { vec2 } from 'gl-matrix'
+import { ReadonlyVec2, vec2 } from 'gl-matrix'
 import { blockCheck } from './blockCheck'
 import { lineCollisionResponse } from './lineCollisionResponse'
 import { getBlocks } from './getBlocks'
@@ -20,7 +20,7 @@ let lineCollisions: LineCollisionCheckResult = {
     lines: new LinkedList()
 }
 
-export const collisionCheck = (postCollisionPosition: vec2, stateful: StatefulThing, p0: vec2, p1: vec2): void => {
+export const collisionCheck = (stateful: StatefulThing, p0: ReadonlyVec2, p1: vec2): void => {
     const blocks = getBlocks(stateful, p0, p1)
     const { radius } = stateful.info
     const { index } = stateful.thing
@@ -37,17 +37,18 @@ export const collisionCheck = (postCollisionPosition: vec2, stateful: StatefulTh
         thingCollisionCheck(thingCollisions, blocks, index, radius, p0, p1)
         if (!thingCollisions.allow) {
             const last = thingCollisions.statefuls.last()!.item
-            p1 = thingCollisionResponse(last, radius, p0, p1)
+            thingCollisionResponse(p1, last, radius, p0, p1)
         }
 
         lineCollisionCheck(lineCollisions, blocks, radius, p0, p1)
         if (!lineCollisions.allow) {
             const last = lineCollisions.lines.last()!.item.line
-            p1 = lineCollisionResponse(last.start, last.end, radius, p0, p1)
+            lineCollisionResponse(p1, last.start, last.end, radius, p0, p1)
         }
 
         if (++infiniteLoopProtection > 2) {
-            p1 = p0
+            p1[0] = p0[0]
+            p1[1] = p0[1]
             break
         }
     }
@@ -55,7 +56,4 @@ export const collisionCheck = (postCollisionPosition: vec2, stateful: StatefulTh
 
     blockCheck(stateful, p1)
     sectorCheck(lineCollisions.lines, stateful, p0, p1)
-
-    postCollisionPosition[0] = p1[0]
-    postCollisionPosition[1] = p1[1]
 }

@@ -1,4 +1,4 @@
-import { vec2, vec3 } from 'gl-matrix'
+import { ReadonlyVec2, vec2, vec3 } from 'gl-matrix'
 import { findLinkedList, LinkedList } from 'low-mem'
 import { isStatefulObjectThing } from '../global'
 import { Block } from '../interfaces/BlockMap'
@@ -10,7 +10,7 @@ export interface ThingCollisionCheckResult {
     statefuls: LinkedList<StatefulObjectThing>
 }
 
-let p0: vec2
+let p0: ReadonlyVec2
 const candidates = new LinkedList<StatefulObjectThing>()
 
 const vec3tovec2 = (vec3: vec3): vec2 => [vec3[0], vec3[2]]
@@ -28,7 +28,7 @@ export const thingCollisionCheck = (
     blocks: Block[],
     index: number,
     radius: number,
-    p0in: vec2,
+    p0in: ReadonlyVec2,
     p1: vec2
 ): void => {
     p0 = p0in
@@ -48,7 +48,7 @@ export const thingCollisionCheck = (
             entry = block.statefuls.next(entry)
         }
     }
-    
+
     let current = candidates.next()
     while (current !== undefined) {
         thingCollisions.statefuls.add(current.item)
@@ -63,7 +63,7 @@ export const thingCollisionCheck = (
     candidates.clear()
 }
 
-export const resetThingResult = (thingCollisions: ThingCollisionCheckResult) : void => {
+export const resetThingResult = (thingCollisions: ThingCollisionCheckResult): void => {
     thingCollisions.allow = false
     thingCollisions.statefuls.clear()
 }

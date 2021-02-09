@@ -15,13 +15,8 @@ const velocity = vec2.create()
 const result = vec2.create()
 const t0 = vec2.create()
 const t1 = vec2.create()
-const postCollisionPosition = vec2.create()
 
 const forward = (stateful: StatefulObjectThing, speed: number): void => {
-    const {
-        cheats: { noclip }
-    } = G
-
     const geometry = stateful.geometry
     velocity[1] = speed
     vec2.rotate(result, velocity, origin, -geometry.rotation)
@@ -30,11 +25,7 @@ const forward = (stateful: StatefulObjectThing, speed: number): void => {
     t0[1] = geometry.position[2]
     vec2.subtract(t1, t0, result)
 
-    collisionCheck(postCollisionPosition, stateful, t0, t1)
-    if (!noclip) {
-        t1[0] = postCollisionPosition[0]
-        t1[1] = postCollisionPosition[1]
-    }
+    collisionCheck(stateful, t0, t1)
 
     geometry.position[0] = t1[0]
     geometry.position[2] = t1[1]

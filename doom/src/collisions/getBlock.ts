@@ -1,6 +1,6 @@
 import { getMapBlock } from 'doom-map'
-import { vec2 } from 'gl-matrix'
+import { ReadonlyVec2 } from 'gl-matrix'
 import { G } from '../global'
 import { Block } from '../interfaces/BlockMap'
 
-export const getBlock = (point: vec2): Block => getMapBlock(G.blockmap, point) as Block
+export const getBlock = (point: ReadonlyVec2): Block => getMapBlock(G.blockmap, point) as Block

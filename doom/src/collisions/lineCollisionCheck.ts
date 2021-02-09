@@ -1,11 +1,11 @@
-import { vec2 } from 'gl-matrix'
+import { ReadonlyVec2, vec2 } from 'gl-matrix'
 import { HomogenousHeap, LinkedList, forEachLinkedList } from 'low-mem'
 import { Block } from '../interfaces/BlockMap'
 import { Line } from '../interfaces/Sector'
 import { findLineSideForPoint } from '../maths/findLineSideForPoint'
 import { lineCircleSweep } from '../maths/lineCircleSweep'
 
-let p0: vec2
+let p0: ReadonlyVec2
 
 export interface LineCollisionCheckResult {
     allow: boolean
@@ -55,8 +55,8 @@ export const lineCollisionCheck = (
     lineCollisions: LineCollisionCheckResult,
     blocks: Block[],
     radius: number,
-    p0in: vec2,
-    p1: vec2
+    p0in: ReadonlyVec2,
+    p1: ReadonlyVec2
 ): void => {
     //TODO thing sphere to line intersection check and then check for legal moves
     // e.g. two sided lines

@@ -1,4 +1,4 @@
-import { vec2 } from 'gl-matrix'
+import { ReadonlyVec2, vec2 } from 'gl-matrix'
 
 interface RayRayIntersectionResult {
     point: vec2
@@ -7,10 +7,10 @@ interface RayRayIntersectionResult {
 }
 
 const rayRayIntersection = (
-    [x1, y1]: vec2,
-    [x2, y2]: vec2,
-    [x3, y3]: vec2,
-    [x4, y4]: vec2
+    [x1, y1]: ReadonlyVec2,
+    [x2, y2]: ReadonlyVec2,
+    [x3, y3]: ReadonlyVec2,
+    [x4, y4]: ReadonlyVec2
 ): RayRayIntersectionResult | undefined => {
     // Check if none of the lines are of length 0
     if ((x1 === x2 && y1 === y2) || (x3 === x4 && y3 === y4)) {
@@ -38,7 +38,12 @@ const rayRayIntersection = (
     }
 }
 
-export const lineRayIntersection = (lineP1: vec2, lineP2: vec2, rayP1: vec2, rayP2: vec2): vec2 | undefined => {
+export const lineRayIntersection = (
+    lineP1: ReadonlyVec2,
+    lineP2: ReadonlyVec2,
+    rayP1: ReadonlyVec2,
+    rayP2: ReadonlyVec2
+): vec2 | undefined => {
     const result = rayRayIntersection(lineP1, lineP2, rayP1, rayP2)
     if (result !== undefined) {
         // is the intersection along the segments
@@ -49,7 +54,12 @@ export const lineRayIntersection = (lineP1: vec2, lineP2: vec2, rayP1: vec2, ray
     return result?.point
 }
 
-export const lineLineIntersection = (p1: vec2, p2: vec2, p3: vec2, p4: vec2): vec2 | undefined => {
+export const lineLineIntersection = (
+    p1: ReadonlyVec2,
+    p2: ReadonlyVec2,
+    p3: ReadonlyVec2,
+    p4: ReadonlyVec2
+): vec2 | undefined => {
     const result = rayRayIntersection(p1, p2, p3, p4)
     if (result !== undefined) {
         // is the intersection along the segments

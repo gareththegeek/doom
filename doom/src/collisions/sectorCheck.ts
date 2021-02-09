@@ -1,16 +1,15 @@
 import PubSub from 'pubsub-js'
-import { vec2 } from 'gl-matrix'
+import { ReadonlyVec2, vec2 } from 'gl-matrix'
 import { WALK_LINE } from '../interfaces/messageTypes'
 import { findLineSideForPoint } from '../maths/findLineSideForPoint'
 import { lineLineIntersection } from '../maths/lineLineIntersection'
 import { changeSector } from './changeSector'
-import { Line } from '../interfaces/Sector'
 import { Stateful } from '../interfaces/State'
 import { forEachLinkedListReverse, LinkedList } from 'low-mem'
 import { LineIntersection } from './lineCollisionCheck'
 
-let p0: vec2
-let p1: vec2
+let p0: ReadonlyVec2
+let p1: ReadonlyVec2
 let stateful: Stateful
 
 const sectorCheckLine = ({ line }: LineIntersection) => {
@@ -30,8 +29,8 @@ const sectorCheckLine = ({ line }: LineIntersection) => {
 export const sectorCheck = (
     lines: LinkedList<LineIntersection>,
     statefulIn: Stateful,
-    p0in: vec2,
-    p1in: vec2
+    p0in: ReadonlyVec2,
+    p1in: ReadonlyVec2
 ): void => {
     p0 = p0in
     p1 = p1in

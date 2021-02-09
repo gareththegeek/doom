@@ -1,5 +1,5 @@
 import { vec2, vec3 } from 'gl-matrix'
-import { LinkedList, LinkedListEntry } from 'low-mem'
+import { findLinkedList, LinkedList } from 'low-mem'
 import { isStatefulObjectThing } from '../global'
 import { Block } from '../interfaces/BlockMap'
 import { StatefulObjectThing } from '../interfaces/State'
@@ -11,6 +11,7 @@ export interface ThingCollisionCheckResult {
 }
 
 let p0: vec2
+const candidates = new LinkedList<StatefulObjectThing>()
 
 const vec3tovec2 = (vec3: vec3): vec2 => [vec3[0], vec3[2]]
 
@@ -20,6 +21,8 @@ const curryDepthSort = () => {
 }
 const depthSort = curryDepthSort()
 
+const isSolid = (thing: StatefulObjectThing): boolean => thing.info.flags.solid
+
 export const thingCollisionCheck = (
     thingCollisions: ThingCollisionCheckResult,
     blocks: Block[],
@@ -27,8 +30,9 @@ export const thingCollisionCheck = (
     radius: number,
     p0in: vec2,
     p1: vec2
-): StatefulObjectThing | undefined => {
+): void => {
     p0 = p0in
+    thingCollisions.allow = true
 
     for (const block of blocks) {
         let entry = block.statefuls.next()
@@ -39,15 +43,27 @@ export const thingCollisionCheck = (
                 entry.item.thing.index !== index &&
                 circleCircleIntersection(vec3tovec2(entry.item.geometry!.position), entry.item.info.radius, p1, radius)
             ) {
-                thingCollisions.statefuls.sortedAdd(entry.item, depthSort)
-                if (entry.item.info.flags.solid) {
-                    thingCollisions.allow = false
-                    return entry.item
-                }
+                candidates.sortedAdd(entry.item, depthSort)
             }
             entry = block.statefuls.next(entry)
         }
     }
-    thingCollisions.allow = true
-    return undefined
+    
+    let current = candidates.next()
+    while (current !== undefined) {
+        thingCollisions.statefuls.add(current.item)
+
+        if (isSolid(current.item)) {
+            thingCollisions.allow = false
+            break
+        }
+        current = candidates.next(current)
+    }
+
+    candidates.clear()
+}
+
+export const resetThingResult = (thingCollisions: ThingCollisionCheckResult) : void => {
+    thingCollisions.allow = false
+    thingCollisions.statefuls.clear()
 }

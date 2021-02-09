@@ -1,28 +1,32 @@
-export interface ILinkedList<T> {
-    length(): number
-    next(entry?: LinkedListEntry<T>): LinkedListEntry<T> | undefined
-    add(object: T): void
-    remove(object: T): void
-}
-
 export interface LinkedListEntry<T> {
     item: T
     next: LinkedListEntry<T> | undefined
+    prev: LinkedListEntry<T> | undefined
 }
 
-export class LinkedList<T> implements ILinkedList<T> {
+export class LinkedList<T> {
     private _length: number
     private _free: LinkedListEntry<T> | undefined
     private _first: LinkedListEntry<T> | undefined
+    private _last: LinkedListEntry<T> | undefined
 
     constructor() {
         this._length = 0
         this._free = undefined
         this._first = undefined
+        this._last = undefined
     }
 
     length(): number {
         return this._length
+    }
+
+    first(): LinkedListEntry<T> | undefined {
+        return this._first
+    }
+
+    last(): LinkedListEntry<T> | undefined {
+        return this._last
     }
 
     next(entry?: LinkedListEntry<T>): LinkedListEntry<T> | undefined {
@@ -32,17 +36,26 @@ export class LinkedList<T> implements ILinkedList<T> {
         return entry.next
     }
 
+    prev(entry?: LinkedListEntry<T>): LinkedListEntry<T> | undefined {
+        if (entry === undefined) {
+            return this._last
+        }
+        return entry.prev
+    }
+
     private allocate(object: T): LinkedListEntry<T> {
         let entry: LinkedListEntry<T>
         if (this._free !== undefined) {
             entry = this._free
             entry.item = object
             entry.next = undefined
+            entry.prev = undefined
             this._free = entry.next
         } else {
             entry = {
                 item: object,
-                next: undefined
+                next: undefined,
+                prev: undefined
             }
         }
         return entry
@@ -50,6 +63,11 @@ export class LinkedList<T> implements ILinkedList<T> {
 
     add(object: T): void {
         const entry = this.allocate(object)
+        if (this._first !== undefined) {
+            this._first.prev = entry
+        } else {
+            this._last = entry
+        }
         entry.next = this._first
         this._first = entry
         this._length += 1
@@ -67,6 +85,8 @@ export class LinkedList<T> implements ILinkedList<T> {
         while (current !== undefined) {
             if (sort(entry.item, current.item) <= 0) {
                 entry.next = current
+                entry.prev = previous
+                current.prev = entry
                 if (previous === undefined) {
                     this._first = entry
                 } else {
@@ -78,24 +98,30 @@ export class LinkedList<T> implements ILinkedList<T> {
             current = current.next
         }
         previous!.next = entry
+        entry.prev = previous
+        this._last = entry
     }
 
     remove(object: T): void {
-        let previous: LinkedListEntry<T> | undefined = undefined
         let entry = this._first
         while (entry !== undefined) {
             if (entry.item === object) {
-                if (previous === undefined) {
+                if (entry.prev === undefined) {
                     this._first = entry.next
                 } else {
-                    previous.next = entry.next
+                    entry.prev.next = entry.next
+                    if (entry.next !== undefined) {
+                        entry.next.prev = entry.prev
+                    }
+                }
+                if (entry === this._last) {
+                    this._last = entry.prev
                 }
                 entry.next = this._free
                 this._free = entry
                 this._length -= 1
                 return
             }
-            previous = entry
             entry = entry.next
         }
     }
@@ -111,6 +137,7 @@ export class LinkedList<T> implements ILinkedList<T> {
             last.next = this._first
         }
         this._first = undefined
+        this._last = undefined
         this._length = 0
     }
 }

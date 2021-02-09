@@ -1,4 +1,4 @@
-import { LinkedList } from './LinkedList'
+import { LinkedList, LinkedListEntry } from './LinkedList'
 
 describe('LinkedList', () => {
     it('is initially empty', () => {
@@ -156,5 +156,106 @@ describe('LinkedList', () => {
         list.sortedAdd(expected[1], sort)
 
         sortedCheckList(expected, list)
+    })
+
+    it('returns correct previous item', () => {
+        const expected = [{ foo: 2 }, { foo: 5 }, { foo: 7 }, { foo: 16 }, { foo: 16 }, { foo: 123 }]
+
+        const list = new LinkedList<TestObject>()
+        list.sortedAdd(expected[4], sort)
+        list.sortedAdd(expected[0], sort)
+        list.sortedAdd(expected[5], sort)
+        list.sortedAdd(expected[2], sort)
+        list.sortedAdd(expected[3], sort)
+        list.sortedAdd(expected[1], sort)
+
+        let array = []
+        let current = list.next()
+        while (current !== undefined) {
+            array.push(current)
+            current = list.next(current)
+        }
+
+        expect(array[0].prev).toBeUndefined()
+        expect(array[1].prev).not.toBeUndefined()
+        expect(array[1].prev!.item).toBe(expected[0])
+        expect(array[2].prev).not.toBeUndefined()
+        expect(array[2].prev!.item).toBe(expected[1])
+        expect(array[3].prev).not.toBeUndefined()
+        expect(array[3].prev!.item).toBe(expected[2])
+        expect(array[4].prev).not.toBeUndefined()
+        expect(array[4].prev!.item).toBe(expected[3])
+        expect(array[5].prev).not.toBeUndefined()
+        expect(array[5].prev!.item).toBe(expected[4])
+    })
+
+    it('returns correct previous item when items are removed', () => {
+        const expected = [{ foo: 2 }, { foo: 5 }, { foo: 7 }, { foo: 16 }, { foo: 16 }, { foo: 123 }]
+        const unexpected = { foo: 8 }
+
+        const list = new LinkedList<TestObject>()
+        list.sortedAdd(expected[4], sort)
+        list.sortedAdd(expected[0], sort)
+        list.sortedAdd(unexpected, sort)
+        list.sortedAdd(expected[5], sort)
+        list.remove(unexpected)
+        list.sortedAdd(expected[2], sort)
+        list.sortedAdd(expected[3], sort)
+        list.sortedAdd(expected[1], sort)
+
+        let array = []
+        let current = list.next()
+        while (current !== undefined) {
+            array.push(current)
+            current = list.next(current)
+        }
+
+        expect(array[0].prev).toBeUndefined()
+        expect(array[1].prev).not.toBeUndefined()
+        expect(array[1].prev!.item).toBe(expected[0])
+        expect(array[2].prev).not.toBeUndefined()
+        expect(array[2].prev!.item).toBe(expected[1])
+        expect(array[3].prev).not.toBeUndefined()
+        expect(array[3].prev!.item).toBe(expected[2])
+        expect(array[4].prev).not.toBeUndefined()
+        expect(array[4].prev!.item).toBe(expected[3])
+        expect(array[5].prev).not.toBeUndefined()
+        expect(array[5].prev!.item).toBe(expected[4])
+    })
+
+    it('returns correct last entry', () => {
+        const expected = { foo: 123 }
+        const others = [{ foo: 2 }, { foo: 5 }, { foo: 7 }, { foo: 16 }, { foo: 16 }]
+        const unexpected = { foo: 8 }
+
+        const list = new LinkedList<TestObject>()
+        list.sortedAdd(others[4], sort)
+        list.sortedAdd(others[0], sort)
+        list.sortedAdd(unexpected, sort)
+        list.sortedAdd(expected, sort)
+        list.remove(unexpected)
+        list.sortedAdd(others[2], sort)
+        list.sortedAdd(others[3], sort)
+        list.sortedAdd(others[1], sort)
+
+        const last = list.last()
+        const prev = list.prev()
+        expect(last).not.toBeUndefined()
+        expect(last!.item).toBe(expected)
+        expect(prev).not.toBeUndefined()
+        expect(prev!.item).toBe(expected)
+    })
+
+    it('returns undefined last entry when empty', () => {
+        const unexpected = { foo: 8 }
+
+        const list = new LinkedList<TestObject>()
+        list.sortedAdd(unexpected, sort)
+        list.remove(unexpected)
+
+        const last = list.last()
+        const prev = list.prev()
+        expect(last).toBeUndefined()
+        expect(prev).toBeUndefined()
     })
 })

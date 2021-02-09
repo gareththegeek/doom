@@ -6,6 +6,8 @@ import { findLineSideForPoint } from '../maths/findLineSideForPoint'
 import { lineCircleSweep } from '../maths/lineCircleSweep'
 
 let p0: ReadonlyVec2
+let p1: ReadonlyVec2
+let radius: number
 
 export interface LineCollisionCheckResult {
     allow: boolean
@@ -51,12 +53,25 @@ const isSolid = ({ line }: LineIntersection): boolean => {
     return false
 }
 
+const addCandidates = (block: Block) => {
+    for (const line of block.lines) {
+        const distance = lineCircleSweep(line, p0, p1, radius)
+        if (distance === undefined) {
+            continue
+        }
+        const intersection = lineIntersectionHeap.allocate()
+        intersection.line = line
+        intersection.distance = distance
+        candidates.sortedAdd(intersection, depthSort)
+    }
+}
+
 export const lineCollisionCheck = (
     lineCollisions: LineCollisionCheckResult,
-    blocks: Block[],
-    radius: number,
+    blocks: LinkedList<Block>,
+    radiusIn: number,
     p0in: ReadonlyVec2,
-    p1: ReadonlyVec2
+    p1in: ReadonlyVec2
 ): void => {
     //TODO thing sphere to line intersection check and then check for legal moves
     // e.g. two sided lines
@@ -65,20 +80,11 @@ export const lineCollisionCheck = (
     // return a list of intersected lines
 
     p0 = p0in
+    p1 = p1in
+    radius = radiusIn
     lineCollisions.allow = true
 
-    for (const block of blocks) {
-        for (const line of block.lines) {
-            const distance = lineCircleSweep(line, p0, p1, radius)
-            if (distance === undefined) {
-                continue
-            }
-            const intersection = lineIntersectionHeap.allocate()
-            intersection.line = line
-            intersection.distance = distance
-            candidates.sortedAdd(intersection, depthSort)
-        }
-    }
+    forEachLinkedList(blocks, addCandidates)
 
     let current = candidates.next()
     while (current !== undefined) {

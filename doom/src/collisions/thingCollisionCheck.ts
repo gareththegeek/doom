@@ -1,5 +1,5 @@
 import { ReadonlyVec2, vec2, vec3 } from 'gl-matrix'
-import { findLinkedList, LinkedList } from 'low-mem'
+import { findLinkedList, forEachLinkedList, LinkedList } from 'low-mem'
 import { isStatefulObjectThing } from '../global'
 import { Block } from '../interfaces/BlockMap'
 import { StatefulObjectThing } from '../interfaces/State'
@@ -10,44 +10,59 @@ export interface ThingCollisionCheckResult {
     statefuls: LinkedList<StatefulObjectThing>
 }
 
+let index: number
 let p0: ReadonlyVec2
+let p1: ReadonlyVec2
+let radius: number
+
+// Temporary variables used to store conversion from vec3 to vec2
+let temp0 = vec2.create()
+let temp1 = vec2.create()
+
 const candidates = new LinkedList<StatefulObjectThing>()
 
-const vec3tovec2 = (vec3: vec3): vec2 => [vec3[0], vec3[2]]
-
 const curryDepthSort = () => {
-    return (a: StatefulObjectThing, b: StatefulObjectThing) =>
-        vec2.sqrDist(vec3tovec2(a.geometry!.position), p0) - vec2.sqrDist(vec3tovec2(b.geometry!.position), p0)
+    return (a: StatefulObjectThing, b: StatefulObjectThing) => {
+        temp0[0] = a.geometry!.position[0]
+        temp0[1] = a.geometry!.position[2]
+        temp1[0] = b.geometry!.position[0]
+        temp1[1] = b.geometry!.position[2]
+        return vec2.sqrDist(temp0, p0) - vec2.sqrDist(temp1, p0)
+    }
 }
 const depthSort = curryDepthSort()
 
 const isSolid = (thing: StatefulObjectThing): boolean => thing.info.flags.solid
 
-export const thingCollisionCheck = (
-    thingCollisions: ThingCollisionCheckResult,
-    blocks: Block[],
-    index: number,
-    radius: number,
-    p0in: ReadonlyVec2,
-    p1: vec2
-): void => {
-    p0 = p0in
-    thingCollisions.allow = true
-
-    for (const block of blocks) {
-        let entry = block.statefuls.next()
-        while (entry !== undefined) {
-            if (
-                isStatefulObjectThing(entry.item) &&
-                entry.item.geometry.visible &&
-                entry.item.thing.index !== index &&
-                circleCircleIntersection(vec3tovec2(entry.item.geometry!.position), entry.item.info.radius, p1, radius)
-            ) {
+const addCandidates = (block: Block): void => {
+    let entry = block.statefuls.next()
+    while (entry !== undefined) {
+        if (isStatefulObjectThing(entry.item) && entry.item.geometry.visible && entry.item.thing.index !== index) {
+            temp0[0] = entry.item.geometry!.position[0]
+            temp0[1] = entry.item.geometry!.position[2]
+            if (circleCircleIntersection(temp0, entry.item.info.radius, p1, radius)) {
                 candidates.sortedAdd(entry.item, depthSort)
             }
-            entry = block.statefuls.next(entry)
         }
+        entry = block.statefuls.next(entry)
     }
+}
+
+export const thingCollisionCheck = (
+    thingCollisions: ThingCollisionCheckResult,
+    blocks: LinkedList<Block>,
+    indexIn: number,
+    radiusIn: number,
+    p0in: ReadonlyVec2,
+    p1in: vec2
+): void => {
+    p0 = p0in
+    p1 = p1in
+    radius = radiusIn
+    thingCollisions.allow = true
+
+    index = indexIn
+    forEachLinkedList(blocks, addCandidates)
 
     let current = candidates.next()
     while (current !== undefined) {

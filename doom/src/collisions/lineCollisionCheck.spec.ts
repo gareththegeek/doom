@@ -5,6 +5,14 @@ import { Line, Side } from '../interfaces/Sector'
 import { lineCollisionCheck, LineIntersection, resetLineResult } from './lineCollisionCheck'
 
 describe('lineCollisionCheck', () => {
+    const toLinkedList = (blocks: Block[]): LinkedList<Block> => {
+        const result = new LinkedList<Block>()
+        for (const block of blocks) {
+            result.add(block)
+        }
+        return result
+    }
+
     it('should detect collision with line', () => {
         const radius = 16
         const p0 = [682.8463745117188, 3343.74560546875] as vec2
@@ -29,7 +37,7 @@ describe('lineCollisionCheck', () => {
             lines: new LinkedList<LineIntersection>()
         }
 
-        lineCollisionCheck(lineCollisions, blocks, radius, p0, p1)
+        lineCollisionCheck(lineCollisions, toLinkedList(blocks), radius, p0, p1)
 
         expect(lineCollisions.allow).toBe(false)
         expect(lineCollisions.lines.length()).toBe(1)
@@ -77,7 +85,7 @@ describe('lineCollisionCheck', () => {
             lines: new LinkedList<LineIntersection>()
         }
 
-        lineCollisionCheck(lineCollisions, blocks, radius, p0, p1)
+        lineCollisionCheck(lineCollisions, toLinkedList(blocks), radius, p0, p1)
 
         expect(lineCollisions.allow).toBe(false)
         expect(lineCollisions.lines.length()).toBe(2)
@@ -136,7 +144,7 @@ describe('lineCollisionCheck', () => {
             lines: new LinkedList<LineIntersection>()
         }
 
-        lineCollisionCheck(lineCollisions, blocks, radius, p0, p1)
+        lineCollisionCheck(lineCollisions, toLinkedList(blocks), radius, p0, p1)
 
         expect(lineCollisions.allow).toBe(false)
         expect(lineCollisions.lines.length()).toBe(3)

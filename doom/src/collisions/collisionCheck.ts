@@ -9,6 +9,7 @@ import { thingCollisionResponse } from './thingCollisionResponse'
 import { pickups } from '../items/pickups'
 import { StatefulThing } from '../interfaces/State'
 import { LinkedList } from 'low-mem'
+import { Block } from '../interfaces/BlockMap'
 
 let thingCollisions: ThingCollisionCheckResult = {
     allow: false,
@@ -20,8 +21,10 @@ let lineCollisions: LineCollisionCheckResult = {
     lines: new LinkedList()
 }
 
+const blocks = new LinkedList<Block>()
+
 export const collisionCheck = (stateful: StatefulThing, p0: ReadonlyVec2, p1: vec2): void => {
-    const blocks = getBlocks(stateful, p0, p1)
+    getBlocks(blocks, stateful, p0, p1)
     const { radius } = stateful.info
     const { index } = stateful.thing
 

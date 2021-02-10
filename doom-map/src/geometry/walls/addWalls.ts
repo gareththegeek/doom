@@ -5,6 +5,7 @@ import { M } from '../../global'
 import { MapSector } from '../../interfaces/MapSector'
 import { FaceData, SectorGeometryData } from '../../interfaces/SectorGeometryData'
 import { MapSide } from '../../interfaces/MapSide'
+import { hasTexture } from './isNullTexture'
 
 const createFace = (): FaceData => ({
     isFlat: false,
@@ -167,14 +168,14 @@ const buildFace = (
     // }
 }
 
-const hasMiddle = (side: MapSide): boolean => side.middleTexture !== '-'
+const hasMiddle = (side: MapSide): boolean => hasTexture(side.middleTexture)
 
 const hasUpper = (side: MapSide, front: MapSector, back?: MapSector): boolean =>
-    !!back && (side.upperTexture !== '-' || isSky(front))
+    !!back && (hasTexture(side.upperTexture) || isSky(front))
 
 const isSky = (back: MapSector) => back.ceilingTexture === 'f_f_sky1'
 
-const hasLower = (side: MapSide, back?: MapSector): boolean => !!back && side.lowerTexture !== '-'
+const hasLower = (side: MapSide, back?: MapSector): boolean => !!back && hasTexture(side.lowerTexture)
 
 enum TextureOriginType {
     Top = 0,

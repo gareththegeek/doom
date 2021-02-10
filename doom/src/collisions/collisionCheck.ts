@@ -1,70 +1,149 @@
 import { ReadonlyVec2, vec2 } from 'gl-matrix'
-import { blockCheck } from './blockCheck'
-import { lineCollisionResponse } from './lineCollisionResponse'
-import { getBlocks } from './getBlocks'
-import { resetLineResult, lineCollisionCheck, LineCollisionCheckResult } from './lineCollisionCheck'
-import { sectorCheck } from './sectorCheck'
-import { resetThingResult, thingCollisionCheck, ThingCollisionCheckResult } from './thingCollisionCheck'
-import { thingCollisionResponse } from './thingCollisionResponse'
-import { pickups } from '../items/pickups'
-import { StatefulThing } from '../interfaces/State'
-import { LinkedList } from 'low-mem'
+import { forEachLinkedList, HomogenousHeap, LinkedList } from 'low-mem'
+import { isStatefulObjectThing } from '../global'
 import { Block } from '../interfaces/BlockMap'
-import { G } from '../global'
+import { Line } from '../interfaces/Sector'
+import { Stateful, StatefulObjectThing } from '../interfaces/State'
+import { circleCircleIntersection } from '../maths/circleCircleIntersection'
+import { findLineSideForPoint, LineSideResult } from '../maths/findLineSideForPoint'
+import { lineCircleSweep } from '../maths/lineCircleSweep'
 
-let thingCollisions: ThingCollisionCheckResult = {
-    allow: false,
-    statefuls: new LinkedList()
+export interface Intersection {
+    distance: number
+    isLine: boolean
+    collider: StatefulObjectThing | Line
 }
 
-let lineCollisions: LineCollisionCheckResult = {
-    allow: false,
-    lines: new LinkedList()
+export interface CollisionCheckResult {
+    allow: boolean
+    intersections: LinkedList<Intersection>
 }
 
-const blocks = new LinkedList<Block>()
+let self: Stateful | undefined
+let p0: ReadonlyVec2
+let p1: ReadonlyVec2
+let radius: number
+let block: Block
 
-export const collisionCheck = (stateful: StatefulThing, p0: ReadonlyVec2, p1: vec2): void => {
-    const {
-        cheats: { noclip }
-    } = G
+// Temporary variables used to store conversion from vec3 to vec2
+let temp0 = vec2.create()
+let temp1 = vec2.create()
 
-    getBlocks(blocks, stateful, p0, p1)
-    const { radius } = stateful.info
-    const { index } = stateful.thing
+const candidates = new LinkedList<Intersection>()
 
-    thingCollisions.allow = false
-    lineCollisions.allow = false
+const NULL_LINE: Line = {} as Line
+const createIntersection = (): Intersection => ({ distance: 0, isLine: false, collider: NULL_LINE })
+const intersectionHeap = new HomogenousHeap<Intersection>(createIntersection)
 
-    let infiniteLoopProtection = 0
-    while (!(thingCollisions.allow && lineCollisions.allow)) {
-        resetThingResult(thingCollisions)
-        resetLineResult(lineCollisions)
+const depthSort = (a: Intersection, b: Intersection) => a.distance - b.distance
 
-        // TODO maybe we can merge collision response and check logic for things and lines?
-        thingCollisionCheck(thingCollisions, blocks, index, radius, p0, p1)
-        if (!(thingCollisions.allow || noclip)) {
-            const last = thingCollisions.statefuls.last()!.item
-            thingCollisionResponse(p1, last, radius, p0, p1)
+const addStatefulCandidates = (stateful: Stateful): void => {
+    if (isStatefulObjectThing(stateful) && stateful.geometry.visible && stateful !== self) {
+        temp0[0] = stateful.geometry!.position[0]
+        temp0[1] = stateful.geometry!.position[2]
+        if (circleCircleIntersection(temp0, stateful.info.radius, p1, radius)) {
+            const intersection = intersectionHeap.allocate()
+            intersection.collider = stateful
+            intersection.isLine = false
+            intersection.distance = vec2.sqrDist(temp0, p0)
+            candidates.sortedAdd(intersection, depthSort)
         }
+    }
+}
 
-        lineCollisionCheck(lineCollisions, blocks, radius, p0, p1)
-        if (!(lineCollisions.allow || noclip)) {
-            const last = lineCollisions.lines.last()!.item.line
-            lineCollisionResponse(p1, last.start, last.end, radius, p0, p1)
-        }
+const addLineCandidate = (line: Line): void => {
+    const distance = lineCircleSweep(line, p0, p1, radius)
+    if (distance === undefined) {
+        return
+    }
+    const intersection = intersectionHeap.allocate()
+    intersection.collider = line
+    intersection.isLine = true
+    intersection.distance = distance
+    candidates.sortedAdd(intersection, depthSort)
+}
 
-        if (++infiniteLoopProtection > 2) {
-            p1[0] = p0[0]
-            p1[1] = p0[1]
+const addCandidates = (blockIn: Block): void => {
+    block = blockIn
+
+    forEachLinkedList(block.statefuls, addStatefulCandidates)
+    block.lines.forEach(addLineCandidate)
+}
+
+const isStatefulSolid = (stateful: StatefulObjectThing): boolean => stateful.info.flags.solid
+
+const lineSideResult = {} as LineSideResult
+const isLineSolid = (line: Line): boolean => {
+    if (line.back === undefined) {
+        return true
+    }
+    if (line.flags.blocks) {
+        return true
+    }
+
+    findLineSideForPoint(lineSideResult, line, p0)
+    const { side, other } = lineSideResult
+    if (side === undefined || other === undefined) {
+        // I think this can't happen but we'll see
+        console.warn(`Missing side in line collision check side:${side} other:${other}`)
+        return true
+    }
+    if (other.sector.floorHeight - side.sector.floorHeight > 24) {
+        return true
+    }
+    if (other.sector.ceilingHeight - other.sector.floorHeight < 56) {
+        return true
+    }
+    if (other.sector.ceilingHeight - side.sector.floorHeight < 56) {
+        return true
+    }
+    return false
+}
+
+const isSolid = (intersection: Intersection): boolean =>
+    intersection.isLine
+        ? isLineSolid(intersection.collider as Line)
+        : isStatefulSolid(intersection.collider as StatefulObjectThing)
+
+export const collisionCheck = (
+    selfIn: Stateful | undefined,
+    collisions: CollisionCheckResult,
+    blocks: LinkedList<Block>,
+    radiusIn: number,
+    p0in: ReadonlyVec2,
+    p1in: vec2
+): void => {
+    self = selfIn
+    p0 = p0in
+    p1 = p1in
+    radius = radiusIn
+    collisions.allow = true
+
+    forEachLinkedList(blocks, addCandidates)
+
+    let current = candidates.next()
+    while (current !== undefined) {
+        collisions.intersections.sortedAdd(current.item, depthSort)
+
+        if (isSolid(current.item)) {
+            collisions.allow = false
             break
         }
-
-        thingCollisions.allow ||= noclip
-        lineCollisions.allow ||= noclip
+        current = candidates.next(current)
     }
-    pickups(thingCollisions.statefuls)
+}
 
-    blockCheck(stateful, p1)
-    sectorCheck(lineCollisions.lines, stateful, p0, p1)
+const freeIntersection = (intersection: Intersection): void => {
+    intersectionHeap.free(intersection)
+}
+
+const freeIntersections = (intersections: LinkedList<Intersection>): void => {
+    forEachLinkedList(intersections, freeIntersection)
+    intersections.clear()
+}
+
+export const resetCollisionResult = (collisions: CollisionCheckResult): void => {
+    freeIntersections(candidates)
+    collisions.intersections.clear()
+    collisions.allow = false
 }

@@ -25,7 +25,7 @@ const getActivationType = (type: string): ActivationType => {
     }
 }
 
-const activate = (type: string, { line }: { line: Line }): void => {
+const activate = (type: string, line: Line): void => {
     if (line.special === 0) {
         return
     }

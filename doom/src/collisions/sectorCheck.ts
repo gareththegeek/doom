@@ -6,7 +6,8 @@ import { LineIntersectionResult, lineLineIntersection } from '../maths/lineLineI
 import { changeSector } from './changeSector'
 import { Stateful } from '../interfaces/State'
 import { forEachLinkedListReverse, LinkedList } from 'low-mem'
-import { LineIntersection } from './lineCollisionCheck'
+import { Intersection } from './collisionCheck'
+import { Line } from '../interfaces/Sector'
 
 let p0: ReadonlyVec2
 let p1: ReadonlyVec2
@@ -15,7 +16,11 @@ const lineSideResult = {} as LineSideResult
 
 const intersection: LineIntersectionResult = { intersects: false, point: vec2.create() }
 
-const sectorCheckLine = ({ line }: LineIntersection) => {
+const sectorCheckLine = ({ isLine, collider }: Intersection) => {
+    if (!isLine) {
+        return
+    }
+    const line = collider as Line
     // Lines are sorted from closest to farthest - work backwards to find the furthest line crossing
     lineLineIntersection(intersection, p0, p1, line.start, line.end)
     if (intersection.intersects) {
@@ -27,12 +32,12 @@ const sectorCheckLine = ({ line }: LineIntersection) => {
             return
         }
         changeSector(stateful, side.sector)
-        PubSub.publish(WALK_LINE, { line })
+        PubSub.publish(WALK_LINE, line)
     }
 }
 
 export const sectorCheck = (
-    lines: LinkedList<LineIntersection>,
+    intersections: LinkedList<Intersection>,
     statefulIn: Stateful,
     p0in: ReadonlyVec2,
     p1in: ReadonlyVec2
@@ -40,5 +45,5 @@ export const sectorCheck = (
     p0 = p0in
     p1 = p1in
     stateful = statefulIn
-    forEachLinkedListReverse(lines, sectorCheckLine)
+    forEachLinkedListReverse(intersections, sectorCheckLine)
 }

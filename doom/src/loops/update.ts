@@ -1,6 +1,6 @@
 import { vec2 } from 'gl-matrix'
 import { forEachLinkedList } from 'low-mem'
-import { collisionCheck } from '../collisions/collisionCheck'
+import { moveStateful } from '../collisions/moveStateful'
 import { forEachAdjacentSector } from '../forEachAdjacentSector'
 import { G } from '../global'
 import { isPressed } from '../input/isPressed'
@@ -25,7 +25,7 @@ const forward = (stateful: StatefulObjectThing, speed: number): void => {
     t0[1] = geometry.position[2]
     vec2.subtract(t1, t0, result)
 
-    collisionCheck(stateful, t0, t1)
+    moveStateful(stateful, t0, t1)
 
     geometry.position[0] = t1[0]
     geometry.position[2] = t1[1]

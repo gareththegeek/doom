@@ -1,4 +1,5 @@
 import { forEachLinkedList, LinkedList } from 'low-mem'
+import { Intersection } from '../collisions/collisionCheck'
 import { G } from '../global'
 import { ObjectFlags } from '../interfaces/ObjectInfo'
 import { StatefulObjectThing } from '../interfaces/State'
@@ -6,7 +7,12 @@ import { removeStateful } from '../state/removeStateful'
 
 const pickupable = (flags: ObjectFlags): boolean => flags.special || flags.countitem || flags.pickup || flags.dropped
 
-const pickup = (stateful: StatefulObjectThing): void => {
+const pickup = (intersection: Intersection): void => {
+    if (intersection.isLine) {
+        return
+    }
+    const stateful = intersection.collider as StatefulObjectThing
+
     if (!pickupable(stateful.info.flags)) {
         return
     }
@@ -32,6 +38,6 @@ const pickup = (stateful: StatefulObjectThing): void => {
     }
 }
 
-export const pickups = (statefuls: LinkedList<StatefulObjectThing>): void => {
-    forEachLinkedList(statefuls, pickup)
+export const pickups = (intersections: LinkedList<Intersection>): void => {
+    forEachLinkedList(intersections, pickup)
 }

@@ -1,5 +1,5 @@
 import { ReadonlyVec2, vec2 } from 'gl-matrix'
-import { forEachLinkedList, HomogenousHeap, LinkedList } from 'low-mem'
+import { forEachLinkedList, HomogenousHeap, LinkedList, LinkedListEntry } from 'low-mem'
 import { isStatefulObjectThing } from '../global'
 import { Block } from '../interfaces/BlockMap'
 import { Line } from '../interfaces/Sector'
@@ -27,7 +27,6 @@ let block: Block
 
 // Temporary variables used to store conversion from vec3 to vec2
 let temp0 = vec2.create()
-let temp1 = vec2.create()
 
 const candidates = new LinkedList<Intersection>()
 
@@ -119,17 +118,24 @@ export const collisionCheck = (
     radius = radiusIn
     collisions.allow = true
 
-    forEachLinkedList(blocks, addCandidates)
+    let previous: LinkedListEntry<Intersection> | undefined = undefined
+    let block = blocks.next()
+    while (block !== undefined) {
+        addCandidates(block.item)
 
-    let current = candidates.next()
-    while (current !== undefined) {
-        collisions.intersections.sortedAdd(current.item, depthSort)
+        let current = candidates.next(previous)
+        while (current !== undefined) {
+            collisions.intersections.sortedAdd(current.item, depthSort)
 
-        if (isSolid(current.item)) {
-            collisions.allow = false
-            break
+            if (isSolid(current.item)) {
+                collisions.allow = false
+                return
+            }
+            previous = current
+            current = candidates.next(current)
         }
-        current = candidates.next(current)
+
+        block = blocks.next(block)
     }
 }
 

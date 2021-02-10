@@ -3,6 +3,8 @@ import { Stateful } from '../../interfaces/State'
 import { addToSector } from '../../collisions/addToSector'
 import { addStateful } from '../addStateful'
 import { allocateSprite } from '../allocateStateful'
+import { G } from '../../global'
+import { fireRay } from '../../collisions/fireRay'
 
 const flash = (weapon: Weapon) => {
     const flash = allocateSprite(weapon.info.flashstate)
@@ -22,5 +24,5 @@ export const A_FirePistol = (stateful: Stateful): void => {
     flash(stateful)
     stateful.ammo -= 1
 
-    //Do the thing
+    fireRay(G.player)
 }

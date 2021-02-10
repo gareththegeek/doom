@@ -1,5 +1,6 @@
-import { Geometry } from 'doom-video'
+import { BufferSetParams, Geometry } from 'doom-video'
 import { MapSide } from './MapSide'
+import { SectorGeometryData } from './SectorGeometryData'
 
 export interface MapSector {
     index: number
@@ -8,6 +9,8 @@ export interface MapSector {
     floorTexture: string
     ceilingTexture: string
     lightLevel: number
+    geometryParams: BufferSetParams
+    geometryData: SectorGeometryData
     geometry: Geometry | undefined
     dirty: boolean
     sides: MapSide[]

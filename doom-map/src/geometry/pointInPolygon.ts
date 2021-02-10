@@ -3,7 +3,7 @@ import { vec2 } from 'gl-matrix'
 export const pointInPolygon = (point: vec2, vs: vec2[], includeBoundary = false) => {
     const x = point[0]
     const y = point[1]
-    let inside = false
+    
     let intersections = 0
     let ss = 0
 

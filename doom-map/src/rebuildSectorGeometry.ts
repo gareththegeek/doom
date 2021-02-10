@@ -1,13 +1,10 @@
 import { MapSector } from '.'
-import {
-    createSingleSectorGeometryData,
-    createSingleSectorBufferSetParams,
-    updateSingleSectorGeometry
-} from './geometry'
+import { updateSingleSectorData, updateSingleSectorGeometry, updateSingleSectorGeometryParams } from './geometry'
 
 export const rebuildSectorGeometry = (sector: MapSector): void => {
-    const data = createSingleSectorGeometryData(sector)
-    const params = createSingleSectorBufferSetParams(data)
-    updateSingleSectorGeometry(sector, params)
+    //if (sector.index !== 26) return
+    updateSingleSectorData(sector)
+    updateSingleSectorGeometryParams(sector)
+    updateSingleSectorGeometry(sector)
     sector.dirty = false
 }

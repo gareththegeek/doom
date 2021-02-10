@@ -3,7 +3,7 @@ import { SectorGeometryData } from '../interfaces/SectorGeometryData'
 import { addFlats } from './flats/addFlats'
 import { addWalls } from './walls/addWalls'
 
-export const createSingleSectorGeometryData = (sector: MapSector) => {
+export const createSingleSectorGeometryData = (sector: MapSector): SectorGeometryData => {
     try {
         const result = { adjacency: [], faces: [] }
         if (sector.sides.length <= 1) {

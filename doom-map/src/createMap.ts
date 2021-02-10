@@ -13,7 +13,7 @@ export const createMap = (mapName: string, flags: MapFlags): Map => {
     const data = createSectorGeometryData(sectors)
     const params = createSectorBufferSetParams(data)
     const things = createThings(wadMap, sectors, data, blockmap, flags)
-    createSectorGeometry(sectors, params)
+    createSectorGeometry(sectors, params, data)
 
     M.map = {
         name: mapName,

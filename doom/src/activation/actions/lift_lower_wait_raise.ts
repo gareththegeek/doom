@@ -11,6 +11,6 @@ export const lift_lower_wait_raise = async (sector: Sector) => {
     if (await lowerFloor(sector, lowest_floor(sector), 140)) return
     if (await wait(sector, LIFT_WAIT)) return
     if (await raiseFloor(sector, next_lowest_floor(sector), 140)) return
-    
+
     sector.update = undefined
 }

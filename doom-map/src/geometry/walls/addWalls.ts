@@ -143,29 +143,6 @@ const buildFace = (
     s[1] = ss
     s[2] = ss
     s[3] = ss
-
-    //const bounds: [number, number, number, number] = [texture.left, texture.top, texture.right, texture.bottom]
-    // return {
-    //     isFlat: false,
-    //     isCeiling: false,
-    //     holes: [],
-    //     contour: {
-    //         position: [
-    //             [start[0], bottom, start[1]],
-    //             [start[0], top, start[1]],
-    //             [end[0], top, end[1]],
-    //             [end[0], bottom, end[1]]
-    //         ],
-    //         texture: [
-    //             [x0, y1],
-    //             [x0, y0],
-    //             [x1, y0],
-    //             [x1, y1]
-    //         ],
-    //         atlas: [[...bounds], [...bounds], [...bounds], [...bounds]],
-    //         sky: isSky ? [1, 1, 1, 1] : [0, 0, 0, 0]
-    //     }
-    // }
 }
 
 const hasMiddle = (side: MapSide): boolean => hasTexture(side.middleTexture)

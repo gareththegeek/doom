@@ -13,5 +13,6 @@ const setLight = (stateful: Stateful): void => {
 export const light_change_to = (sector: Sector, amount: number) => {
     light = amount
     sector.lightLevel = light
+    sector.geometry!.light = light
     forEachLinkedList(sector.statefuls, setLight)
 }

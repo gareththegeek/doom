@@ -149,7 +149,7 @@ const hasMiddle = (side: MapSide): boolean => hasTexture(side.middleTexture)
 
 const hasUpper = (side: MapSide, front: MapSector, back?: MapSector): boolean =>
     !!back &&
-    (front.ceilingHeight > back.ceilingHeight || front.ceilingHeight == back.ceilingHeight) &&
+    //(front.ceilingHeight > back.ceilingHeight || front.ceilingHeight == back.ceilingHeight) &&
     (hasTexture(side.upperTexture) || isSky(front))
 
 const isSky = (back: MapSector) => back.ceilingTexture === 'f_f_sky1'
@@ -193,6 +193,8 @@ export const processSidedef = (
         putFace(middle)
     }
     if (hasUpper(side, frontSector, backSector)) {
+        if (side.index === 665) console.log(side.upperTexture, frontSector, backSector)
+        if (side.index === 666) console.log(side.upperTexture, frontSector, backSector)
         const upper = getFace()
         const sky = isSky(backSector!)
         const texture = sky
@@ -237,9 +239,11 @@ export const addWalls = ({ adjacency, faces }: SectorGeometryData, sector: MapSe
 
         const starti = isFront ? side.line.startIndex : side.line.endIndex
         const endi = isFront ? side.line.endIndex : side.line.startIndex
+        const start = isFront ? side.start : side.end
+        const end = isFront ? side.end : side.start
 
         adjacency.push([starti, endi])
-        processSidedef(side, side.start, side.end, side.flags, sector, side.other?.sector, createFace, (face) =>
+        processSidedef(side, start, end, side.flags, sector, side.other?.sector, createFace, (face) =>
             faces.push(face)
         )
     })

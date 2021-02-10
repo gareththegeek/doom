@@ -1,1 +1,1 @@
-export const hasTexture = (texture: string): boolean => texture !== '-' && texture !== 'aastinky'
+export const hasTexture = (texture: string): boolean => texture !== '-'

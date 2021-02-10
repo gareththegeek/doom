@@ -60,7 +60,10 @@ export const updateSingleSectorData = (sectorIn: MapSector): void => {
             }
         } else {
             const side = sector.sides[sideIndex++]
-            processSidedef(side, side.start, side.end, side.flags, sector, side.other?.sector, getFace, putFace)
+            const isFront = side.line.front === side
+            const start = isFront ? side.start : side.end
+            const end = isFront ? side.end : side.start
+            processSidedef(side, start, end, side.flags, sector, side.other?.sector, getFace, putFace)
         }
     }
 }

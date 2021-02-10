@@ -149,14 +149,12 @@ const hasMiddle = (side: MapSide): boolean => hasTexture(side.middleTexture)
 
 const hasUpper = (side: MapSide, front: MapSector, back?: MapSector): boolean =>
     !!back &&
-    //(front.ceilingHeight > back.ceilingHeight || front.ceilingHeight == back.ceilingHeight) &&
     (hasTexture(side.upperTexture) || isSky(front))
 
 const isSky = (back: MapSector) => back.ceilingTexture === 'f_f_sky1'
 
-const hasLower = (side: MapSide, front: MapSector, back?: MapSector): boolean =>
+const hasLower = (side: MapSide, back?: MapSector): boolean =>
     !!back &&
-    (front.floorHeight < back.floorHeight || front.floorHeight == back.floorHeight) &&
     hasTexture(side.lowerTexture)
 
 enum TextureOriginType {
@@ -193,8 +191,6 @@ export const processSidedef = (
         putFace(middle)
     }
     if (hasUpper(side, frontSector, backSector)) {
-        if (side.index === 665) console.log(side.upperTexture, frontSector, backSector)
-        if (side.index === 666) console.log(side.upperTexture, frontSector, backSector)
         const upper = getFace()
         const sky = isSky(backSector!)
         const texture = sky
@@ -215,7 +211,7 @@ export const processSidedef = (
         )
         putFace(upper)
     }
-    if (hasLower(side, frontSector, backSector)) {
+    if (hasLower(side, backSector)) {
         const lower = getFace()
         buildFace(
             lower,

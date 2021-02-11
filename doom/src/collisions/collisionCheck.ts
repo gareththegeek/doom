@@ -42,7 +42,7 @@ const addStatefulCandidates = (stateful: Stateful): void => {
     if (isStatefulObjectThing(stateful) && stateful.geometry.visible && stateful !== self) {
         temp0[0] = stateful.geometry!.position[0]
         temp0[1] = stateful.geometry!.position[2]
-
+        if (temp0[0] === -192) debugger;
         if (lineCircleIntersection(p0, p1, temp0, stateful.info.radius + radius)) {
             const intersection = intersectionHeap.allocate()
             intersection.collider = stateful

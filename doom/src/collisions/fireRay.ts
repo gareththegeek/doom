@@ -16,6 +16,7 @@ const collisions = {
 } as CollisionCheckResult
 
 const pos = vec2.create()
+const final = vec2.create()
 const coords = vec2.create()
 const p0 = vec2.create()
 const p1 = vec2.create()
@@ -63,11 +64,15 @@ export const rayTraceBlockMap = (
             error += dx
         }
     }
-    last[0] = blockmap.origin[0] + x * BLOCK_SIZE
-    last[1] = blockmap.origin[1] - y * BLOCK_SIZE
+    
+    final[0] = blockmap.origin[0] + x * BLOCK_SIZE
+    final[1] = blockmap.origin[1] - y * BLOCK_SIZE
+    const distance = vec2.distance(final, pos)
+    last[0] = pos[0] + sinr * distance
+    last[1] = pos[1] - cosr * distance
 }
 
-export const fireRay = (stateful: StatefulObject) => {
+export const fireRay = (stateful: StatefulObject): Intersection | undefined => {
     const { blockmap } = G
     rayTraceBlockMap(blocks, p1, blockmap, stateful)
 
@@ -78,10 +83,11 @@ export const fireRay = (stateful: StatefulObject) => {
 
     if (collisions.allow) {
         console.warn('Somehow shot clear out of the level?')
-        return
+        return undefined
     }
 
     const intersection = collisions.intersections.prev()!.item
+    console.log('hit', intersection.collider, stateful.geometry, blocks)
     if (!intersection.isLine) {
         const hit = intersection.collider as StatefulObjectThing
         console.log('hit', hit)
@@ -89,4 +95,5 @@ export const fireRay = (stateful: StatefulObject) => {
         hit.tics = hit.state.tics
         removeFromBlock(hit)
     }
+    return intersection
 }

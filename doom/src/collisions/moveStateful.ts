@@ -11,6 +11,7 @@ import { Block } from '../interfaces/BlockMap'
 import { G } from '../global'
 import { collisionCheck, CollisionCheckResult, Intersection, resetCollisionResult } from './collisionCheck'
 import { Line } from '../interfaces/Sector'
+import { isSolidForPlayer } from './isSolidForPlayer'
 
 const collisions: CollisionCheckResult = {
     allow: false,
@@ -19,7 +20,7 @@ const collisions: CollisionCheckResult = {
 
 const blocks = new LinkedList<Block>()
 
-export const moveStateful = (stateful: StatefulThing, p0: ReadonlyVec2, p1: vec2): void => {
+export const moveStateful = (stateful: StatefulObjectThing, p0: ReadonlyVec2, p1: vec2): void => {
     const {
         cheats: { noclip }
     } = G
@@ -33,7 +34,7 @@ export const moveStateful = (stateful: StatefulThing, p0: ReadonlyVec2, p1: vec2
     while (!collisions.allow) {
         resetCollisionResult(collisions)
 
-        collisionCheck(stateful, collisions, blocks, radius, p0, p1)
+        collisionCheck(stateful, collisions, blocks, radius, p0, p1, isSolidForPlayer)
         if (!collisions.allow) {
             const last = collisions.intersections.last()!.item
             if (last.isLine) {

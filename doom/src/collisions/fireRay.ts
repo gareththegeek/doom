@@ -7,6 +7,7 @@ import { Block, BlockMap } from '../interfaces/BlockMap'
 import { StatefulObject, StatefulObjectThing } from '../interfaces/State'
 import { StateLookup } from '../state/StateLookup'
 import { collisionCheck, CollisionCheckResult, Intersection, resetCollisionResult } from './collisionCheck'
+import { isSolidForMissile } from './isSolidForMissile'
 import { removeFromBlock } from './removeFromBlock'
 
 const blocks = new LinkedList<Block>()
@@ -64,7 +65,7 @@ export const rayTraceBlockMap = (
             error += dx
         }
     }
-    
+
     final[0] = blockmap.origin[0] + x * BLOCK_SIZE
     final[1] = blockmap.origin[1] - y * BLOCK_SIZE
     const distance = vec2.distance(final, pos)
@@ -72,14 +73,14 @@ export const rayTraceBlockMap = (
     last[1] = pos[1] - cosr * distance
 }
 
-export const fireRay = (stateful: StatefulObject): Intersection | undefined => {
+export const fireRay = (stateful: StatefulObjectThing): Intersection | undefined => {
     const { blockmap } = G
     rayTraceBlockMap(blocks, p1, blockmap, stateful)
 
     p0[0] = stateful.geometry.position[0]
     p0[1] = stateful.geometry.position[2]
     resetCollisionResult(collisions)
-    collisionCheck(stateful, collisions, blocks, 0, p0, p1)
+    collisionCheck(stateful, collisions, blocks, 0, p0, p1, isSolidForMissile)
 
     if (collisions.allow) {
         console.warn('Somehow shot clear out of the level?')

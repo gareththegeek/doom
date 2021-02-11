@@ -4,7 +4,6 @@ import { isStatefulObjectThing } from '../global'
 import { Block } from '../interfaces/BlockMap'
 import { Line } from '../interfaces/Sector'
 import { Stateful, StatefulObjectThing } from '../interfaces/State'
-import { findLineSideForPoint, LineSideResult } from '../maths/findLineSideForPoint'
 import { lineCircleIntersection } from '../maths/lineCircleIntersection'
 import { lineCircleSweep } from '../maths/lineCircleSweep'
 import { LineIntersectionResult, lineLineIntersection } from '../maths/lineLineIntersection'
@@ -21,7 +20,7 @@ export interface CollisionCheckResult {
     intersections: LinkedList<Intersection>
 }
 
-let self: Stateful | undefined
+let self: StatefulObjectThing | undefined
 let p0: ReadonlyVec2
 let p1: ReadonlyVec2
 let radius: number
@@ -42,7 +41,7 @@ const addStatefulCandidates = (stateful: Stateful): void => {
     if (isStatefulObjectThing(stateful) && stateful.geometry.visible && stateful !== self) {
         temp0[0] = stateful.geometry!.position[0]
         temp0[1] = stateful.geometry!.position[2]
-        if (temp0[0] === -192) debugger;
+
         if (lineCircleIntersection(p0, p1, temp0, stateful.info.radius + radius)) {
             const intersection = intersectionHeap.allocate()
             intersection.collider = stateful
@@ -88,48 +87,14 @@ const addCandidates = (blockIn: Block): void => {
     block.lines.forEach(addLineCandidate)
 }
 
-const isStatefulSolid = (stateful: StatefulObjectThing): boolean => stateful.info.flags.solid
-
-const lineSideResult = {} as LineSideResult
-const isLineSolid = (line: Line): boolean => {
-    if (line.back === undefined) {
-        return true
-    }
-    if (line.flags.blocks) {
-        return true
-    }
-
-    findLineSideForPoint(lineSideResult, line, p0)
-    const { side, other } = lineSideResult
-    if (side === undefined || other === undefined) {
-        // I think this can't happen but we'll see
-        console.warn(`Missing side in line collision check side:${side} other:${other}`)
-        return true
-    }
-    if (other.sector.floorHeight - side.sector.floorHeight > 24) {
-        return true
-    }
-    if (other.sector.ceilingHeight - other.sector.floorHeight < 56) {
-        return true
-    }
-    if (other.sector.ceilingHeight - side.sector.floorHeight < 56) {
-        return true
-    }
-    return false
-}
-
-const isSolid = (intersection: Intersection): boolean =>
-    intersection.isLine
-        ? isLineSolid(intersection.collider as Line)
-        : isStatefulSolid(intersection.collider as StatefulObjectThing)
-
 export const collisionCheck = (
-    selfIn: Stateful | undefined,
+    selfIn: StatefulObjectThing,
     collisions: CollisionCheckResult,
     blocks: LinkedList<Block>,
     radiusIn: number,
     p0in: ReadonlyVec2,
-    p1in: vec2
+    p1in: vec2,
+    isSolid: (actor: StatefulObjectThing, intersection: Intersection) => boolean
 ): void => {
     self = selfIn
     p0 = p0in
@@ -147,7 +112,7 @@ export const collisionCheck = (
             if (!current.item.checked) {
                 collisions.intersections.sortedAdd(current.item, depthSort)
 
-                if (isSolid(current.item)) {
+                if (isSolid(self, current.item)) {
                     collisions.allow = false
                     return
                 }

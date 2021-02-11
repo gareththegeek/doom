@@ -7,6 +7,7 @@ import { forEachLinkedList, LinkedList } from 'low-mem'
 import { getBlocks } from './getBlocks'
 import { collisionCheck, CollisionCheckResult, Intersection, resetCollisionResult } from './collisionCheck'
 import { Line } from '../interfaces/Sector'
+import { isSolidForPlayer } from './isSolidForPlayer'
 
 const USE_RANGE = 64
 
@@ -39,7 +40,7 @@ export const use = (player: StatefulObjectThing): void => {
 
     getBlocks(blocks, player, p0, p1)
     resetCollisionResult(collisions)
-    collisionCheck(player, collisions, blocks, 8, p0, p1)
+    collisionCheck(player, collisions, blocks, 8, p0, p1, isSolidForPlayer)
 
     forEachLinkedList(collisions.intersections, useLine)
 }

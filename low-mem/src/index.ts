@@ -3,6 +3,7 @@ import { forEachLinkedList } from './forEachLinkedList'
 import { forEachLinkedListReverse } from './forEachLinkedListReverse'
 import { HomogenousHeap } from './HomogenousHeap'
 import { LinkedList, LinkedListEntry } from './LinkedList'
+import { toArray, toArrayReverse } from './toArray'
 import { toLinkedList } from './toLinkedList'
 
 export {
@@ -12,5 +13,7 @@ export {
     forEachLinkedList,
     forEachLinkedListReverse,
     findLinkedList,
-    toLinkedList
+    toLinkedList,
+    toArray,
+    toArrayReverse
 }

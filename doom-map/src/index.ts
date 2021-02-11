@@ -8,15 +8,20 @@ import { MapSector } from './interfaces/MapSector'
 import { MapSide } from './interfaces/MapSide'
 import { Thing } from './interfaces/Thing'
 import { rebuildSectorGeometry } from './rebuildSectorGeometry'
-import { getMapBlock } from './structures/getMapBlock'
+import { getMapBlock, getMapBlockCoordinates } from './structures/getMapBlock'
+import { getBlockMapExtents } from './structures'
+import { BlockMapExtents } from './structures/getBlockMapExtents'
 
 export {
     initialiseMapSystem,
     createMap,
     rebuildSectorGeometry,
     getMapBlock,
+    getBlockMapExtents,
+    getMapBlockCoordinates,
     MapBlock,
     MapBlockMap,
+    BlockMapExtents,
     MapLine,
     Map,
     MapFlags,

@@ -14,7 +14,7 @@ import { Sector } from '../interfaces/Sector'
 import { Stateful, StatefulObject, StatefulThing } from '../interfaces/State'
 import { Weapon, WeaponInfoLookup, WeaponType } from '../interfaces/Weapon'
 import { addStateful } from '../state/addStateful'
-import { allocateSprite, allocateStateful } from '../state/allocateStateful'
+import { allocateSprite, allocateStateful, clearHeap, freeStateful } from '../state/allocateStateful'
 
 const createPistol = (player: StatefulObject): Weapon => {
     const info = { ...WeaponInfoLookup[WeaponType.Pistol] }
@@ -64,7 +64,10 @@ export const loadMap = (mapName: string): void => {
             block.statefuls = new LinkedList()
         })
     )
+    console.log(G.blockmap)
 
+    clearHeap()
+    G.statefuls.clear()
     G.statefuls = toLinkedList(
         map.things.map((thing) => {
             let info = Object.values(ObjectInfoLookup).find((info) => info.doomednum === thing.type)

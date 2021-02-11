@@ -1,20 +1,11 @@
 import { LinkedList, LinkedListEntry } from './LinkedList'
+import { toArray } from './toArray'
 
 describe('LinkedList', () => {
     it('is initially empty', () => {
         const actual = new LinkedList()
         expect(actual.length()).toEqual(0)
     })
-
-    const toArray = <T>(list: LinkedList<T>): T[] => {
-        let next = list.next()
-        const actual: T[] = []
-        while (next !== undefined) {
-            actual.push(next.item)
-            next = list.next(next)
-        }
-        return actual
-    }
 
     const checkList = <T>(expected: T[], list: LinkedList<T>): void => {
         expect(list.length()).toEqual(expected.length)

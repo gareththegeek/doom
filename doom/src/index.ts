@@ -36,7 +36,7 @@ const main = async () => {
         initialiseSpriteSystem(wad.sprites, atlas)
         console.info('Initialised subsystems')
 
-        loadMap('e1m2')
+        loadMap('e1m1')
 
         requestAnimationFrame(onFrame)
     } catch (e) {

@@ -38,7 +38,7 @@ describe('lineCircleIntersection', () => {
     examples.forEach((example) => {
         it(`Correctly detects line circle intersection distance for line [[${example.line.start}]->[${example.line.end}]] and circle [[${example.centre}], ${example.radius}] -> [${example.expected}]`, () => {
             const { line, centre, radius, expected } = example
-            const actual = lineCircleIntersection(line, centre, radius)
+            const actual = lineCircleIntersection(line.start, line.end, centre, radius)
             if (expected === undefined) {
                 expect(actual).toBeUndefined()
             } else {

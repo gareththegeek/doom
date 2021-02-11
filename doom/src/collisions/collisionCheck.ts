@@ -1,12 +1,13 @@
 import { ReadonlyVec2, vec2 } from 'gl-matrix'
-import { forEachLinkedList, HomogenousHeap, LinkedList, LinkedListEntry } from 'low-mem'
+import { forEachLinkedList, HomogenousHeap, LinkedList, LinkedListEntry, toArray } from 'low-mem'
 import { isStatefulObjectThing } from '../global'
 import { Block } from '../interfaces/BlockMap'
 import { Line } from '../interfaces/Sector'
 import { Stateful, StatefulObjectThing } from '../interfaces/State'
-import { circleCircleIntersection } from '../maths/circleCircleIntersection'
 import { findLineSideForPoint, LineSideResult } from '../maths/findLineSideForPoint'
+import { lineCircleIntersection } from '../maths/lineCircleIntersection'
 import { lineCircleSweep } from '../maths/lineCircleSweep'
+import { LineIntersectionResult, lineLineIntersection } from '../maths/lineLineIntersection'
 
 export interface Intersection {
     distance: number
@@ -40,7 +41,8 @@ const addStatefulCandidates = (stateful: Stateful): void => {
     if (isStatefulObjectThing(stateful) && stateful.geometry.visible && stateful !== self) {
         temp0[0] = stateful.geometry!.position[0]
         temp0[1] = stateful.geometry!.position[2]
-        if (circleCircleIntersection(temp0, stateful.info.radius, p1, radius)) {
+        
+        if (lineCircleIntersection(p0, p1, temp0, stateful.info.radius + radius)) {
             const intersection = intersectionHeap.allocate()
             intersection.collider = stateful
             intersection.isLine = false
@@ -50,10 +52,24 @@ const addStatefulCandidates = (stateful: Stateful): void => {
     }
 }
 
+const lineIntersectionResult: LineIntersectionResult = {
+    intersects: false,
+    point: vec2.create()
+}
+
 const addLineCandidate = (line: Line): void => {
-    const distance = lineCircleSweep(line, p0, p1, radius)
-    if (distance === undefined) {
-        return
+    let distance: number | undefined
+    if (radius === 0) {
+        lineLineIntersection(lineIntersectionResult, p0, p1, line.start, line.end)
+        if (!lineIntersectionResult.intersects) {
+            return
+        }
+        distance = vec2.squaredDistance(lineIntersectionResult.point, p0)
+    } else {
+        distance = lineCircleSweep(line.start, line.end, p0, p1, radius)
+        if (distance === undefined) {
+            return
+        }
     }
     const intersection = intersectionHeap.allocate()
     intersection.collider = line
@@ -119,7 +135,7 @@ export const collisionCheck = (
     collisions.allow = true
 
     let previous: LinkedListEntry<Intersection> | undefined = undefined
-    let block = blocks.next()
+    let block = blocks.prev()
     while (block !== undefined) {
         addCandidates(block.item)
 
@@ -135,7 +151,7 @@ export const collisionCheck = (
             current = candidates.next(current)
         }
 
-        block = blocks.next(block)
+        block = blocks.prev(block)
     }
 }
 

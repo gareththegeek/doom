@@ -6,7 +6,8 @@ let closest = vec2.create()
 const distance = vec2.create()
 
 export const lineCircleIntersection = (
-    { start, end }: Line,
+    start: ReadonlyVec2,
+    end: ReadonlyVec2,
     centre: ReadonlyVec2,
     radius: number
 ): number | undefined => {

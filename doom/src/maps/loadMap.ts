@@ -64,7 +64,6 @@ export const loadMap = (mapName: string): void => {
             block.statefuls = new LinkedList()
         })
     )
-    console.log(G.blockmap)
 
     clearHeap()
     G.statefuls.clear()

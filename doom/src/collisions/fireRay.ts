@@ -1,20 +1,31 @@
 import { getMapBlockCoordinates } from 'doom-map'
+import { BLOCK_SIZE } from 'doom-map/dist/interfaces/MapBlockMap'
 import { vec2 } from 'gl-matrix'
-import { LinkedList, toArrayReverse } from 'low-mem'
+import { LinkedList } from 'low-mem'
 import { G } from '../global'
 import { Block, BlockMap } from '../interfaces/BlockMap'
-import { StatefulObject } from '../interfaces/State'
+import { StatefulObject, StatefulObjectThing } from '../interfaces/State'
+import { StateLookup } from '../state/StateLookup'
+import { collisionCheck, CollisionCheckResult, Intersection, resetCollisionResult } from './collisionCheck'
+import { removeFromBlock } from './removeFromBlock'
 
 const blocks = new LinkedList<Block>()
+const collisions = {
+    allow: false,
+    intersections: new LinkedList<Intersection>()
+} as CollisionCheckResult
 
 const pos = vec2.create()
 const coords = vec2.create()
+const p0 = vec2.create()
+const p1 = vec2.create()
 
 const inBounds = (x: number, y: number, x0: number, y0: number, x1: number, y1: number): boolean =>
     x >= x0 && x < x1 && y >= y0 && y < y1
 
 export const rayTraceBlockMap = (
     blocks: LinkedList<Block>,
+    last: vec2,
     blockmap: BlockMap,
     { geometry: { position, rotation } }: StatefulObject
 ): void => {
@@ -52,11 +63,30 @@ export const rayTraceBlockMap = (
             error += dx
         }
     }
+    last[0] = blockmap.origin[0] + x * BLOCK_SIZE
+    last[1] = blockmap.origin[1] - y * BLOCK_SIZE
 }
 
 export const fireRay = (stateful: StatefulObject) => {
     const { blockmap } = G
-    rayTraceBlockMap(blocks, blockmap, stateful)
-    console.log(stateful.geometry.rotation * (180/Math.PI))
-    console.log(toArrayReverse(blocks))
+    rayTraceBlockMap(blocks, p1, blockmap, stateful)
+
+    p0[0] = stateful.geometry.position[0]
+    p0[1] = stateful.geometry.position[2]
+    resetCollisionResult(collisions)
+    collisionCheck(stateful, collisions, blocks, 0, p0, p1)
+
+    if (collisions.allow) {
+        console.warn('Somehow shot clear out of the level?')
+        return
+    }
+
+    const intersection = collisions.intersections.prev()!.item
+    if (!intersection.isLine) {
+        const hit = intersection.collider as StatefulObjectThing
+        console.log('hit', hit)
+        hit.state = StateLookup[hit.info.deathstate]
+        hit.tics = hit.state.tics
+        removeFromBlock(hit)
+    }
 }

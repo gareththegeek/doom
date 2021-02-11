@@ -7,7 +7,7 @@ import { isPressed } from '../input/isPressed'
 import { Sector } from '../interfaces/Sector'
 import { Stateful, StatefulObjectThing } from '../interfaces/State'
 import { StateType } from '../interfaces/StateType'
-import { getState } from '../state/getState'
+import { setState } from '../state/setState'
 import { doGravity } from './gravity'
 
 const origin = vec2.create()
@@ -46,7 +46,7 @@ const updateState = (stateful: Stateful): void => {
     if (stateful.state.nextState === StateType.S_NULL) {
         return
     }
-    stateful.state = getState(stateful.state.nextState)
+    setState(stateful, stateful.state.nextState)
     stateful.tics = stateful.state.tics
 }
 

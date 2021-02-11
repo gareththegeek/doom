@@ -1,7 +1,7 @@
 import { G } from '../../global'
 import { isWeapon } from '../../interfaces/Weapon'
 import { Stateful } from '../../interfaces/State'
-import { getState } from '../getState'
+import { setState } from '../setState'
 
 export const A_WeaponReady = (stateful: Stateful): void => {
     if (!isWeapon(stateful)) {
@@ -20,6 +20,6 @@ export const A_WeaponReady = (stateful: Stateful): void => {
         return
     }
 
-    stateful.state = getState(stateful.info.atkstate)
+    setState(stateful, stateful.info.atkstate)
     stateful.tics = stateful.state.tics
 }

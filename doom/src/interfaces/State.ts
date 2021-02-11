@@ -1,5 +1,6 @@
 import { Thing } from 'doom-map'
 import { Geometry } from 'doom-video'
+import { vec2 } from 'gl-matrix'
 import { Block } from './BlockMap'
 import { ObjectInfo } from './ObjectInfo'
 import { Sector } from './Sector'
@@ -13,6 +14,7 @@ export interface State {
     tics: number
     action: ActionHandler | undefined
     nextState: StateType
+    spriteOffsetX?: number
 }
 
 export interface Stateful {

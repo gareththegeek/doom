@@ -5,7 +5,7 @@ import { LinkedList } from 'low-mem'
 import { G } from '../global'
 import { Block, BlockMap } from '../interfaces/BlockMap'
 import { StatefulObject, StatefulObjectThing } from '../interfaces/State'
-import { StateLookup } from '../state/StateLookup'
+import { setState } from '../state/setState'
 import { collisionCheck, CollisionCheckResult, Intersection, resetCollisionResult } from './collisionCheck'
 import { isSolidForMissile } from './isSolidForMissile'
 import { removeFromBlock } from './removeFromBlock'
@@ -92,8 +92,7 @@ export const fireRay = (stateful: StatefulObjectThing): Intersection | undefined
     if (!intersection.isLine) {
         const hit = intersection.collider as StatefulObjectThing
         console.log('hit', hit)
-        hit.state = StateLookup[hit.info.deathstate]
-        hit.tics = hit.state.tics
+        setState(hit, hit.info.deathstate)
         removeFromBlock(hit)
     }
     return intersection

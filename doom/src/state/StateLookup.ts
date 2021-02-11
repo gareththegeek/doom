@@ -81,13 +81,15 @@ const s = (
     frame: number,
     tics: number,
     action: ActionHandler | undefined,
-    nextState: StateType
+    nextState: StateType,
+    spriteOffsetX?: number
 ): State => ({
     spriteName,
     frame,
     tics,
     action,
-    nextState
+    nextState,
+    spriteOffsetX
 })
 
 // Build using info.c from original doom source and the following regex substitution:
@@ -107,13 +109,13 @@ export const StateLookup: StateLookupType = {
     [StateType.S_PUNCH3]: s('pung', 3, 5, undefined, StateType.S_PUNCH4),
     [StateType.S_PUNCH4]: s('pung', 2, 4, undefined, StateType.S_PUNCH5),
     [StateType.S_PUNCH5]: s('pung', 1, 5, A_ReFire, StateType.S_PUNCH),
-    [StateType.S_PISTOL]: s('pisg', 0, 1, A_WeaponReady, StateType.S_PISTOL),
-    [StateType.S_PISTOLDOWN]: s('pisg', 0, 1, A_Lower, StateType.S_PISTOLDOWN),
-    [StateType.S_PISTOLUP]: s('pisg', 0, 1, A_Raise, StateType.S_PISTOLUP),
-    [StateType.S_PISTOL1]: s('pisg', 0, 4, undefined, StateType.S_PISTOL2),
-    [StateType.S_PISTOL2]: s('pisg', 1, 6, A_FirePistol, StateType.S_PISTOL3),
-    [StateType.S_PISTOL3]: s('pisg', 2, 4, undefined, StateType.S_PISTOL4),
-    [StateType.S_PISTOL4]: s('pisg', 1, 5, A_ReFire, StateType.S_PISTOL),
+    [StateType.S_PISTOL]: s('pisg', 0, 1, A_WeaponReady, StateType.S_PISTOL, -11),
+    [StateType.S_PISTOLDOWN]: s('pisg', 0, 1, A_Lower, StateType.S_PISTOLDOWN, -11),
+    [StateType.S_PISTOLUP]: s('pisg', 0, 1, A_Raise, StateType.S_PISTOLUP, -11),
+    [StateType.S_PISTOL1]: s('pisg', 0, 4, undefined, StateType.S_PISTOL2, -11),
+    [StateType.S_PISTOL2]: s('pisg', 1, 6, A_FirePistol, StateType.S_PISTOL3, -33),
+    [StateType.S_PISTOL3]: s('pisg', 2, 4, undefined, StateType.S_PISTOL4, -15),
+    [StateType.S_PISTOL4]: s('pisg', 1, 5, A_ReFire, StateType.S_PISTOL, -33),
     [StateType.S_PISTOLFLASH]: s('pisf', 32768, 7, A_Light1, StateType.S_LIGHTDONE),
     [StateType.S_SGUN]: s('shtg', 0, 1, A_WeaponReady, StateType.S_SGUN),
     [StateType.S_SGUNDOWN]: s('shtg', 0, 1, A_Lower, StateType.S_SGUNDOWN),

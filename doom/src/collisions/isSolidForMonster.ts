@@ -1,7 +1,7 @@
 import { Line } from '../interfaces/Sector'
 import { StatefulObjectThing } from '../interfaces/State'
 import { Intersection } from './collisionCheck'
-import { isSolidForPlayer } from './isSolidForPlayer'
+import { isSolidForThing } from './isSolidForThing'
 
 export const isSolidForMonster = (actor: StatefulObjectThing, intersection: Intersection): boolean => {
     if (intersection.isLine) {
@@ -11,5 +11,5 @@ export const isSolidForMonster = (actor: StatefulObjectThing, intersection: Inte
         }
     }
 
-    return isSolidForPlayer(actor, intersection)
+    return isSolidForThing(actor, intersection)
 }

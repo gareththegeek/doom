@@ -12,6 +12,7 @@ import { LineIntersectionResult, lineLineIntersection } from '../maths/lineLineI
 export interface Intersection {
     distance: number
     isLine: boolean
+    checked: boolean
     collider: StatefulObjectThing | Line
 }
 
@@ -32,7 +33,7 @@ let temp0 = vec2.create()
 const candidates = new LinkedList<Intersection>()
 
 const NULL_LINE: Line = {} as Line
-const createIntersection = (): Intersection => ({ distance: 0, isLine: false, collider: NULL_LINE })
+const createIntersection = (): Intersection => ({ distance: 0, isLine: false, checked: false, collider: NULL_LINE })
 const intersectionHeap = new HomogenousHeap<Intersection>(createIntersection)
 
 const depthSort = (a: Intersection, b: Intersection) => a.distance - b.distance
@@ -41,11 +42,12 @@ const addStatefulCandidates = (stateful: Stateful): void => {
     if (isStatefulObjectThing(stateful) && stateful.geometry.visible && stateful !== self) {
         temp0[0] = stateful.geometry!.position[0]
         temp0[1] = stateful.geometry!.position[2]
-        
+
         if (lineCircleIntersection(p0, p1, temp0, stateful.info.radius + radius)) {
             const intersection = intersectionHeap.allocate()
             intersection.collider = stateful
             intersection.isLine = false
+            intersection.checked = false
             intersection.distance = vec2.sqrDist(temp0, p0)
             candidates.sortedAdd(intersection, depthSort)
         }
@@ -74,6 +76,7 @@ const addLineCandidate = (line: Line): void => {
     const intersection = intersectionHeap.allocate()
     intersection.collider = line
     intersection.isLine = true
+    intersection.checked = false
     intersection.distance = distance
     candidates.sortedAdd(intersection, depthSort)
 }
@@ -134,20 +137,22 @@ export const collisionCheck = (
     radius = radiusIn
     collisions.allow = true
 
-    let previous: LinkedListEntry<Intersection> | undefined = undefined
     let block = blocks.prev()
+
     while (block !== undefined) {
         addCandidates(block.item)
 
-        let current = candidates.next(previous)
+        let current = candidates.next()
         while (current !== undefined) {
-            collisions.intersections.sortedAdd(current.item, depthSort)
+            if (!current.item.checked) {
+                collisions.intersections.sortedAdd(current.item, depthSort)
 
-            if (isSolid(current.item)) {
-                collisions.allow = false
-                return
+                if (isSolid(current.item)) {
+                    collisions.allow = false
+                    return
+                }
+                current.item.checked = true
             }
-            previous = current
             current = candidates.next(current)
         }
 

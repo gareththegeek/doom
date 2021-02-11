@@ -1,3 +1,4 @@
+import { contains } from './contains'
 import { findLinkedList } from './findLinkedList'
 import { forEachLinkedList } from './forEachLinkedList'
 import { forEachLinkedListReverse } from './forEachLinkedListReverse'
@@ -10,6 +11,7 @@ export {
     HomogenousHeap,
     LinkedList,
     LinkedListEntry,
+    contains,
     forEachLinkedList,
     forEachLinkedListReverse,
     findLinkedList,

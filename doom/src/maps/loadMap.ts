@@ -22,9 +22,6 @@ const createPistol = (player: Player): Weapon => {
     result.ammo = 50
     result.info = info
     result.sector = player.sector
-    //TODO constants for native screen res
-    result.geometry.position = [160, 0, 0]
-    result.geometry.screenspace = true
     //TODO light must be linked to sector
     result.geometry.light = 255
     return result

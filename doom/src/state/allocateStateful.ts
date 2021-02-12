@@ -15,7 +15,8 @@ const createNewStateful = (): Stateful => ({
     state: StateLookup[StateType.S_NULL],
     sector: (undefined as unknown) as Sector,
     block: undefined,
-    geometry: (undefined as unknown) as Geometry
+    geometry: (undefined as unknown) as Geometry,
+    singleFrame: false
 })
 
 const createNewPhysics = (): Physics => ({
@@ -26,7 +27,8 @@ const createNewPhysics = (): Physics => ({
     info: (undefined as unknown) as ObjectInfo,
     velocity: vec3.create(),
     acceleration: vec3.create(),
-    geometry: (undefined as unknown) as Geometry
+    geometry: (undefined as unknown) as Geometry,
+    singleFrame: false
 })
 
 const createNewWeapon = (): Weapon => ({
@@ -36,7 +38,8 @@ const createNewWeapon = (): Weapon => ({
     sector: (undefined as unknown) as Sector,
     block: undefined,
     info: (undefined as unknown) as WeaponInfo,
-    geometry: (undefined as unknown) as Geometry
+    geometry: (undefined as unknown) as Geometry,
+    singleFrame: false
 })
 
 const statefulHeap = new HomogenousHeap<Stateful>(createNewStateful)
@@ -62,8 +65,11 @@ export const allocatePhysics = (type: StateType): Physics => {
 export const allocateWeapon = (type: StateType): Weapon => {
     const result = weaponHeap.allocate()
     setState(result, type)
-    result.tics = result.state.tics
     result.geometry = createSpriteGeometry(result.state.spriteName)
+    //TODO constants for native screen res
+    result.geometry.position = [160, 0, 0]
+    result.geometry.position[0] += result.state.spriteOffsetX ?? 0
+    result.geometry.screenspace = true
     return result
 }
 

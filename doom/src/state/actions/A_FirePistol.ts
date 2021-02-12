@@ -8,6 +8,7 @@ import { allocateStateful } from '../allocateStateful'
 
 const flash = (weapon: Weapon) => {
     const flash = allocateStateful(weapon.info.flashstate)
+    flash.singleFrame = true
     flash.sector = weapon.sector
     flash.geometry.position = [160, 64, 0]
     flash.geometry.screenspace = true

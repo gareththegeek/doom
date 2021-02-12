@@ -1,8 +1,14 @@
 import { Stateful } from '../interfaces/State'
 import { StateType } from '../interfaces/StateType'
+import { removeStateful } from './removeStateful'
 import { setState } from './setState'
 
 export const updateState = (stateful: Stateful) => {
+    if (stateful.singleFrame) {
+        removeStateful(stateful)
+        return
+    }
+
     stateful.tics -= 1
     if (stateful.tics > 0) {
         return

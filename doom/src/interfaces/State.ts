@@ -24,6 +24,7 @@ export interface Stateful {
     block: Block | undefined
     geometry: Geometry
     thing?: Thing
+    singleFrame: boolean
 }
 
 export interface Physics extends Stateful {

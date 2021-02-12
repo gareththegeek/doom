@@ -5,6 +5,7 @@ import { G } from '../global'
 import { vec3 } from 'gl-matrix'
 import { forEachLinkedList } from 'low-mem'
 import { Stateful } from '../interfaces/State'
+import { removeStateful } from '../state/removeStateful'
 
 const direction = vec3.create()
 

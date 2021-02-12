@@ -1,7 +1,7 @@
 import { Sector } from '../interfaces/Sector'
 import { Stateful } from '../interfaces/State'
 
-export const addToSector = (sector: Sector, stateful: Stateful): void => {
+export const addToSector = (sector: Sector, stateful: Stateful, setHeight = false): void => {
     if (sector === undefined) {
         return
     }
@@ -13,7 +13,7 @@ export const addToSector = (sector: Sector, stateful: Stateful): void => {
     stateful.sector = sector
 
     stateful.geometry.light = sector.lightLevel
-    if (!stateful.geometry.screenspace) {
+    if (setHeight && !stateful.geometry.screenspace) {
         stateful.geometry.position[1] = sector.floorHeight
     }
 }

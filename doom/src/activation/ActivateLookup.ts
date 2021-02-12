@@ -77,7 +77,6 @@ const DOOR_SPEED_FAST = DOOR_SPEED_SLOW * 2
 const FAST_DAMAGE = 2 //TODO
 const SLOW_DAMAGE = 1 //TODO
 
-//TODO some of the floor changes should change texture and some not
 export const ActivateLookup: { [special: number]: ActivateLookupEntry } = {
     1: a(dr, c(door_open_wait_close, v(DOOR_SPEED_SLOW))),
     2: a(w1, c(door_open_stay, v(DOOR_SPEED_SLOW))),

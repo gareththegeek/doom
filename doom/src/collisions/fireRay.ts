@@ -88,10 +88,9 @@ export const fireRay = (stateful: Physics): Intersection | undefined => {
     }
 
     const intersection = collisions.intersections.prev()!.item
-    console.log('hit', intersection.collider, stateful.geometry, blocks)
+    console.info('hit', intersection.collider, stateful.geometry, blocks)
     if (!intersection.isLine) {
         const hit = intersection.collider as Physics
-        console.log('hit', hit)
         setState(hit, hit.info.deathstate)
         removeFromBlock(hit)
     }

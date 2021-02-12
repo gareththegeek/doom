@@ -1,5 +1,4 @@
 import { ReadonlyVec2, vec2 } from 'gl-matrix'
-import { Line } from '../interfaces/Sector'
 import { projectPositionOntoLine } from './projectVectorOntoVector'
 
 let closest = vec2.create()

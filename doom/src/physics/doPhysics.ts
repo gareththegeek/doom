@@ -9,6 +9,10 @@ export const doPhysics = (stateful: Stateful, deltaTime: number): void => {
         return
     }
 
+    if (stateful.block === undefined) {
+        return
+    }
+
     doFriction(stateful, deltaTime)
     doGravity(stateful, deltaTime)
     applyAcceleration(stateful)

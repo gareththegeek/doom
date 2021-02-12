@@ -5,5 +5,6 @@ import { removeFromSector } from './removeFromSector'
 
 export const changeSector = (stateful: Stateful, sector: Sector): void => {
     removeFromSector(stateful)
-    addToSector(sector, stateful)
+    const touchingFloor = sector.floorHeight >= stateful.geometry.position[1]
+    addToSector(sector, stateful, touchingFloor)
 }

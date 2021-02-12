@@ -1,14 +1,14 @@
 import { vec2 } from 'gl-matrix'
 import { Line } from '../interfaces/Sector'
-import { StatefulObjectThing, StatefulThing } from '../interfaces/State'
+import { Physics } from '../interfaces/State'
 import { findLineSideForPoint, LineSideResult } from '../maths/findLineSideForPoint'
 import { Intersection } from './collisionCheck'
 
 const lineSideResult = {} as LineSideResult
 const p0 = vec2.create()
-export const isSolidForThing = (actor: StatefulObjectThing, intersection: Intersection): boolean => {
+export const isSolidForThing = (actor: Physics, intersection: Intersection): boolean => {
     if (!intersection.isLine) {
-        const thing = intersection.collider as StatefulThing
+        const thing = intersection.collider as Physics
         return thing.info.flags.solid
     }
 

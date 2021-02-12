@@ -5,20 +5,20 @@ import { createScene, GeometryBox } from 'doom-video'
 import { findLinkedList, LinkedList, toLinkedList } from 'low-mem'
 import { addToBlock } from '../collisions/addToBlock'
 import { addToSector } from '../collisions/addToSector'
-import { G, isStatefulThing } from '../global'
+import { G } from '../global'
 import { Block, BlockMap } from '../interfaces/BlockMap'
 import { ObjectInfoLookup } from '../interfaces/ObjectInfoLookup'
 import { ObjectInfoType } from '../interfaces/ObjectInfoType'
-import { Player, PlayerState } from '../interfaces/Player'
+import { MAX_PLAYER_SPEED, Player, PlayerState } from '../interfaces/Player'
 import { Sector } from '../interfaces/Sector'
-import { Stateful, StatefulObject, StatefulThing } from '../interfaces/State'
+import { Stateful } from '../interfaces/State'
 import { Weapon, WeaponInfoLookup, WeaponType } from '../interfaces/Weapon'
 import { addStateful } from '../state/addStateful'
-import { allocateSprite, allocateStateful, clearHeap, freeStateful } from '../state/allocateStateful'
+import { allocatePhysics, allocateWeapon, clearHeap } from '../state/allocateStateful'
 
-const createPistol = (player: StatefulObject): Weapon => {
+const createPistol = (player: Player): Weapon => {
     const info = { ...WeaponInfoLookup[WeaponType.Pistol] }
-    const result = allocateSprite(info.readystate) as Weapon
+    const result = allocateWeapon(info.readystate)
     result.ammo = 50
     result.info = info
     result.sector = player.sector
@@ -30,7 +30,7 @@ const createPistol = (player: StatefulObject): Weapon => {
     return result
 }
 
-const createPlayerState = (player: StatefulObject): PlayerState => {
+const createPlayerState = (player: Player): PlayerState => {
     const weapons = {
         [WeaponType.Pistol]: createPistol(player)
     }
@@ -43,7 +43,7 @@ const createPlayerState = (player: StatefulObject): PlayerState => {
 }
 
 const isPlayer = (stateful: Stateful): boolean => {
-    if (!isStatefulThing(stateful)) {
+    if (stateful.thing === undefined) {
         return false
     }
     return stateful.thing.type === 1
@@ -78,12 +78,9 @@ export const loadMap = (mapName: string): void => {
 
             const sector = G.sectors[thing.sector.index]
             const block = thing.block as Block
-            const result = allocateStateful(info.spawnstate) as StatefulThing
+            const result = allocatePhysics(info.spawnstate)
             result.thing = thing
-            result.sector = sector
             result.info = info
-            addToBlock(block, result)
-            addToSector(sector, result)
 
             if (result.state.spriteName === '-') {
                 return result
@@ -94,7 +91,10 @@ export const loadMap = (mapName: string): void => {
             geometry.position = thing.spawnPosition
             geometry.rotation = thing.spawnAngle - Math.PI / 2
             geometry.light = thing.sector.lightLevel
-            ;((result as Stateful) as StatefulObject).geometry = geometry
+            result.geometry = geometry
+
+            addToBlock(block, result)
+            addToSector(sector, result)
 
             return result
         })
@@ -114,6 +114,7 @@ export const loadMap = (mapName: string): void => {
 
     playerStateful.playerState = createPlayerState(playerStateful)
     playerStateful.geometry.visible = false
+    playerStateful.info.speed = MAX_PLAYER_SPEED
     addStateful(playerStateful.playerState.currentWeapon)
     G.player = playerStateful
 

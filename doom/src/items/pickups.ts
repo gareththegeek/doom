@@ -2,7 +2,7 @@ import { forEachLinkedList, LinkedList } from 'low-mem'
 import { Intersection } from '../collisions/collisionCheck'
 import { G } from '../global'
 import { ObjectFlags } from '../interfaces/ObjectInfo'
-import { StatefulObjectThing } from '../interfaces/State'
+import { Physics } from '../interfaces/State'
 import { removeStateful } from '../state/removeStateful'
 
 const pickupable = (flags: ObjectFlags): boolean => flags.special || flags.countitem || flags.pickup || flags.dropped
@@ -11,7 +11,7 @@ const pickup = (intersection: Intersection): void => {
     if (intersection.isLine) {
         return
     }
-    const stateful = intersection.collider as StatefulObjectThing
+    const stateful = intersection.collider as Physics
 
     if (!pickupable(stateful.info.flags)) {
         return
@@ -25,6 +25,11 @@ const pickup = (intersection: Intersection): void => {
     removeStateful(stateful)
 
     console.info(`Picked up ${state.spriteName}`)
+
+    if (thing === undefined) {
+        return
+    }
+
     const { type } = thing
     const { playerState } = G.player
     if (type === 5 || type === 40) {

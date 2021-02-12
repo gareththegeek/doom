@@ -4,7 +4,7 @@ import { vec2 } from 'gl-matrix'
 import { LinkedList } from 'low-mem'
 import { G } from '../global'
 import { Block, BlockMap } from '../interfaces/BlockMap'
-import { StatefulObject, StatefulObjectThing } from '../interfaces/State'
+import { Physics } from '../interfaces/State'
 import { setState } from '../state/setState'
 import { collisionCheck, CollisionCheckResult, Intersection, resetCollisionResult } from './collisionCheck'
 import { isSolidForMissile } from './isSolidForMissile'
@@ -29,7 +29,7 @@ export const rayTraceBlockMap = (
     blocks: LinkedList<Block>,
     last: vec2,
     blockmap: BlockMap,
-    { geometry: { position, rotation } }: StatefulObject
+    { geometry: { position, rotation } }: Physics
 ): void => {
     const x0 = 0
     const x1 = blockmap.blocks.length
@@ -73,7 +73,7 @@ export const rayTraceBlockMap = (
     last[1] = pos[1] - cosr * distance
 }
 
-export const fireRay = (stateful: StatefulObjectThing): Intersection | undefined => {
+export const fireRay = (stateful: Physics): Intersection | undefined => {
     const { blockmap } = G
     rayTraceBlockMap(blocks, p1, blockmap, stateful)
 
@@ -90,7 +90,7 @@ export const fireRay = (stateful: StatefulObjectThing): Intersection | undefined
     const intersection = collisions.intersections.prev()!.item
     console.log('hit', intersection.collider, stateful.geometry, blocks)
     if (!intersection.isLine) {
-        const hit = intersection.collider as StatefulObjectThing
+        const hit = intersection.collider as Physics
         console.log('hit', hit)
         setState(hit, hit.info.deathstate)
         removeFromBlock(hit)

@@ -1,5 +1,4 @@
-import { isStatefulObject } from '../global'
-import { StatefulObject, Stateful } from './State'
+import { Stateful } from './State'
 import { StateType } from './StateType'
 
 export enum AmmoType {
@@ -30,10 +29,9 @@ export const WeaponInfoLookup: { [type in WeaponType]: WeaponInfo } = {
     }
 }
 
-export interface Weapon extends StatefulObject {
+export interface Weapon extends Stateful {
     ammo: number //TODO some weapons share ammo
     info: WeaponInfo
 }
 
-export const isWeapon = (stateful: Stateful): stateful is Weapon =>
-    isStatefulObject(stateful) && 'ammo' in stateful && 'info' in stateful
+export const isWeapon = (stateful: Stateful): stateful is Weapon => 'ammo' in stateful

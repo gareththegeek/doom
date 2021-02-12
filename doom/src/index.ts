@@ -17,7 +17,7 @@ const onFrame = (now: number) => {
 }
 
 const main = async () => {
-    try {
+    //try {
         const canvas = document.querySelector('#canvas') as HTMLCanvasElement
         const gl = canvas.getContext('webgl2')
 
@@ -39,9 +39,9 @@ const main = async () => {
         loadMap('e1m1')
 
         requestAnimationFrame(onFrame)
-    } catch (e) {
-        console.error(e.message)
-    }
+    //} catch (e) {
+    //    console.error(e.message)
+    //}
 }
 
 window.onload = main

@@ -1,13 +1,13 @@
 // prettier-ignore
 /* eslint-disable */
 import { Thing } from 'doom-map'
-import { vec2, vec3 } from 'gl-matrix'
+import { vec2 } from 'gl-matrix'
 import { LinkedList, toArrayReverse, toLinkedList } from 'low-mem'
 import { G } from '../global'
 import { Block, BlockMap } from '../interfaces/BlockMap'
 import { Player } from '../interfaces/Player'
 import { Line, Side } from '../interfaces/Sector'
-import { Stateful, StatefulObject } from '../interfaces/State'
+import { Physics, Stateful } from '../interfaces/State'
 import { StateType } from '../interfaces/StateType'
 import { fireRay, rayTraceBlockMap } from './fireRay'
 
@@ -18,7 +18,7 @@ const buildBlocks = (width: number, height: number): Block[][] => {
         for (let y = 0; y < height; y++) {
             column.push({
                 origin: [x, y] as vec2,
-                statefuls: new LinkedList<Stateful>(),
+                statefuls: new LinkedList<Physics>(),
                 lines: []
             })
         }
@@ -132,7 +132,7 @@ describe('rayTraceBlockMap', () => {
             const actualLast = [0, 0]
             rayTraceBlockMap(blockList, actualLast as vec2, blockmap, {
                 geometry: { position, rotation: rotation * (Math.PI / 180) }
-            } as StatefulObject)
+            } as Physics)
 
             const blocks = toArrayReverse(blockList)
             expect(actualLast).toEqual(last)

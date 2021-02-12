@@ -1,5 +1,5 @@
 import { ReadonlyVec2, vec2 } from 'gl-matrix'
-import { StatefulObjectThing } from '../interfaces/State'
+import { Physics } from '../interfaces/State'
 import { lineCollisionResponse } from './lineCollisionResponse'
 
 let pos = vec2.create()
@@ -13,7 +13,7 @@ let axis2 = vec2.create()
 
 export const thingCollisionResponse = (
     pout: vec2,
-    stateful: StatefulObjectThing,
+    stateful: Physics,
     radius: number,
     p0: ReadonlyVec2,
     p1: ReadonlyVec2

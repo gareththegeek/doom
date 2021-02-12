@@ -1,6 +1,6 @@
 import { Thing } from 'doom-map'
 import { Geometry } from 'doom-video'
-import { vec2 } from 'gl-matrix'
+import { vec3 } from 'gl-matrix'
 import { Block } from './BlockMap'
 import { ObjectInfo } from './ObjectInfo'
 import { Sector } from './Sector'
@@ -22,15 +22,14 @@ export interface Stateful {
     state: State
     sector: Sector
     block: Block | undefined
-}
-
-export interface StatefulObject extends Stateful {
     geometry: Geometry
+    thing?: Thing
 }
 
-export interface StatefulThing extends Stateful {
-    thing: Thing
+export interface Physics extends Stateful {
     info: ObjectInfo
+    velocity: vec3
+    acceleration: vec3
 }
 
-export type StatefulObjectThing = StatefulThing & StatefulObject
+export const isPhysics = (stateful: Stateful): stateful is Physics => 'velocity' in stateful

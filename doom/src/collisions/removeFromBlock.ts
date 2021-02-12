@@ -1,6 +1,6 @@
-import { Stateful } from '../interfaces/State'
+import { Physics } from '../interfaces/State'
 
-export const removeFromBlock = (stateful: Stateful): void => {
+export const removeFromBlock = (stateful: Physics): void => {
     if (stateful.block === undefined) {
         return
     }

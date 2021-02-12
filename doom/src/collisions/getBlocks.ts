@@ -2,7 +2,7 @@ import { BLOCK_SIZE } from 'doom-map/dist/interfaces/MapBlockMap'
 import { ReadonlyVec2, vec2 } from 'gl-matrix'
 import { contains, LinkedList } from 'low-mem'
 import { Block } from '../interfaces/BlockMap'
-import { StatefulThing } from '../interfaces/State'
+import { Physics } from '../interfaces/State'
 import { getBlock } from './getBlock'
 
 let allCorners = [
@@ -37,7 +37,7 @@ const depthSort = (a: Block, b: Block): number => {
 
 export const getBlocks = (
     blocks: LinkedList<Block>,
-    { info: { radius } }: StatefulThing,
+    { info: { radius } }: Physics,
     p0in: ReadonlyVec2,
     p1: ReadonlyVec2
 ): void => {

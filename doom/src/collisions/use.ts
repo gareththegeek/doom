@@ -2,12 +2,12 @@ import PubSub from 'pubsub-js'
 import { vec2 } from 'gl-matrix'
 import { SWITCH_LINE } from '../interfaces/messageTypes'
 import { Block } from '../interfaces/BlockMap'
-import { StatefulObjectThing } from '../interfaces/State'
 import { forEachLinkedList, LinkedList } from 'low-mem'
 import { getBlocks } from './getBlocks'
 import { collisionCheck, CollisionCheckResult, Intersection, resetCollisionResult } from './collisionCheck'
 import { Line } from '../interfaces/Sector'
 import { isSolidForPlayer } from './isSolidForPlayer'
+import { Player } from '../interfaces/Player'
 
 const USE_RANGE = 64
 
@@ -31,7 +31,7 @@ const useLine = ({ isLine, collider }: Intersection): void => {
     }
 }
 
-export const use = (player: StatefulObjectThing): void => {
+export const use = (player: Player): void => {
     p0[0] = player.geometry.position[0]
     p0[1] = player.geometry.position[2]
 

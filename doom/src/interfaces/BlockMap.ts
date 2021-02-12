@@ -1,10 +1,10 @@
 import { MapBlock, MapBlockMap } from 'doom-map'
 import { LinkedList } from 'low-mem'
 import { Line } from './Sector'
-import { Stateful } from './State'
+import { Physics } from './State'
 
 export interface Block extends MapBlock {
-    statefuls: LinkedList<Stateful>
+    statefuls: LinkedList<Physics>
     lines: Line[]
 }
 

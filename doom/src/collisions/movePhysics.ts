@@ -5,13 +5,13 @@ import { getBlocks } from './getBlocks'
 import { sectorCheck } from './sectorCheck'
 import { thingCollisionResponse } from './thingCollisionResponse'
 import { pickups } from '../items/pickups'
-import { StatefulObjectThing, StatefulThing } from '../interfaces/State'
 import { LinkedList } from 'low-mem'
 import { Block } from '../interfaces/BlockMap'
 import { G } from '../global'
 import { collisionCheck, CollisionCheckResult, Intersection, resetCollisionResult } from './collisionCheck'
 import { Line } from '../interfaces/Sector'
 import { isSolidForPlayer } from './isSolidForPlayer'
+import { Physics } from '../interfaces/State'
 
 const collisions: CollisionCheckResult = {
     allow: false,
@@ -20,7 +20,7 @@ const collisions: CollisionCheckResult = {
 
 const blocks = new LinkedList<Block>()
 
-export const moveStateful = (stateful: StatefulObjectThing, p0: ReadonlyVec2, p1: vec2): void => {
+export const movePhysics = (stateful: Physics, p0: ReadonlyVec2, p1: vec2): void => {
     const {
         cheats: { noclip }
     } = G
@@ -41,7 +41,7 @@ export const moveStateful = (stateful: StatefulObjectThing, p0: ReadonlyVec2, p1
                 const line = last.collider as Line
                 lineCollisionResponse(p1, line.start, line.end, radius, p0, p1)
             } else {
-                thingCollisionResponse(p1, last.collider as StatefulObjectThing, radius, p0, p1)
+                thingCollisionResponse(p1, last.collider as Physics, radius, p0, p1)
             }
         }
 

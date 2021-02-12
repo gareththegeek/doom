@@ -1,11 +1,13 @@
-import { isStatefulObject } from '../global'
-import { StatefulObject, StatefulThing } from './State'
+import { Physics } from './State'
 import { WeaponType, Weapon } from './Weapon'
+
+export const MAX_PLAYER_SPEED = 400
+export const PLAYER_ACCELERATION = 4000
 
 export interface PlayerState {
     weapons: { [type in WeaponType]: Weapon }
-    currentWeapon: StatefulObject
-    nextWeapon: StatefulObject | undefined
+    currentWeapon: Weapon
+    nextWeapon: Weapon | undefined
     keys: {
         blue: boolean
         red: boolean
@@ -13,6 +15,6 @@ export interface PlayerState {
     }
 }
 
-export interface Player extends StatefulThing, StatefulObject {
+export interface Player extends Physics {
     playerState: PlayerState
 }

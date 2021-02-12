@@ -1,9 +1,8 @@
 import { ReadonlyVec2, vec2 } from 'gl-matrix'
-import { forEachLinkedList, HomogenousHeap, LinkedList, LinkedListEntry, toArray } from 'low-mem'
-import { isStatefulObjectThing } from '../global'
+import { forEachLinkedList, HomogenousHeap, LinkedList } from 'low-mem'
 import { Block } from '../interfaces/BlockMap'
 import { Line } from '../interfaces/Sector'
-import { Stateful, StatefulObjectThing } from '../interfaces/State'
+import { Physics } from '../interfaces/State'
 import { lineCircleIntersection } from '../maths/lineCircleIntersection'
 import { lineCircleSweep } from '../maths/lineCircleSweep'
 import { LineIntersectionResult, lineLineIntersection } from '../maths/lineLineIntersection'
@@ -12,7 +11,7 @@ export interface Intersection {
     distance: number
     isLine: boolean
     checked: boolean
-    collider: StatefulObjectThing | Line
+    collider: Physics | Line
 }
 
 export interface CollisionCheckResult {
@@ -20,7 +19,7 @@ export interface CollisionCheckResult {
     intersections: LinkedList<Intersection>
 }
 
-let self: StatefulObjectThing | undefined
+let self: Physics | undefined
 let p0: ReadonlyVec2
 let p1: ReadonlyVec2
 let radius: number
@@ -37,8 +36,8 @@ const intersectionHeap = new HomogenousHeap<Intersection>(createIntersection)
 
 const depthSort = (a: Intersection, b: Intersection) => a.distance - b.distance
 
-const addStatefulCandidates = (stateful: Stateful): void => {
-    if (isStatefulObjectThing(stateful) && stateful.geometry.visible && stateful !== self) {
+const addStatefulCandidates = (stateful: Physics): void => {
+    if (stateful.geometry.visible && stateful !== self) {
         temp0[0] = stateful.geometry!.position[0]
         temp0[1] = stateful.geometry!.position[2]
 
@@ -88,13 +87,13 @@ const addCandidates = (blockIn: Block): void => {
 }
 
 export const collisionCheck = (
-    selfIn: StatefulObjectThing,
+    selfIn: Physics,
     collisions: CollisionCheckResult,
     blocks: LinkedList<Block>,
     radiusIn: number,
     p0in: ReadonlyVec2,
     p1in: vec2,
-    isSolid: (actor: StatefulObjectThing, intersection: Intersection) => boolean
+    isSolid: (actor: Physics, intersection: Intersection) => boolean
 ): void => {
     self = selfIn
     p0 = p0in

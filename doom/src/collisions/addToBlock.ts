@@ -1,7 +1,7 @@
 import { Block } from '../interfaces/BlockMap'
-import { Stateful } from '../interfaces/State'
+import { Physics } from '../interfaces/State'
 
-export const addToBlock = (block: Block, stateful: Stateful): void => {
+export const addToBlock = (block: Block, stateful: Physics): void => {
     if (block === undefined) {
         return
     }

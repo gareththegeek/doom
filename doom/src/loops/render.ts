@@ -1,7 +1,7 @@
 import { rebuildSectorGeometry } from 'doom-map'
 import { setSpriteFrame } from 'doom-sprite'
 import { renderScene } from 'doom-video'
-import { G, isStatefulObject } from '../global'
+import { G } from '../global'
 import { vec3 } from 'gl-matrix'
 import { forEachLinkedList } from 'low-mem'
 import { Stateful } from '../interfaces/State'
@@ -10,10 +10,6 @@ const direction = vec3.create()
 
 const updateSprite = (stateful: Stateful): void => {
     const { player } = G
-
-    if (!isStatefulObject(stateful)) {
-        return
-    }
 
     const TWO_PI = Math.PI * 2
     vec3.subtract(direction, stateful.geometry.position, player.geometry.position)

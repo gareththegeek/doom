@@ -7,7 +7,7 @@ import { G } from '../global'
 import { Block, BlockMap } from '../interfaces/BlockMap'
 import { Player } from '../interfaces/Player'
 import { Line, Side } from '../interfaces/Sector'
-import { Physics, Stateful } from '../interfaces/State'
+import { Physics, State, Stateful } from '../interfaces/State'
 import { StateType } from '../interfaces/StateType'
 import { fireRay, rayTraceBlockMap } from './fireRay'
 
@@ -158,12 +158,14 @@ describe('fireRay', () => {
         const expected1 = {
             geometry: { position: [-160, 104, 3232], rotation: -(Math.PI / 2), visible: true },
             info: { flags: { solid: true }, radius: 16, deathstate: StateType.S_POSS_DIE1 },
-            thing: {} as Thing
+            thing: {} as Thing,
+            state: {} as State
         }
         const expected2 = {
             geometry: { position: [-192, 104, 3296], rotation: -(Math.PI / 2), visible: true },
             info: { flags: { solid: true }, radius: 20, deathstate: StateType.S_POSS_DIE1 },
-            thing: {} as Thing
+            thing: {} as Thing,
+            state: {} as State
         }
 
         G.blockmap = {
@@ -447,6 +449,11 @@ describe('fireRay', () => {
 
         player.geometry.position = [24.91266632080078, 104, 3227.240478515625]
         player.geometry.rotation = 1.8502530000000315
+        actual = fireRay(player as Player)
+        expect(actual?.collider).toBe(expected2)
+
+        player.geometry.position = [39.32548522949219, 104, 3216.176513671875]
+        player.geometry.rotation = 1.8991200000000141
         actual = fireRay(player as Player)
         expect(actual?.collider).toBe(expected2)
     })

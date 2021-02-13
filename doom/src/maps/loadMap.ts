@@ -112,6 +112,7 @@ export const loadMap = (mapName: string): void => {
     playerStateful.playerState = createPlayerState(playerStateful)
     playerStateful.geometry.visible = false
     playerStateful.info.speed = MAX_PLAYER_SPEED
+    playerStateful.angularVelocity = 0
     addStateful(playerStateful.playerState.currentWeapon)
     G.player = playerStateful
 

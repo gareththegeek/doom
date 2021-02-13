@@ -49,6 +49,5 @@ export const setPlayerAcceleration = (deltaTime: number) => {
             player.angularVelocity = -MAX_PLAYER_ROTATION
         }
     }
-    console.log(player.angularVelocity)
     geometry.rotation += player.angularVelocity
 }

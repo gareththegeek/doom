@@ -9,9 +9,14 @@ export const A_Raise = (stateful: Stateful): void => {
         return
     }
 
-    stateful.geometry.position[1] += WEAPON_RAISE_SPEED
+    const {
+        geometry: { position }
+    } = stateful
 
-    if (stateful.geometry.position[1] >= 0) {
+    position[1] += WEAPON_RAISE_SPEED
+
+    if (position[1] >= 0) {
+        position[1] = 0
         setState(stateful, stateful.info.readystate)
     }
 }

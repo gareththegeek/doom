@@ -1,9 +1,7 @@
 import { ActionHandler, State } from '../interfaces/State'
 import { StateType } from '../interfaces/StateType'
-import { A_WeaponReady, A_FirePistol, A_Light0, A_Light1 } from './actions'
+import { A_WeaponReady, A_FirePistol, A_Light0, A_Light1, A_Lower, A_Raise } from './actions'
 import {
-    A_Lower,
-    A_Raise,
     A_Punch,
     A_ReFire,
     A_FireShotgun,

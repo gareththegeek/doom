@@ -27,17 +27,11 @@ const createPistol = (player: Player): Weapon => {
     return result
 }
 
-const createPlayerState = (player: Player): PlayerState => {
-    const weapons = {
-        [WeaponType.Pistol]: createPistol(player)
-    }
-    return {
-        weapons,
-        currentWeapon: weapons[WeaponType.Pistol],
-        nextWeapon: undefined,
-        keys: { blue: false, red: false, yellow: false }
-    }
-}
+const createPlayerState = (player: Player): PlayerState => ({
+    weapon: createPistol(player),
+    nextWeapon: undefined,
+    keys: { blue: false, red: false, yellow: false }
+})
 
 const isPlayer = (stateful: Stateful): boolean => {
     if (stateful.thing === undefined) {
@@ -113,7 +107,7 @@ export const loadMap = (mapName: string): void => {
     playerStateful.geometry.visible = false
     playerStateful.info.speed = MAX_PLAYER_SPEED
     playerStateful.angularVelocity = 0
-    addStateful(playerStateful.playerState.currentWeapon)
+    addStateful(playerStateful.playerState.weapon)
     G.player = playerStateful
 
     console.info('Prepared scene')

@@ -77,7 +77,12 @@ export const createSpriteSheet = (atlas: TextureAtlas, baseName: string): Sprite
             if (frameLookup[index] === undefined) {
                 frameLookup[index] = {}
             }
-            frameLookup[index][angle] = { name, mirror, index: frameIndex }
+            frameLookup[index][angle] = {
+                name,
+                mirror,
+                index: frameIndex,
+                height: Math.abs(frameParams.atlas[0][3] - frameParams.atlas[0][1])
+            }
             frameIndex += 1
         })
     })
@@ -86,10 +91,10 @@ export const createSpriteSheet = (atlas: TextureAtlas, baseName: string): Sprite
     for (const ordinal of Object.values(frameLookup)) {
         const angles = Object.entries(ordinal)
         if (angles.length === 1) {
-            frames.push({ angle: new Array(8).fill(angles[0][1].index) })
+            frames.push({ angle: new Array(8).fill(angles[0][1].index), height: angles[0][1].height })
             continue
         }
-        const frame: SpriteFrame = { angle: [] }
+        const frame: SpriteFrame = { angle: [], height: angles[0][1].height }
         angles.forEach((angle) => frame.angle.push(angle[1].index))
         frames.push(frame)
     }

@@ -8,9 +8,8 @@ export const PLAYER_ANGULAR_ACCELERATION = 1.2
 export const PLAYER_ROTATION_DECAY = 0.8
 
 export interface PlayerState {
-    weapons: { [type in WeaponType]: Weapon }
-    currentWeapon: Weapon
-    nextWeapon: Weapon | undefined
+    weapon: Weapon
+    nextWeapon: WeaponType | undefined
     keys: {
         blue: boolean
         red: boolean

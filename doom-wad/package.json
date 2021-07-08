@@ -11,7 +11,8 @@
         "test": "jest"
     },
     "dependencies": {
-        "buffer": "^6.0.3"
+        "buffer": "^6.0.3",
+        "mus2midi": "^1.0.8"
     },
     "devDependencies": {
         "@types/jest": "^26.0.20",

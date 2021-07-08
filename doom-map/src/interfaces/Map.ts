@@ -11,4 +11,5 @@ export interface Map {
     lines: MapLine[]
     things: Thing[]
     vertices: WadVertex[]
+    music: Buffer
 }

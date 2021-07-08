@@ -1,12 +1,12 @@
+import { readMusicLump } from '../audio/readMusicLump'
 import { readDirectory } from '../directory'
 import { readFlatLump } from '../flats'
 import { Wad } from '../interfaces/Wad'
 import { WadColorMapLump } from '../interfaces/WadColorMapLump'
 import { WadDirectory, WadDirectoryEntry } from '../interfaces/WadDirectory'
-import { WadFlatLump } from '../interfaces/WadFlatLump'
 import { WadLump } from '../interfaces/WadLump'
 import { WadMapLump } from '../interfaces/WadMapLump'
-import { WadPictureLump } from '../interfaces/WadPictureLump'
+import { WadMusicLump } from '../interfaces/WadMusicLump'
 import { WadPlayPalLump } from '../interfaces/WadPlayPalLump'
 import { WadPNamesLump } from '../interfaces/WadPNamesLump'
 import { WadTextureLump } from '../interfaces/WadTextureLump'
@@ -46,7 +46,8 @@ export const readWad = (data: Buffer): Wad => {
         patches: {},
         flats: {},
         sprites: {},
-        maps: {}
+        maps: {},
+        music: {}
     }
 
     const directory = readDirectory(data)
@@ -101,7 +102,12 @@ export const readWad = (data: Buffer): Wad => {
 
     const maps = directory.entries.filter((entry) => entry.name.match(/^(e[1-4]m[1-9]|map(0[1-9]|[1-2][0-9]|3[0-2]))$/))
     maps.forEach((entry) => (wad.maps![entry.name] = readLump<WadMapLump>(entry.name, readMapLump)))
-    
+
+    const musics = directory.entries.filter((entry) => entry.name.startsWith('d_'))
+    musics.forEach((entry) => {
+        wad.music![entry.name.replace('d_', '')] = readLump<WadMusicLump>(entry.name, readMusicLump)
+    })
+
     if (!isWad(wad)) {
         throw new Error('Invalid wad')
     }

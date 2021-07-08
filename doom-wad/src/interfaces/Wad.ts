@@ -2,6 +2,7 @@ import { WadColorMapLump } from './WadColorMapLump'
 import { WadFlatLump } from './WadFlatLump'
 import { WadLump } from './WadLump'
 import { WadMapLump } from './WadMapLump'
+import { WadMusicLump } from './WadMusicLump'
 import { WadPictureLump } from './WadPictureLump'
 import { WadPlayPalLump } from './WadPlayPalLump'
 import { WadPNamesLump } from './WadPNamesLump'
@@ -19,4 +20,5 @@ export interface Wad {
     flats: WadLookup<WadFlatLump>
     sprites: WadLookup<WadPictureLump>
     maps: WadLookup<WadMapLump>
+    music: WadLookup<WadMusicLump>
 }

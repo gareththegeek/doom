@@ -26,9 +26,9 @@
     "webpack-cli": "^4.4.0"
   },
   "dependencies": {
-    "@magenta/music": "^1.22.1",
     "buffer": "^6.0.3",
     "doom-atlas": "1.0.0",
+    "doom-audio": "1.0.0",
     "doom-map": "1.0.0",
     "doom-sprite": "1.0.0",
     "doom-video": "1.0.0",

@@ -15,10 +15,6 @@ import { Stateful } from '../interfaces/State'
 import { Weapon, WeaponInfoLookup, WeaponType } from '../interfaces/Weapon'
 import { addStateful } from '../state/addStateful'
 import { allocatePhysics, allocateWeapon, clearHeap } from '../state/allocateStateful'
-import * as mm from '@magenta/music/esm/core.js'
-import { BasePlayer } from '@magenta/music'
-
-let player: BasePlayer
 
 const createPistol = (player: Player): Weapon => {
     const info = { ...WeaponInfoLookup[WeaponType.Pistol] }
@@ -115,19 +111,7 @@ export const loadMap = async (mapName: string): Promise<void> => {
     G.player = playerStateful
 
     console.info('Starting music')
-    //https://github.com/cifkao/html-midi-player/blob/aee0a5c24f5b82e0a72179c2558e04d2eb295fba/src/player.ts#L49
-    const midiblob = new Blob([new Uint8Array(map.music, 0, map.music.length)])
-    console.log(mm)
-    const sequence = await mm.blobToNoteSequence(midiblob)
-    const soundFontUrl = 'https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus'
-    if (player === undefined) {
-        player = new mm.SoundFontPlayer(soundFontUrl)
-    } else {
-        player.stop()
-    }
-    setTimeout(() => {
-        player.start(sequence)
-    }, 0);
+    await playMusic(map.music)
 
     console.info('Prepared scene')
 }

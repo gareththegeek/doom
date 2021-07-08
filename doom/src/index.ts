@@ -1,6 +1,7 @@
 import { initialiseVideoSystem } from 'doom-video'
 import { initialiseMapSystem } from 'doom-map'
 import { initialiseSpriteSystem } from 'doom-sprite'
+import { initialiseAudioSystem } from 'doom-audio'
 import { fetchWad } from 'doom-wad'
 import { createAtlas } from 'doom-atlas'
 import { loadMap } from './maps/loadMap'
@@ -18,27 +19,28 @@ const onFrame = (now: number) => {
 
 const main = async () => {
     //try {
-        const canvas = document.querySelector('#canvas') as HTMLCanvasElement
-        const gl = canvas.getContext('webgl2')
+    const canvas = document.querySelector('#canvas') as HTMLCanvasElement
+    const gl = canvas.getContext('webgl2')
 
-        if (!gl) {
-            throw new Error('Unable to acquire webgl context')
-        }
+    if (!gl) {
+        throw new Error('Unable to acquire webgl context')
+    }
 
-        console.info('Loading...')
-        const wad = await fetchWad('doom.wad')
-        console.info('Loaded doom.wad')
+    console.info('Loading...')
+    const wad = await fetchWad('doom.wad')
+    console.info('Loaded doom.wad')
 
-        const ATLAS_SIZE = 4096
-        const atlas = createAtlas(wad, ATLAS_SIZE)
-        initialiseVideoSystem(gl, atlas.image, ATLAS_SIZE, wad.playpal.palettes[0].colours, wad.colormap.maps)
-        initialiseMapSystem(wad, atlas)
-        initialiseSpriteSystem(wad.sprites, atlas)
-        console.info('Initialised subsystems')
+    const ATLAS_SIZE = 4096
+    const atlas = createAtlas(wad, ATLAS_SIZE)
+    initialiseVideoSystem(gl, atlas.image, ATLAS_SIZE, wad.playpal.palettes[0].colours, wad.colormap.maps)
+    initialiseMapSystem(wad, atlas)
+    initialiseSpriteSystem(wad.sprites, atlas)
+    initialiseAudioSystem()
+    console.info('Initialised subsystems')
 
-        loadMap('e1m1')
+    loadMap('e1m1')
 
-        requestAnimationFrame(onFrame)
+    requestAnimationFrame(onFrame)
     //} catch (e) {
     //    console.error(e.message)
     //}

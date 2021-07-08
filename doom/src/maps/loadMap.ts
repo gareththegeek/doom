@@ -15,6 +15,7 @@ import { Stateful } from '../interfaces/State'
 import { Weapon, WeaponInfoLookup, WeaponType } from '../interfaces/Weapon'
 import { addStateful } from '../state/addStateful'
 import { allocatePhysics, allocateWeapon, clearHeap } from '../state/allocateStateful'
+import { playMusic } from 'doom-audio'
 
 const createPistol = (player: Player): Weapon => {
     const info = { ...WeaponInfoLookup[WeaponType.Pistol] }

@@ -1093,11 +1093,6 @@
   resolved "https://registry.yarnpkg.com/@types/webgl2/-/webgl2-0.0.5.tgz#dd925e20ab8ace80eb4b1e46fda5b109c508fb0d"
   integrity sha512-oGaKsBbxQOY5+aJFV3KECDhGaXt+yZJt2y/OZsnQGLRkH6Fvr7rv4pCt3SRH1somIHfej/c4u7NSpCyd9x+1Ow==
 
-"@types/webmidi@^2.0.5":
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/@types/webmidi/-/webmidi-2.0.5.tgz#fe287fc4d157285fb3dd5e154cfb02c723beafa4"
-  integrity sha512-LtAZySewD8nq1PlOWSPbA6SK3yUpD1p61Q7ck6b/RxWJTUVZIlZOq+rfSzy80pxFPs7DKO5gvz74bxI/pcbwMA==
-
 "@types/yargs-parser@*":
   version "20.2.0"
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-20.2.0.tgz#dd3e6699ba3237f0348cd085e4698780204842f9"

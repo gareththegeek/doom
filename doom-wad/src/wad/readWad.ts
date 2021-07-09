@@ -13,6 +13,8 @@ import { WadTextureLump } from '../interfaces/WadTextureLump'
 import { readMapLump } from '../maps'
 import { readPlayPalLump, readColorMapLump } from '../palettes'
 import { readPictureLump, readPNamesLump, readTextureLump } from '../textures'
+import { readSoundLump } from '../audio/readSoundLump'
+import { WadSoundLump } from '../interfaces/WadSoundLump'
 
 const hasEntry = (directory: WadDirectory, name: string): boolean =>
     directory.entries.find((entry) => entry.name === name) !== undefined
@@ -47,7 +49,8 @@ export const readWad = (data: Buffer): Wad => {
         flats: {},
         sprites: {},
         maps: {},
-        music: {}
+        music: {},
+        sounds: {}
     }
 
     const directory = readDirectory(data)
@@ -106,6 +109,11 @@ export const readWad = (data: Buffer): Wad => {
     const musics = directory.entries.filter((entry) => entry.name.startsWith('d_'))
     musics.forEach((entry) => {
         wad.music![entry.name.replace('d_', '')] = readLump<WadMusicLump>(entry.name, readMusicLump)
+    })
+
+    const sounds = directory.entries.filter(({ name }) => name.match(/^(ds[0-9a-z]+)$/))
+    sounds.forEach((entry) => {
+        wad.sounds![entry.name] = readLump<WadSoundLump>(entry.name, readSoundLump)
     })
 
     if (!isWad(wad)) {

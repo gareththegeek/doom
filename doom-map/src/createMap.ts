@@ -21,8 +21,7 @@ export const createMap = (mapName: string, flags: MapFlags): Map => {
         lines,
         blockmap,
         things,
-        vertices: wadMap.vertices,
-        music: M.wad.music[mapName].data
+        vertices: wadMap.vertices
     }
     return M.map
 }

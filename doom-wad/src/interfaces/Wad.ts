@@ -6,9 +6,10 @@ import { WadMusicLump } from './WadMusicLump'
 import { WadPictureLump } from './WadPictureLump'
 import { WadPlayPalLump } from './WadPlayPalLump'
 import { WadPNamesLump } from './WadPNamesLump'
+import { WadSoundLump } from './WadSoundLump'
 import { WadTextureLump } from './WadTextureLump'
 
-export type WadLookup<T extends WadLump> = { [name: string]: T}
+export type WadLookup<T extends WadLump> = { [name: string]: T }
 
 export interface Wad {
     playpal: WadPlayPalLump
@@ -21,4 +22,5 @@ export interface Wad {
     sprites: WadLookup<WadPictureLump>
     maps: WadLookup<WadMapLump>
     music: WadLookup<WadMusicLump>
+    sounds: WadLookup<WadSoundLump>
 }

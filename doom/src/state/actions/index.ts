@@ -4,6 +4,7 @@ import { A_Light1 } from './A_Light1'
 import { A_Lower } from './A_Lower'
 import { A_Raise } from './A_Raise'
 import { A_ReFire } from './A_ReFire'
+import { A_Scream } from './A_Scream'
 import { A_WeaponReady } from './A_WeaponReady'
 
-export { A_FirePistol, A_WeaponReady, A_Light0, A_Light1, A_Lower, A_Raise, A_ReFire }
+export { A_FirePistol, A_WeaponReady, A_Light0, A_Light1, A_Lower, A_Raise, A_ReFire, A_Scream }

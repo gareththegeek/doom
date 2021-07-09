@@ -35,7 +35,7 @@ const main = async () => {
     initialiseVideoSystem(gl, atlas.image, ATLAS_SIZE, wad.playpal.palettes[0].colours, wad.colormap.maps)
     initialiseMapSystem(wad, atlas)
     initialiseSpriteSystem(wad.sprites, atlas)
-    initialiseAudioSystem()
+    initialiseAudioSystem(wad.music, wad.sounds)
     console.info('Initialised subsystems')
 
     loadMap('e1m1')

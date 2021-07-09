@@ -12,6 +12,7 @@
     },
     "dependencies": {
         "buffer": "^6.0.3",
+        "dmx2wav": "^1.0.3",
         "mus2midi": "^1.0.8"
     },
     "devDependencies": {

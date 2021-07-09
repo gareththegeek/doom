@@ -112,7 +112,7 @@ export const loadMap = async (mapName: string): Promise<void> => {
     G.player = playerStateful
 
     console.info('Starting music')
-    await playMusic(map.music)
+    await playMusic(map.name)
 
     console.info('Prepared scene')
 }

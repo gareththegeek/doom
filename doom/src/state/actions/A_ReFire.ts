@@ -1,3 +1,4 @@
+import { playSound } from 'doom-audio'
 import { G } from '../../global'
 import { Stateful } from '../../interfaces/State'
 import { isWeapon } from '../../interfaces/Weapon'
@@ -18,5 +19,7 @@ export const A_ReFire = (stateful: Stateful): void => {
 
     if (isPressed['Control']) {
         setState(stateful, stateful.info.atkstate)
+    
+        playSound('dspistol')
     }
 }

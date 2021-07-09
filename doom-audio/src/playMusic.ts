@@ -2,15 +2,16 @@
 import { blobToNoteSequence } from '@magenta/music'
 import { A } from './global'
 
-export const playMusic = async (music: Buffer) => {
+export const playMusic = async (name: string) => {
     const { midiplayer } = A
+    const music = A.music[name].data
 
     const midiblob = new Blob([new Uint8Array(music, 0, music.length)])
-    const sequence = await blobToNoteSequence(midiblob)
+    A.currentNoteSequence = await blobToNoteSequence(midiblob)
 
     midiplayer.stop()
 
     setTimeout(() => {
-        midiplayer.start(sequence)
+        midiplayer.start(A.currentNoteSequence)
     }, 0)
 }

@@ -29,7 +29,6 @@ export const A_Look = (stateful: Stateful): void => {}
 export const A_Chase = (stateful: Stateful): void => {}
 export const A_FaceTarget = (stateful: Stateful): void => {}
 export const A_PosAttack = (stateful: Stateful): void => {}
-export const A_Scream = (stateful: Stateful): void => {}
 export const A_SPosAttack = (stateful: Stateful): void => {}
 export const A_VileChase = (stateful: Stateful): void => {}
 export const A_VileStart = (stateful: Stateful): void => {}

@@ -5,6 +5,7 @@ import { addStateful } from '../addStateful'
 import { G } from '../../global'
 import { fireRay } from '../../collisions/fireRay'
 import { allocateStateful } from '../allocateStateful'
+import { playSound } from 'doom-audio'
 
 const flash = (weapon: Weapon) => {
     const flash = allocateStateful(weapon.info.flashstate)
@@ -26,4 +27,6 @@ export const A_FirePistol = (stateful: Stateful): void => {
     stateful.ammo -= 1
 
     fireRay(G.player)
+    
+    playSound('dspistol')
 }

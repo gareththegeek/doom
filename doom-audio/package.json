@@ -23,6 +23,7 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
-    "@magenta/music": "^1.22.1"
+    "@magenta/music": "^1.22.1",
+    "doom-wad": "1.0.0"
   }
 }
